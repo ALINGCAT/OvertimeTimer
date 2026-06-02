@@ -1,0 +1,42 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# Rider / JetBrains
+.idea/**/workspace.xml
+.idea/**/shelf/
+.idea/**/httpRequests/
+.idea/**/dataSources/
+.idea/**/dataSources.local.xml
+.idea/**/queries/
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries/
+.idea/**/sonarlint/
+.idea/**/httpClientCookies/
+.idea/**/kotlinc.xml
+.idea/**/tasks.xml
+.idea/**/modules.xml
+*.sln.iml
+
+# Visual Studio / MSBuild user state
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.csproj.user
+*.vbproj.user
+*.dbmdl
+*.sln.docstates
+
+# NuGet / temporary files
+*.nupkg
+*.snupkg
+project.lock.json
+packages/
+TestResult*/
+*.log
+
+# Windows thumbnail cache
+Thumbs.db
+Desktop.ini
