@@ -1,0 +1,99 @@
+<UserControl x:Class="OvertimeTimer.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:design="clr-namespace:OvertimeTimer.App.DesignTime"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DataContext="{d:DesignInstance Type=design:DesignSettingsViewModel, IsDesignTimeCreatable=True}"
+             mc:Ignorable="d">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="4">
+            <hc:Card Margin="0,0,0,16" Padding="16">
+                <StackPanel>
+                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="设置" />
+                    <TextBlock Margin="0,6,0,0" Foreground="{DynamicResource TextSecondaryBrush}" Text="{Binding SelectedDateDisplay}" />
+                </StackPanel>
+            </hc:Card>
+
+            <hc:Card Padding="16">
+                <StackPanel>
+                    <TextBlock Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold" Text="工作日模式" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <RadioButton Margin="0,0,16,0" Content="按周算" IsChecked="{Binding IsWeeklyMode}" />
+                        <RadioButton Content="按天算" IsChecked="{Binding IsDailyMode}" />
+                    </StackPanel>
+
+                    <StackPanel Visibility="{Binding IsWeeklyMode, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Margin="0,0,0,8" Text="按周模式" />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <TextBlock VerticalAlignment="Center" Text="周期次数" />
+                            <hc:NumericUpDown Width="80"
+                                              Margin="8,0,16,0"
+                                              Minimum="1"
+                                              Maximum="52"
+                                              Value="{Binding WeekCycleCount}" />
+                            <TextBlock VerticalAlignment="Center" Text="当前周序号" />
+                            <hc:NumericUpDown Width="80"
+                                              Margin="8,0,0,0"
+                                              Minimum="1"
+                                              Maximum="52"
+                                              Value="{Binding CurrentCycleWeekIndex}" />
+                        </StackPanel>
+
+                        <ItemsControl ItemsSource="{Binding WeeklyCycleItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{DynamicResource ShellBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                        <StackPanel>
+                                            <TextBlock Margin="0,0,0,8" FontWeight="SemiBold" Text="{Binding WeekIndex, StringFormat=第 {0} 周}" />
+                                            <WrapPanel>
+                                                <CheckBox Margin="0,0,12,8" Content="周一" IsChecked="{Binding MondayWork}" />
+                                                <CheckBox Margin="0,0,12,8" Content="周二" IsChecked="{Binding TuesdayWork}" />
+                                                <CheckBox Margin="0,0,12,8" Content="周三" IsChecked="{Binding WednesdayWork}" />
+                                                <CheckBox Margin="0,0,12,8" Content="周四" IsChecked="{Binding ThursdayWork}" />
+                                                <CheckBox Margin="0,0,12,8" Content="周五" IsChecked="{Binding FridayWork}" />
+                                                <CheckBox Margin="0,0,12,8" Content="周六" IsChecked="{Binding SaturdayWork}" />
+                                                <CheckBox Margin="0,0,12,8" Content="周日" IsChecked="{Binding SundayWork}" />
+                                            </WrapPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <StackPanel Visibility="{Binding IsDailyMode, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Margin="0,0,0,8" Text="按天模式" />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <TextBlock VerticalAlignment="Center" Text="工作天数" />
+                            <hc:NumericUpDown Width="80"
+                                              Margin="8,0,16,0"
+                                              Minimum="1"
+                                              Maximum="365"
+                                              Value="{Binding WorkDays}" />
+                            <TextBlock VerticalAlignment="Center" Text="休息天数" />
+                            <hc:NumericUpDown Width="80"
+                                              Margin="8,0,16,0"
+                                              Minimum="0"
+                                              Maximum="365"
+                                              Value="{Binding RestDays}" />
+                            <TextBlock VerticalAlignment="Center" Text="锚点工作日序号" />
+                            <hc:NumericUpDown Width="80"
+                                              Margin="8,0,0,0"
+                                              Minimum="1"
+                                              Maximum="365"
+                                              Value="{Binding AnchorWorkDayIndex}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Button HorizontalAlignment="Left"
+                            Command="{Binding SaveCommand}"
+                            Content="保存设置" />
+                </StackPanel>
+            </hc:Card>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

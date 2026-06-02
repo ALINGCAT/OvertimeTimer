@@ -1,0 +1,23 @@
+<Window x:Class="OvertimeTimer.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:prism="http://prismlibrary.com/"
+        xmlns:design="clr-namespace:OvertimeTimer.App.DesignTime"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        d:DataContext="{d:DesignInstance Type=design:DesignMainWindowViewModel, IsDesignTimeCreatable=True}"
+        mc:Ignorable="d"
+        Title="OvertimeTimer"
+        Height="720"
+        Width="1200"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+    <DockPanel Background="{DynamicResource AppWindowBackgroundBrush}">
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem Content="{Binding StatusMessage}" />
+        </StatusBar>
+
+        <ContentControl Margin="20" Content="{Binding CurrentView}" />
+    </DockPanel>
+</Window>
