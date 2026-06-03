@@ -1,14 +1,14 @@
 using System.Collections.ObjectModel;
 using Prism.Commands;
-using OvertimeTimer.Core.Models;
+using OvertimeTimer.App.Localization;
+using OvertimeTimer.App.Models;
 
 namespace OvertimeTimer.App.ViewModels;
 
 public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
 {
-    private const string SaveSuccessMessage = "工作日规则设置已保存。";
-
     private readonly Func<Task> _saveAsync;
+    private readonly ILocalizationService _loc;
     private WorkScheduleMode _selectedMode = WorkScheduleMode.Weekly;
     private DateOnly _anchorDate = DateOnly.FromDateTime(DateTime.Today);
     private int _weekCycleCount = 1;
@@ -17,17 +17,26 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
     private int _restDays = 2;
     private int _anchorWorkDayIndex = 1;
 
-    public WorkScheduleSettingsViewModel(Func<Task> saveAsync)
+    public WorkScheduleSettingsViewModel(Func<Task> saveAsync, ILocalizationService localizationService)
     {
         _saveAsync = saveAsync;
+        _loc = localizationService;
         WeeklyCycleItems = new ObservableCollection<WeeklyCycleItemViewModel>
         {
             new(1)
         };
         SaveCommand = new DelegateCommand(() => _ = SaveCurrentSectionAsync());
+
+        _loc.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == "Item[]")
+            {
+                RaisePropertyChanged(nameof(TodayDescription));
+            }
+        };
     }
 
-    public string TodayDescription => $"今天是{_anchorDate.Month}月{_anchorDate.Day}日";
+    public string TodayDescription => string.Format(_loc["WorkSchedule.TodayDescription"], _anchorDate.Month, _anchorDate.Day);
 
     public WorkScheduleMode SelectedMode
     {
@@ -177,7 +186,7 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
 
     public Task ShowLoadFailedFeedbackAsync()
     {
-        return ShowSaveFeedbackAsync("设置加载失败，已使用默认配置。", true);
+        return ShowSaveFeedbackAsync(_loc["Settings.LoadFailed"], true);
     }
 
     private async Task SaveCurrentSectionAsync()
@@ -191,11 +200,11 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
         }
         catch (Exception)
         {
-            await ShowSaveFeedbackAsync("工作日规则设置保存失败。", true);
+            await ShowSaveFeedbackAsync(_loc["Settings.SaveFailed"], true);
             return;
         }
 
-        await ShowSaveFeedbackAsync(SaveSuccessMessage, false);
+        await ShowSaveFeedbackAsync(_loc["Settings.Saved"], false);
     }
 
     private void EnsureWeeklyCycleItems()

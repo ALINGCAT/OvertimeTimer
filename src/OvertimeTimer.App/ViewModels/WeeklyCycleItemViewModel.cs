@@ -1,4 +1,5 @@
-using OvertimeTimer.Core.Models;
+using OvertimeTimer.App.Localization;
+using OvertimeTimer.App.Models;
 
 namespace OvertimeTimer.App.ViewModels;
 
@@ -7,9 +8,18 @@ public sealed class WeeklyCycleItemViewModel : ViewModelBase
     public WeeklyCycleItemViewModel(int weekIndex)
     {
         WeekIndex = weekIndex;
+        LocalizationService.Instance.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == "Item[]")
+            {
+                RaisePropertyChanged(nameof(WeekLabel));
+            }
+        };
     }
 
     public int WeekIndex { get; }
+
+    public string WeekLabel => string.Format(LocalizationService.Instance["Calendar.WeekLabelFormat"], WeekIndex);
 
     public bool MondayWork { get; set; } = true;
 

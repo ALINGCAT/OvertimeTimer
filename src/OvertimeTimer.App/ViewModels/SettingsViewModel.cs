@@ -1,3 +1,4 @@
+using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Services;
 using Prism.Commands;
 
@@ -6,44 +7,52 @@ namespace OvertimeTimer.App.ViewModels;
 public sealed class SettingsViewModel : ViewModelBase
 {
     private readonly ISettingsPersistenceCoordinator _settingsPersistenceCoordinator;
-    private SettingsSection _selectedSection = SettingsSection.WorkSchedule;
+    private SettingsSection _selectedSection = SettingsSection.General;
+    private readonly ILocalizationService _loc;
 
     public SettingsViewModel(
         IAppearanceSettingsService appearanceSettingsService,
         IColorSelectionService colorSelectionService,
         ISettingsInteractionService settingsInteractionService,
-        ISettingsPersistenceCoordinator settingsPersistenceCoordinator)
+        ISettingsPersistenceCoordinator settingsPersistenceCoordinator,
+        ILocalizationService localizationService)
     {
         _settingsPersistenceCoordinator = settingsPersistenceCoordinator;
+        _loc = localizationService;
 
-        WorkScheduleSection = new WorkScheduleSettingsViewModel(SaveSettingsAsync);
-        StorageSection = new StorageSettingsViewModel(settingsInteractionService, SaveSettingsAsync);
-        AppearanceSection = new AppearanceSettingsViewModel(appearanceSettingsService, colorSelectionService, SaveSettingsAsync);
-        LanguageSection = new LanguageSettingsViewModel();
+        _loc.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == "Item[]")
+            {
+                RaisePropertyChanged(nameof(CurrentSectionTitle));
+                RaisePropertyChanged(nameof(CurrentSectionDescription));
+            }
+        };
 
+        GeneralSection = new GeneralSettingsViewModel(settingsInteractionService, SaveSettingsAsync, localizationService);
+        WorkScheduleSection = new WorkScheduleSettingsViewModel(SaveSettingsAsync, localizationService);
+        AppearanceSection = new AppearanceSettingsViewModel(appearanceSettingsService, colorSelectionService, SaveSettingsAsync, localizationService);
+
+        ShowGeneralSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.General));
         ShowWorkScheduleSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.WorkSchedule));
-        ShowStorageSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.Storage));
         ShowAppearanceSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.Appearance));
-        ShowLanguageSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.Language));
 
         _ = LoadSettingsAsync();
     }
 
     public string CurrentSectionTitle => SelectedSection switch
     {
-        SettingsSection.WorkSchedule => "工作日规则",
-        SettingsSection.Storage => "存储设置",
-        SettingsSection.Appearance => "外观设置",
-        SettingsSection.Language => "语言设置",
+        SettingsSection.General => _loc["Settings.General"],
+        SettingsSection.WorkSchedule => _loc["Settings.WorkSchedule"],
+        SettingsSection.Appearance => _loc["Settings.Appearance"],
         _ => string.Empty
     };
 
     public string CurrentSectionDescription => SelectedSection switch
     {
-        SettingsSection.WorkSchedule => "配置按周或按天的工作日循环规则。",
-        SettingsSection.Storage => "配置日记文件的根目录和分组方式。",
-        SettingsSection.Appearance => "配置窗口背景、月历日期和提示点的颜色。",
-        SettingsSection.Language => "后续将在这里配置界面语言与语言包。",
+        SettingsSection.General => _loc["Settings.GeneralDesc"],
+        SettingsSection.WorkSchedule => _loc["Settings.WorkScheduleDesc"],
+        SettingsSection.Appearance => _loc["Settings.AppearanceDesc"],
         _ => string.Empty
     };
 
@@ -54,39 +63,32 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             if (SetProperty(ref _selectedSection, value))
             {
+                RaisePropertyChanged(nameof(IsGeneralSectionSelected));
                 RaisePropertyChanged(nameof(IsWorkScheduleSectionSelected));
-                RaisePropertyChanged(nameof(IsStorageSectionSelected));
                 RaisePropertyChanged(nameof(IsAppearanceSectionSelected));
-                RaisePropertyChanged(nameof(IsLanguageSectionSelected));
                 RaisePropertyChanged(nameof(CurrentSectionTitle));
                 RaisePropertyChanged(nameof(CurrentSectionDescription));
             }
         }
     }
 
-    public bool IsWorkScheduleSectionSelected => SelectedSection == SettingsSection.WorkSchedule;
+    public bool IsGeneralSectionSelected => SelectedSection == SettingsSection.General;
 
-    public bool IsStorageSectionSelected => SelectedSection == SettingsSection.Storage;
+    public bool IsWorkScheduleSectionSelected => SelectedSection == SettingsSection.WorkSchedule;
 
     public bool IsAppearanceSectionSelected => SelectedSection == SettingsSection.Appearance;
 
-    public bool IsLanguageSectionSelected => SelectedSection == SettingsSection.Language;
+    public GeneralSettingsViewModel GeneralSection { get; }
 
     public WorkScheduleSettingsViewModel WorkScheduleSection { get; }
 
-    public StorageSettingsViewModel StorageSection { get; }
-
     public AppearanceSettingsViewModel AppearanceSection { get; }
 
-    public LanguageSettingsViewModel LanguageSection { get; }
+    public DelegateCommand ShowGeneralSectionCommand { get; }
 
     public DelegateCommand ShowWorkScheduleSectionCommand { get; }
 
-    public DelegateCommand ShowStorageSectionCommand { get; }
-
     public DelegateCommand ShowAppearanceSectionCommand { get; }
-
-    public DelegateCommand ShowLanguageSectionCommand { get; }
 
     private void SelectSection(SettingsSection section)
     {
@@ -97,17 +99,18 @@ public sealed class SettingsViewModel : ViewModelBase
     {
         try
         {
-            await _settingsPersistenceCoordinator.LoadAsync(WorkScheduleSection, StorageSection, AppearanceSection);
+            await _settingsPersistenceCoordinator.LoadAsync(WorkScheduleSection, GeneralSection.StorageSection, AppearanceSection, GeneralSection);
         }
         catch (Exception)
         {
             await WorkScheduleSection.ShowLoadFailedFeedbackAsync();
-            return;
+            await GeneralSection.StorageSection.ShowSaveFeedbackAsync(_loc["Settings.LoadFailed"], true);
+            await AppearanceSection.ShowSaveFeedbackAsync(_loc["Settings.LoadFailed"], true);
         }
     }
 
     private async Task SaveSettingsAsync()
     {
-        await _settingsPersistenceCoordinator.SaveAsync(WorkScheduleSection, StorageSection, AppearanceSection);
+        await _settingsPersistenceCoordinator.SaveAsync(WorkScheduleSection, GeneralSection.StorageSection, AppearanceSection, GeneralSection);
     }
 }

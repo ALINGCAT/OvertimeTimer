@@ -3,7 +3,7 @@ using System.Windows.Media;
 using Application = System.Windows.Application;
 using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
-using OvertimeTimer.Core.Models;
+using OvertimeTimer.App.Models;
 
 namespace OvertimeTimer.App.Services;
 
@@ -44,17 +44,25 @@ public sealed class AppearanceSettingsService : IAppearanceSettingsService
         ApplyBrush(resources, "CalendarOutOfMonthBrush", appearanceConfig.CalendarOutOfMonthColor);
         ApplyBrush(resources, "CalendarOvertimeDotBrush", appearanceConfig.CalendarOvertimeDotColor);
         ApplyBrush(resources, "CalendarDiaryDotBrush", appearanceConfig.CalendarDiaryDotColor);
+        ApplyBrush(resources, "PreviewBackgroundBrush", appearanceConfig.PreviewBackgroundColor);
+    }
+
+    public void ApplyPreviewSettings(string fontFamily, double fontSize, double lineHeight)
+    {
+        var resources = Application.Current?.Resources;
+        if (resources is null)
+        {
+            return;
+        }
+
+        resources["PreviewFontFamily"] = new System.Windows.Media.FontFamily(fontFamily);
+        resources["PreviewFontSize"] = fontSize;
+        resources["PreviewLineHeight"] = lineHeight;
     }
 
     private static void ApplyBrush(ResourceDictionary resources, string resourceKey, string colorText)
     {
         var color = (Color)ColorConverter.ConvertFromString(colorText);
-        if (resources[resourceKey] is SolidColorBrush brush)
-        {
-            brush.Color = color;
-            return;
-        }
-
         resources[resourceKey] = new SolidColorBrush(color);
     }
 }

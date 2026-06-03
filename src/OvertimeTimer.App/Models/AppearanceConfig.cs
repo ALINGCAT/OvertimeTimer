@@ -1,4 +1,4 @@
-namespace OvertimeTimer.Core.Models;
+namespace OvertimeTimer.App.Models;
 
 public sealed class AppearanceConfig
 {
@@ -15,4 +15,6 @@ public sealed class AppearanceConfig
     public string CalendarOvertimeDotColor { get; set; } = "#FFDC2626";
 
     public string CalendarDiaryDotColor { get; set; } = "#FF16A34A";
+
+    public string PreviewBackgroundColor { get; set; } = "#FFF5F0E1";
 }

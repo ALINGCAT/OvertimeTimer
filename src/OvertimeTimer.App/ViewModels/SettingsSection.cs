@@ -2,8 +2,7 @@ namespace OvertimeTimer.App.ViewModels;
 
 public enum SettingsSection
 {
+    General,
     WorkSchedule,
-    Storage,
-    Appearance,
-    Language
+    Appearance
 }

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using Prism.Commands;
+using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Services;
 
 namespace OvertimeTimer.App.ViewModels;
@@ -8,26 +9,51 @@ public sealed class MainViewModel : ViewModelBase
 {
     private readonly DayRecordViewModel _dayRecordViewModel;
     private readonly IMonthSelectionDialogService _monthSelectionDialogService;
+    private readonly IRecordStoreService _recordStoreService;
+    private readonly IDiaryFileService _diaryFileService;
+    private readonly IWorkScheduleProvider _workScheduleProvider;
+    private readonly ILocalizationService _loc;
     private DateOnly _displayedMonth = new(DateTime.Today.Year, DateTime.Today.Month, 1);
     private DateOnly _selectedDate = DateOnly.FromDateTime(DateTime.Today);
     private CalendarDayViewModel? _selectedDay;
-    private string _currentMonthLabel = string.Empty;
     private string _yearMonthLabel = string.Empty;
-    private string _monthlyOvertimeSummary = "0 小时 0 分钟";
+    private string _monthlyOvertimeSummary = string.Empty;
     private string _selectedDateLabel = string.Empty;
 
-    public MainViewModel(IStatusMessageService statusMessageService, IMonthSelectionDialogService monthSelectionDialogService)
+    public MainViewModel(
+        IStatusMessageService statusMessageService,
+        IMonthSelectionDialogService monthSelectionDialogService,
+        IRecordStoreService recordStoreService,
+        IDiaryFileService diaryFileService,
+        IWorkScheduleProvider workScheduleProvider,
+        ILocalizationService localizationService)
     {
-        _dayRecordViewModel = new DayRecordViewModel(statusMessageService);
         _monthSelectionDialogService = monthSelectionDialogService;
+        _recordStoreService = recordStoreService;
+        _diaryFileService = diaryFileService;
+        _workScheduleProvider = workScheduleProvider;
+        _loc = localizationService;
+        _dayRecordViewModel = new DayRecordViewModel(statusMessageService, recordStoreService, diaryFileService, localizationService);
+        _dayRecordViewModel.Saved += () => _ = LoadMonthAsync(_displayedMonth);
+        _monthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + _loc["Calendar.DefaultOvertimeSummary"];
         CalendarDays = new ObservableCollection<CalendarDayViewModel>();
 
         TodayCommand = new DelegateCommand(GoToToday);
         SelectDayCommand = new DelegateCommand<CalendarDayViewModel>(SelectDay);
         OpenMonthPickerCommand = new DelegateCommand(OpenMonthPicker);
 
-        LoadMonth(_displayedMonth);
-        SyncSelectedDay(_selectedDate);
+        _workScheduleProvider.Load();
+        _workScheduleProvider.ConfigChanged += () => _ = LoadMonthAsync(_displayedMonth);
+
+        _loc.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == "Item[]")
+            {
+                _ = LoadMonthAsync(_displayedMonth);
+            }
+        };
+
+        _ = LoadMonthAsync(_displayedMonth);
     }
 
     public ObservableCollection<CalendarDayViewModel> CalendarDays { get; }
@@ -59,8 +85,7 @@ public sealed class MainViewModel : ViewModelBase
         {
             if (SetProperty(ref _selectedDate, value))
             {
-                SelectedDayRecord.Date = value;
-                SyncSelectedDay(value);
+                _ = SelectDayAsync(value);
             }
         }
     }
@@ -111,31 +136,62 @@ public sealed class MainViewModel : ViewModelBase
     private void SetDisplayedMonth(DateOnly month)
     {
         _displayedMonth = new DateOnly(month.Year, month.Month, 1);
-        LoadMonth(_displayedMonth);
+        _ = LoadMonthAsync(_displayedMonth);
     }
 
-    private void LoadMonth(DateOnly month)
+    private async Task LoadMonthAsync(DateOnly month)
     {
         CalendarDays.Clear();
-        YearMonthLabel = month.ToString("yyyy 年 MM 月");
+        YearMonthLabel = month.ToString(_loc["Calendar.YearMonthFormat"]);
 
         var firstDay = new DateOnly(month.Year, month.Month, 1);
         var offset = ((int)firstDay.DayOfWeek + 6) % 7;
         var start = firstDay.AddDays(-offset);
 
+        var records = await _recordStoreService.LoadAllAsync();
+        var monthStart = firstDay;
+        var monthEnd = firstDay.AddMonths(1).AddDays(-1);
+
+        int totalMinutes = 0;
+
         for (var index = 0; index < 42; index++)
         {
             var date = start.AddDays(index);
-            CalendarDays.Add(new CalendarDayViewModel(date, date.Month == month.Month));
+            var day = new CalendarDayViewModel(date, date.Month == month.Month)
+            {
+                IsRestDay = _workScheduleProvider.IsRestDay(date)
+            };
+
+            var record = records.Find(r => r.Date == date);
+            if (record is not null)
+            {
+                day.HasOvertime = record.OvertimeHours > 0 || record.OvertimeMinutes > 0;
+                if (date >= monthStart && date <= monthEnd)
+                {
+                    totalMinutes += record.OvertimeHours * 60 + record.OvertimeMinutes;
+                }
+            }
+
+            if (await _diaryFileService.ExistsAsync(date))
+            {
+                day.HasDiary = true;
+            }
+
+            CalendarDays.Add(day);
         }
 
-        MonthlyOvertimeSummary = "0 小时 0 分钟";
+        var totalHours = totalMinutes / 60;
+        var remainingMinutes = totalMinutes % 60;
+        MonthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + string.Format(_loc["Calendar.OvertimeFormat"], totalHours, remainingMinutes);
+
         UpdateSelectedDateLabel(SelectedDate);
-        SyncSelectedDay(SelectedDate);
+        await SelectDayAsync(SelectedDate);
     }
 
-    private void SyncSelectedDay(DateOnly date)
+    private async Task SelectDayAsync(DateOnly date)
     {
+        SelectedDayRecord.Date = date;
+
         foreach (var day in CalendarDays)
         {
             day.IsSelected = day.Date == date;
@@ -144,24 +200,25 @@ public sealed class MainViewModel : ViewModelBase
         SelectedDay = CalendarDays.FirstOrDefault(day => day.Date == date)
             ?? CalendarDays.FirstOrDefault(day => day.IsInCurrentMonth);
         UpdateSelectedDateLabel(date);
+
+        await SelectedDayRecord.LoadAsync(date);
     }
 
     private void UpdateSelectedDateLabel(DateOnly date)
     {
-        var day = CalendarDays.FirstOrDefault(item => item.Date == date);
-        var dayOfWeek = day?.Date.DayOfWeek ?? date.DayOfWeek;
-        SelectedDateLabel = $"当前选择的日期: {date:yyyy-MM-dd} {GetChineseDayOfWeek(dayOfWeek)}";
+        var dayOfWeekName = GetLocalizedDayOfWeek(date.DayOfWeek);
+        SelectedDateLabel = string.Format(_loc["Calendar.SelectedDateFormat"], $"{date:yyyy-MM-dd} {dayOfWeekName}");
     }
 
-    private static string GetChineseDayOfWeek(DayOfWeek dayOfWeek) => dayOfWeek switch
+    private string GetLocalizedDayOfWeek(DayOfWeek dayOfWeek) => dayOfWeek switch
     {
-        DayOfWeek.Monday => "周一",
-        DayOfWeek.Tuesday => "周二",
-        DayOfWeek.Wednesday => "周三",
-        DayOfWeek.Thursday => "周四",
-        DayOfWeek.Friday => "周五",
-        DayOfWeek.Saturday => "周六",
-        DayOfWeek.Sunday => "周日",
+        DayOfWeek.Monday => _loc["Calendar.Monday"],
+        DayOfWeek.Tuesday => _loc["Calendar.Tuesday"],
+        DayOfWeek.Wednesday => _loc["Calendar.Wednesday"],
+        DayOfWeek.Thursday => _loc["Calendar.Thursday"],
+        DayOfWeek.Friday => _loc["Calendar.Friday"],
+        DayOfWeek.Saturday => _loc["Calendar.Saturday"],
+        DayOfWeek.Sunday => _loc["Calendar.Sunday"],
         _ => string.Empty
     };
 }

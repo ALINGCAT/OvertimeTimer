@@ -1,4 +1,4 @@
-using OvertimeTimer.Core.Models;
+using OvertimeTimer.App.Models;
 
 namespace OvertimeTimer.App.Services;
 

@@ -1,4 +1,5 @@
 using System.Windows;
+using OvertimeTimer.App.Localization;
 
 namespace OvertimeTimer.App.Services;
 
@@ -8,7 +9,7 @@ public sealed class SettingsInteractionService : ISettingsInteractionService
     {
         using var dialog = new System.Windows.Forms.FolderBrowserDialog
         {
-            Description = "选择日记根目录",
+            Description = LocalizationService.Instance["Settings.StorageRootPath"],
             UseDescriptionForTitle = true,
             InitialDirectory = string.IsNullOrWhiteSpace(initialPath) ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : initialPath
         };
@@ -19,8 +20,8 @@ public sealed class SettingsInteractionService : ISettingsInteractionService
     public bool ConfirmCreateFolder(string path)
     {
         var result = System.Windows.MessageBox.Show(
-            $"路径不存在：\n{path}\n\n是否要在此路径新建文件夹？",
-            "路径不存在",
+            string.Format(LocalizationService.Instance["Settings.StorageCreateConfirm"], path),
+            LocalizationService.Instance["Settings.StoragePathNotExist"],
             System.Windows.MessageBoxButton.YesNo,
             System.Windows.MessageBoxImage.Question);
 

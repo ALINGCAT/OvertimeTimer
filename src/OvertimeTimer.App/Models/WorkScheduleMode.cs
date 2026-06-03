@@ -1,4 +1,4 @@
-namespace OvertimeTimer.Core.Models;
+namespace OvertimeTimer.App.Models;
 
 public enum WorkScheduleMode
 {

@@ -5,7 +5,9 @@
                         xmlns:hc="https://handyorg.github.io/handycontrol"
                         xmlns:converters="clr-namespace:OvertimeTimer.App.Converters"
                         xmlns:views="clr-namespace:OvertimeTimer.App.Views"
-                        xmlns:viewModels="clr-namespace:OvertimeTimer.App.ViewModels">
+                        xmlns:viewModels="clr-namespace:OvertimeTimer.App.ViewModels"
+                        xmlns:loc="clr-namespace:OvertimeTimer.App.Localization"
+                        xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -24,6 +26,10 @@
             <SolidColorBrush x:Key="CalendarOvertimeDotBrush" Color="#FFDC2626" />
             <SolidColorBrush x:Key="CalendarDiaryDotBrush" Color="#FF16A34A" />
             <SolidColorBrush x:Key="ShellBorderBrush" Color="#FFE2E8F0" />
+            <FontFamily x:Key="PreviewFontFamily">Microsoft YaHei UI</FontFamily>
+            <system:Double x:Key="PreviewFontSize">8</system:Double>
+            <system:Double x:Key="PreviewLineHeight">12</system:Double>
+            <SolidColorBrush x:Key="PreviewBackgroundBrush" Color="#FFF5F0E1" />
             <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
             <converters:ColorTextToBrushConverter x:Key="ColorTextToBrushConverter" />
             <Style x:Key="SettingsTabButtonStyle" TargetType="Button">

@@ -29,7 +29,7 @@ public abstract class SettingsSectionViewModelBase : ViewModelBase
         protected set => SetProperty(ref _isSaveFeedbackError, value);
     }
 
-    protected async Task ShowSaveFeedbackAsync(string message, bool isError)
+    public async Task ShowSaveFeedbackAsync(string message, bool isError)
     {
         _saveFeedbackCancellationTokenSource?.Cancel();
         _saveFeedbackCancellationTokenSource = new CancellationTokenSource();

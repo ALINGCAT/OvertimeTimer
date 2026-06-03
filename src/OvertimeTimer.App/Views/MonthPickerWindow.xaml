@@ -6,9 +6,9 @@
         xmlns:prism="http://prismlibrary.com/"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:design="clr-namespace:OvertimeTimer.App.DesignTime"
+        xmlns:loc="clr-namespace:OvertimeTimer.App.Localization"
         prism:ViewModelLocator.AutoWireViewModel="True"
         mc:Ignorable="d"
-        Title="选择年月"
         d:DataContext="{d:DesignInstance Type=design:DesignMonthPickerViewModel, IsDesignTimeCreatable=True}"
         Width="220"
         Height="120"
@@ -30,7 +30,7 @@
                           ItemsSource="{Binding YearOptions}"
                           SelectedItem="{Binding SelectedYear, Mode=TwoWay}"
                           Margin="0,0,8,0" />
-                <TextBlock VerticalAlignment="Center" Text="年" />
+                <TextBlock VerticalAlignment="Center" Text="{loc:Loc MonthPicker.Year}" />
             </StackPanel>
 
             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -38,20 +38,20 @@
                           ItemsSource="{Binding MonthOptions}"
                           SelectedItem="{Binding SelectedMonth, Mode=TwoWay}"
                           Margin="0,0,8,0" />
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Text="月" />
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Text="{loc:Loc MonthPicker.Month}" />
             </StackPanel>
 
             <Button Grid.Row="1"
                     Grid.Column="0"
                     Margin="0 5 0 0"
-                    Content="今天"
+                    Content="{loc:Loc MonthPicker.Today}"
                     HorizontalAlignment="Left"
                     Command="{Binding TodayCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
             <Button Grid.Row="1"
                     Grid.Column="1"
                     Margin="0 5 0 0"
-                    Content="确定"
+                    Content="{loc:Loc MonthPicker.Confirm}"
                     HorizontalAlignment="Right"
                     Command="{Binding ConfirmCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />

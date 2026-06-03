@@ -6,9 +6,14 @@
              xmlns:prism="http://prismlibrary.com/"
              xmlns:design="clr-namespace:OvertimeTimer.App.DesignTime"
              xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:loc="clr-namespace:OvertimeTimer.App.Localization"
+             xmlns:mdxam="clr-namespace:MdXaml;assembly=MdXaml"
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance Type=design:DesignMainViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d">
+    <UserControl.InputBindings>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SelectedDayRecord.SaveCommand}" />
+    </UserControl.InputBindings>
     <Grid Margin="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -36,7 +41,7 @@
                             Height="22"
                             Padding="0"
                             Command="{Binding DataContext.NavigateSettingsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            ToolTip="设置">
+                            ToolTip="{loc:Loc Calendar.Setting}">
                         <TextBlock FontSize="14"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
@@ -68,13 +73,13 @@
                              Columns="7"
                              Width="322"
                              Margin="0,0,0,4">
-                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周一" />
-                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周二" />
-                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周三" />
-                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周四" />
-                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周五" />
-                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周六" />
-                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周日" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.Monday}" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.Tuesday}" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.Wednesday}" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.Thursday}" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.Friday}" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.Saturday}" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.Sunday}" />
                 </UniformGrid>
 
                 <ItemsControl Grid.Row="2"
@@ -159,8 +164,9 @@
                             <TextBlock Grid.Column="0"
                                    Margin="0,0,8,0"
                                    VerticalAlignment="Center"
-                                   Text="加班时长" />
+                                   Text="{loc:Loc Calendar.OvertimeHours}" />
                             <hc:NumericUpDown Grid.Column="1"
+                                          x:Name="OvertimeHoursInput"
                                           Width="64"
                                           Minimum="0"
                                           Maximum="999"
@@ -168,8 +174,9 @@
                             <TextBlock Grid.Column="2"
                                    Margin="8,0"
                                    VerticalAlignment="Center"
-                                   Text="小时" />
+                                   Text="{loc:Loc Calendar.Hours}" />
                             <hc:NumericUpDown Grid.Column="3"
+                                          x:Name="OvertimeMinutesInput"
                                           Width="64"
                                           Minimum="0"
                                           Maximum="59"
@@ -177,7 +184,7 @@
                             <TextBlock Grid.Column="4"
                                    Margin="8,0"
                                    VerticalAlignment="Center"
-                                   Text="分钟" />
+                                   Text="{loc:Loc Calendar.Minutes}" />
                         </Grid>
                     </Grid>
 
@@ -189,12 +196,12 @@
                         <TextBlock Grid.Column="0"
                                    VerticalAlignment="Center"
                                    Foreground="{DynamicResource TextSecondaryBrush}"
-                                   Text="{Binding MonthlyOvertimeSummary, StringFormat=总计加班时长：{0}}" />
+                                   Text="{Binding MonthlyOvertimeSummary, StringFormat='{}{0}'}" />
                         <Button Grid.Column="1"
                                 Margin="12,0,0,0"
                                 HorizontalAlignment="Right"
                                 Command="{Binding SelectedDayRecord.SaveCommand}"
-                                Content="保存" />
+                                Content="{loc:Loc Calendar.Save}" />
                     </Grid>
                 </Grid>
             </Grid>
@@ -216,14 +223,14 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock Margin="0,0,0,8" Style="{StaticResource SectionCaptionTextStyle}" Text="Markdown 日记" />
+                        <TextBlock Margin="0,0,0,8" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.MarkdownDiary}" />
                         <hc:TextBox Grid.Row="1"
                                     AcceptsReturn="True"
                                     TextWrapping="Wrap"
                                     Padding="5"
                                     VerticalScrollBarVisibility="Auto"
                                     VerticalContentAlignment="Top"
-                                    Text="{Binding SelectedDayRecord.DiaryMarkdown}" />
+                                    Text="{Binding SelectedDayRecord.DiaryMarkdown, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
 
                     <Grid Grid.Column="1" Margin="6,0,0,0">
@@ -231,11 +238,19 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock Margin="0,0,0,8" Style="{StaticResource SectionCaptionTextStyle}" Text="预览" />
-                        <Border Grid.Row="1" Background="{DynamicResource AccentSoftBrush}" CornerRadius="8" Padding="12">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <TextBlock Text="{Binding SelectedDayRecord.DiaryPreview}" TextWrapping="Wrap" />
-                            </ScrollViewer>
+                        <TextBlock Margin="0,0,0,8" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.Preview}" />
+                        <Border Grid.Row="1"
+                                Padding="5"
+                                BorderBrush="{DynamicResource ShellBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Background="{DynamicResource PreviewBackgroundBrush}">
+                            <mdxam:MarkdownScrollViewer
+                                Background="Transparent"
+                                TextElement.FontFamily="{DynamicResource PreviewFontFamily}"
+                                TextElement.FontSize="{DynamicResource PreviewFontSize}"
+                                Block.LineHeight="{DynamicResource PreviewLineHeight}"
+                                Markdown="{Binding SelectedDayRecord.DiaryMarkdown}" />
                         </Border>
                     </Grid>
                 </Grid>

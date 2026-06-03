@@ -3,6 +3,9 @@ namespace OvertimeTimer.App.ViewModels;
 public sealed class CalendarDayViewModel : ViewModelBase
 {
     private bool _isSelected;
+    private bool _isRestDay;
+    private bool _hasOvertime;
+    private bool _hasDiary;
 
     public CalendarDayViewModel(DateOnly date, bool isInCurrentMonth)
     {
@@ -17,11 +20,23 @@ public sealed class CalendarDayViewModel : ViewModelBase
 
     public bool IsInCurrentMonth { get; }
 
-    public bool IsRestDay => Date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+    public bool IsRestDay
+    {
+        get => _isRestDay;
+        set => SetProperty(ref _isRestDay, value);
+    }
 
-    public bool HasOvertime { get; set; }
+    public bool HasOvertime
+    {
+        get => _hasOvertime;
+        set => SetProperty(ref _hasOvertime, value);
+    }
 
-    public bool HasDiary { get; set; }
+    public bool HasDiary
+    {
+        get => _hasDiary;
+        set => SetProperty(ref _hasDiary, value);
+    }
 
     public bool IsToday { get; }
 

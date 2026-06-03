@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Windows;
+using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Services;
 using OvertimeTimer.App.ViewModels;
 using Prism.Ioc;
@@ -23,6 +25,14 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<ISettingsStoreService, SettingsStoreService>();
         containerRegistry.RegisterSingleton<ISettingsPersistenceCoordinator, SettingsPersistenceCoordinator>();
         containerRegistry.RegisterSingleton<IAppearanceSettingsService, AppearanceSettingsService>();
+        containerRegistry.RegisterSingleton<IRecordStoreService, RecordStoreService>();
+        containerRegistry.RegisterSingleton<IDiaryFileService, DiaryFileService>();
+        containerRegistry.RegisterSingleton<IWorkScheduleProvider, WorkScheduleProvider>();
+
+        var localizationService = new LocalizationService();
+        LocalizationService.Instance = localizationService;
+        containerRegistry.RegisterInstance<ILocalizationService>(localizationService);
+
         containerRegistry.Register<MainWindowViewModel>();
         containerRegistry.Register<MainViewModel>();
         containerRegistry.Register<SettingsViewModel>();
@@ -36,20 +46,27 @@ public partial class App : PrismApplication
             MainWindow.DataContext = Container.Resolve<MainWindowViewModel>();
         }
 
-        _ = InitializeAppearanceAsync();
+        _ = InitializeAsync();
     }
 
-    private async Task InitializeAppearanceAsync()
+    private async Task InitializeAsync()
     {
         try
         {
             var settingsStoreService = Container.Resolve<ISettingsStoreService>();
             var appearanceSettingsService = Container.Resolve<IAppearanceSettingsService>();
+            var diaryFileService = Container.Resolve<IDiaryFileService>();
+            var localizationService = Container.Resolve<ILocalizationService>();
+
             var settingsDataStore = await settingsStoreService.LoadAsync();
             appearanceSettingsService.Apply(settingsDataStore.AppearanceConfig);
+            appearanceSettingsService.ApplyPreviewSettings(settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight);
+            diaryFileService.Configure(settingsDataStore.DiaryStorageConfig);
+            await localizationService.LoadAsync();
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine($"App initialization failed: {ex}");
         }
     }
 }

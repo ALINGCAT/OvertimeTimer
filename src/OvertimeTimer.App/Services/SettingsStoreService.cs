@@ -1,6 +1,6 @@
 using System.IO;
 using System.Text.Json;
-using OvertimeTimer.Core.Models;
+using OvertimeTimer.App.Models;
 
 namespace OvertimeTimer.App.Services;
 

@@ -1,27 +1,38 @@
 using System.IO;
 using Prism.Commands;
+using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Services;
-using OvertimeTimer.Core.Models;
+using OvertimeTimer.App.Models;
 
 namespace OvertimeTimer.App.ViewModels;
 
 public sealed class StorageSettingsViewModel : SettingsSectionViewModelBase
 {
-    private const string SaveSuccessMessage = "存储设置已保存。";
-
     private readonly ISettingsInteractionService _settingsInteractionService;
     private readonly Func<Task> _saveAsync;
+    private readonly ILocalizationService _loc;
     private string _diaryRootPath = Path.Combine(AppContext.BaseDirectory, "dailies");
     private DiaryStorageMode _diaryStorageMode = DiaryStorageMode.Flat;
 
     public StorageSettingsViewModel(
         ISettingsInteractionService settingsInteractionService,
-        Func<Task> saveAsync)
+        Func<Task> saveAsync,
+        ILocalizationService localizationService)
     {
         _settingsInteractionService = settingsInteractionService;
         _saveAsync = saveAsync;
+        _loc = localizationService;
         ChooseDiaryRootPathCommand = new DelegateCommand(ChooseDiaryRootPath);
-        SaveCommand = new DelegateCommand(() => _ = SaveCurrentSectionAsync());
+        SaveCommand = new DelegateCommand(() => _ = SaveAsync());
+
+        _loc.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == "Item[]")
+            {
+                RaisePropertyChanged(nameof(DiaryStorageModeDescription));
+                RaisePropertyChanged(nameof(DiaryStoragePathStatus));
+            }
+        };
     }
 
     public string DiaryRootPath
@@ -90,15 +101,15 @@ public sealed class StorageSettingsViewModel : SettingsSectionViewModelBase
 
     public string DiaryStorageModeDescription => DiaryStorageMode switch
     {
-        DiaryStorageMode.Flat => "所有日记文件直接放在根目录中。",
-        DiaryStorageMode.ByYear => "按年份创建子目录，例如 2026\\2026-06-03.md。",
-        DiaryStorageMode.ByMonth => "按年月创建子目录，例如 2026-06\\2026-06-03.md。",
+        DiaryStorageMode.Flat => _loc["Settings.StorageFlatDesc"],
+        DiaryStorageMode.ByYear => _loc["Settings.StorageByYearDesc"],
+        DiaryStorageMode.ByMonth => _loc["Settings.StorageByMonthDesc"],
         _ => string.Empty
     };
 
     public string DiaryStoragePathStatus => string.IsNullOrWhiteSpace(DiaryRootPath)
-        ? "请先选择或输入日记根目录。"
-        : $"当前目录：{DiaryRootPath}";
+        ? _loc["Settings.StoragePathHint"]
+        : string.Format(_loc["Settings.StorageCurrentPath"], DiaryRootPath);
 
     public DelegateCommand ChooseDiaryRootPathCommand { get; }
 
@@ -130,12 +141,12 @@ public sealed class StorageSettingsViewModel : SettingsSectionViewModelBase
         }
     }
 
-    private async Task SaveCurrentSectionAsync()
+    public async Task<bool> SaveAsync()
     {
         if (!TryValidateDiaryRootPath(out var feedbackMessage, out var isError))
         {
-            await ShowSaveFeedbackAsync(feedbackMessage, isError);
-            return;
+            _ = ShowSaveFeedbackAsync(feedbackMessage, isError);
+            return false;
         }
 
         try
@@ -144,18 +155,19 @@ public sealed class StorageSettingsViewModel : SettingsSectionViewModelBase
         }
         catch (Exception)
         {
-            await ShowSaveFeedbackAsync("存储设置保存失败。", true);
-            return;
+            _ = ShowSaveFeedbackAsync(_loc["Settings.SaveFailed"], true);
+            return false;
         }
 
-        await ShowSaveFeedbackAsync(SaveSuccessMessage, false);
+        _ = ShowSaveFeedbackAsync(_loc["Settings.Saved"], false);
+        return true;
     }
 
     private bool TryValidateDiaryRootPath(out string feedbackMessage, out bool isError)
     {
         if (string.IsNullOrWhiteSpace(DiaryRootPath))
         {
-            feedbackMessage = "日记根目录不能为空。";
+            feedbackMessage = _loc["Settings.StorageRootPathEmpty"];
             isError = true;
             return false;
         }
@@ -169,7 +181,7 @@ public sealed class StorageSettingsViewModel : SettingsSectionViewModelBase
 
         if (!_settingsInteractionService.ConfirmCreateFolder(DiaryRootPath))
         {
-            feedbackMessage = "已取消保存。";
+            feedbackMessage = _loc["Settings.StorageSaveCancelled"];
             isError = true;
             return false;
         }
@@ -183,7 +195,7 @@ public sealed class StorageSettingsViewModel : SettingsSectionViewModelBase
         }
         catch (Exception)
         {
-            feedbackMessage = "创建目录失败，请检查路径是否有效或是否有权限。";
+            feedbackMessage = _loc["Settings.StorageCreateDirFailed"];
             isError = true;
             return false;
         }

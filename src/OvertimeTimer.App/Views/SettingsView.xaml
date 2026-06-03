@@ -7,6 +7,7 @@
              xmlns:design="clr-namespace:OvertimeTimer.App.DesignTime"
              xmlns:views="clr-namespace:OvertimeTimer.App.Views"
              xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:loc="clr-namespace:OvertimeTimer.App.Localization"
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance Type=design:DesignSettingsViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d">
@@ -23,10 +24,24 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <Button Grid.Row="0" Margin="0,0,0,8" Command="{Binding ShowWorkScheduleSectionCommand}">
+                    <Button Grid.Row="0" Margin="0,0,0,8" Command="{Binding ShowGeneralSectionCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsGeneralSectionSelected}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="Foreground" Value="White" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock Text="{loc:Loc Settings.General}" />
+                    </Button>
+
+                    <Button Grid.Row="1" Margin="0,0,0,8" Command="{Binding ShowWorkScheduleSectionCommand}">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
                                 <Style.Triggers>
@@ -38,25 +53,10 @@
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
-                        <TextBlock Text="工作日规则" />
+                        <TextBlock Text="{loc:Loc Settings.WorkSchedule}" />
                     </Button>
 
-                    <Button Grid.Row="1" Margin="0,0,0,8" Command="{Binding ShowStorageSectionCommand}">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsStorageSectionSelected}" Value="True">
-                                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                        <Setter Property="Foreground" Value="White" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <TextBlock Text="存储设置" />
-                    </Button>
-
-                    <Button Grid.Row="2" Margin="0,0,0,8" Command="{Binding ShowAppearanceSectionCommand}">
+                    <Button Grid.Row="2" Command="{Binding ShowAppearanceSectionCommand}">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
                                 <Style.Triggers>
@@ -68,22 +68,7 @@
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
-                        <TextBlock Text="外观设置" />
-                    </Button>
-
-                    <Button Grid.Row="3" Command="{Binding ShowLanguageSectionCommand}">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsLanguageSectionSelected}" Value="True">
-                                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                        <Setter Property="Foreground" Value="White" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <TextBlock Text="语言设置" />
+                        <TextBlock Text="{loc:Loc Settings.Appearance}" />
                     </Button>
                 </Grid>
 
@@ -105,17 +90,14 @@
                                Text="{Binding CurrentSectionDescription}" />
 
                     <Grid Grid.Row="2" Margin="0,16,0,0">
+                        <Grid Visibility="{Binding IsGeneralSectionSelected, Converter={StaticResource BoolToVisibility}}">
+                            <views:GeneralSettingsView DataContext="{Binding GeneralSection}" />
+                        </Grid>
                         <Grid Visibility="{Binding IsWorkScheduleSectionSelected, Converter={StaticResource BoolToVisibility}}">
                             <views:WorkScheduleSettingsView DataContext="{Binding WorkScheduleSection}" />
                         </Grid>
-                        <Grid Visibility="{Binding IsStorageSectionSelected, Converter={StaticResource BoolToVisibility}}">
-                            <views:StorageSettingsView DataContext="{Binding StorageSection}" />
-                        </Grid>
                         <Grid Visibility="{Binding IsAppearanceSectionSelected, Converter={StaticResource BoolToVisibility}}">
                             <views:AppearanceSettingsView DataContext="{Binding AppearanceSection}" />
-                        </Grid>
-                        <Grid Visibility="{Binding IsLanguageSectionSelected, Converter={StaticResource BoolToVisibility}}">
-                            <views:LanguageSettingsView DataContext="{Binding LanguageSection}" />
                         </Grid>
                     </Grid>
                 </Grid>

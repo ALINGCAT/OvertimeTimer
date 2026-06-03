@@ -8,11 +8,13 @@ public interface ISettingsPersistenceCoordinator
         WorkScheduleSettingsViewModel workScheduleSection,
         StorageSettingsViewModel storageSection,
         AppearanceSettingsViewModel appearanceSection,
+        GeneralSettingsViewModel generalSection,
         CancellationToken cancellationToken = default);
 
     Task SaveAsync(
         WorkScheduleSettingsViewModel workScheduleSection,
         StorageSettingsViewModel storageSection,
         AppearanceSettingsViewModel appearanceSection,
+        GeneralSettingsViewModel generalSection,
         CancellationToken cancellationToken = default);
 }

@@ -4,11 +4,9 @@ namespace OvertimeTimer.App.DesignTime;
 
 public sealed class DesignSettingsViewModel
 {
-    public string CurrentSectionTitle { get; } = "工作日规则";
+    public string CurrentSectionTitle { get; } = "通用设置";
 
-    public string CurrentSectionDescription { get; } = "配置按周或按天的工作日循环规则。";
-
-    public string TodayDescription { get; } = "今天是6月3日";
+    public string CurrentSectionDescription { get; } = "配置日记文件存储、分组方式和界面语言。";
 
     public string DiaryRootPath { get; } = @"D:\QuickAccess\Documents\GitHub\OvertimeTimer\dailies";
 
@@ -22,27 +20,21 @@ public sealed class DesignSettingsViewModel
 
     public string DiaryStoragePathStatus { get; } = "当前目录：D:\\QuickAccess\\Documents\\GitHub\\OvertimeTimer\\dailies";
 
-    public bool IsWorkScheduleSectionSelected { get; } = true;
+    public bool IsGeneralSectionSelected { get; } = true;
 
-    public bool IsStorageSectionSelected { get; } = false;
+    public bool IsWorkScheduleSectionSelected { get; } = false;
 
-    public bool IsLanguageSectionSelected { get; } = false;
+    public bool IsAppearanceSectionSelected { get; } = false;
 
     public bool IsWeeklyMode { get; } = true;
 
     public bool IsDailyMode { get; } = false;
 
-    public string WorkScheduleSaveFeedbackMessage { get; } = "工作日规则设置已保存。";
+    public string SaveFeedbackMessage { get; } = "已应用并保存配置";
 
-    public bool HasWorkScheduleSaveFeedback { get; } = true;
+    public bool HasSaveFeedback { get; } = true;
 
-    public bool IsWorkScheduleSaveFeedbackError { get; } = false;
-
-    public string StorageSaveFeedbackMessage { get; } = "日记根目录不能为空。";
-
-    public bool HasStorageSaveFeedback { get; } = true;
-
-    public bool IsStorageSaveFeedbackError { get; } = true;
+    public bool IsSaveFeedbackError { get; } = false;
 
     public int WeekCycleCount { get; } = 1;
 
@@ -56,16 +48,18 @@ public sealed class DesignSettingsViewModel
 
     public int AnchorWorkDayIndex { get; } = 1;
 
+    public string TodayDescription { get; } = "今天是6月3日";
+
     public ObservableCollection<DesignWeeklyCycleItemViewModel> WeeklyCycleItems { get; } = new()
     {
         new DesignWeeklyCycleItemViewModel(1)
     };
 
+    public object ShowGeneralSectionCommand { get; } = new object();
+
     public object ShowWorkScheduleSectionCommand { get; } = new object();
 
-    public object ShowStorageSectionCommand { get; } = new object();
-
-    public object ShowLanguageSectionCommand { get; } = new object();
+    public object ShowAppearanceSectionCommand { get; } = new object();
 
     public object ChooseDiaryRootPathCommand { get; } = new object();
 
