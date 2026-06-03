@@ -31,6 +31,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IWorkScheduleProvider, WorkScheduleProvider>();
 
         var localizationService = new LocalizationService();
+        localizationService.Load();
         LocalizationService.Instance = localizationService;
         containerRegistry.RegisterInstance<ILocalizationService>(localizationService);
 
@@ -57,7 +58,6 @@ public partial class App : PrismApplication
             var settingsStoreService = Container.Resolve<ISettingsStoreService>();
             var appearanceSettingsService = Container.Resolve<IAppearanceSettingsService>();
             var diaryFileService = Container.Resolve<IDiaryFileService>();
-            var localizationService = Container.Resolve<ILocalizationService>();
 
             var settingsDataStore = await settingsStoreService.LoadAsync();
 
@@ -72,7 +72,6 @@ public partial class App : PrismApplication
             appearanceSettingsService.Apply(settingsDataStore.AppearanceConfig);
             appearanceSettingsService.ApplyPreviewSettings(settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight);
             diaryFileService.Configure(settingsDataStore.DiaryStorageConfig);
-            await localizationService.LoadAsync();
         }
         catch (Exception ex)
         {

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Windows;
 using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Services;
@@ -10,7 +11,17 @@ public partial class MonthPickerWindow : Window
     public MonthPickerWindow(DateOnly currentMonth)
     {
         InitializeComponent();
-        Title = LocalizationService.Instance["MonthPicker.Title"];
+        var loc = LocalizationService.Instance;
+        Title = loc["MonthPicker.Title"];
+
+        loc.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == "Item[]")
+            {
+                Title = loc["MonthPicker.Title"];
+            }
+        };
+
         var viewModel = new MonthPickerViewModel(currentMonth);
         viewModel.RequestClose += OnRequestClose;
         DataContext = viewModel;

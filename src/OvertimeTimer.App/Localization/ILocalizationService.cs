@@ -8,5 +8,6 @@ public interface ILocalizationService : INotifyPropertyChanged
     string CurrentLanguage { get; }
     IReadOnlyList<LanguageItem> AvailableLanguages { get; }
     Task SetLanguageAsync(string languageCode);
+    void Load();
     Task LoadAsync();
 }

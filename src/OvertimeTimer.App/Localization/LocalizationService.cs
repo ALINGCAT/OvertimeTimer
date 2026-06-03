@@ -56,6 +56,32 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         RaisePropertyChanged("Item[]");
     }
 
+    public void Load()
+    {
+        var filePath = Path.Combine(
+            AppContext.BaseDirectory,
+            "Localization",
+            "Resources",
+            $"{_currentLanguage}.json");
+
+        if (!File.Exists(filePath))
+        {
+            return;
+        }
+
+        var json = File.ReadAllText(filePath);
+        var entries = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+        if (entries is null)
+        {
+            return;
+        }
+
+        foreach (var (key, value) in entries)
+        {
+            _strings[key] = value;
+        }
+    }
+
     public async Task LoadAsync()
     {
         await LoadLanguageFileAsync(_currentLanguage);

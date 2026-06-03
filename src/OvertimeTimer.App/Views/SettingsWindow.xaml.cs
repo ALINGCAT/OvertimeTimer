@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Windows;
 using OvertimeTimer.App.Localization;
 
@@ -8,6 +9,15 @@ public partial class SettingsWindow : Window
     public SettingsWindow()
     {
         InitializeComponent();
-        Title = LocalizationService.Instance["Settings.Title"];
+        var loc = LocalizationService.Instance;
+        Title = loc["Settings.Title"];
+
+        loc.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == "Item[]")
+            {
+                Title = loc["Settings.Title"];
+            }
+        };
     }
 }
