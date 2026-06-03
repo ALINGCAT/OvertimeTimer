@@ -91,10 +91,12 @@
         <Grid Grid.Row="10" Margin="0,16,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" HorizontalAlignment="Left" Command="{Binding SaveCommand}" Content="{loc:Loc Settings.Save}" />
-            <TextBlock Grid.Column="1"
+            <Button Grid.Column="1" Margin="8,0,0,0" HorizontalAlignment="Left" Command="{Binding OpenSettingsDirectoryCommand}" Content="{loc:Loc Settings.OpenConfigDir}" />
+            <TextBlock Grid.Column="2"
                        Style="{StaticResource InlineSaveFeedbackTextStyle}"
                        Visibility="{Binding HasSaveFeedback, Converter={StaticResource BoolToVisibility}}"
                        Text="{Binding SaveFeedbackMessage}" />

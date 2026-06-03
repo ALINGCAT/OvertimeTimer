@@ -9,6 +9,7 @@ namespace OvertimeTimer.App.ViewModels;
 public sealed class GeneralSettingsViewModel : SettingsSectionViewModelBase
 {
     private readonly ILocalizationService _localizationService;
+    private readonly ISettingsInteractionService _settingsInteractionService;
     private readonly StorageSettingsViewModel _storageSection;
     private LanguageItem? _selectedLanguage;
 
@@ -18,6 +19,7 @@ public sealed class GeneralSettingsViewModel : SettingsSectionViewModelBase
         ILocalizationService localizationService)
     {
         _localizationService = localizationService;
+        _settingsInteractionService = settingsInteractionService;
         _storageSection = new StorageSettingsViewModel(settingsInteractionService, saveAsync, localizationService);
         AvailableLanguages = new ObservableCollection<LanguageItem>(localizationService.AvailableLanguages);
         _selectedLanguage = AvailableLanguages.FirstOrDefault(
@@ -39,6 +41,7 @@ public sealed class GeneralSettingsViewModel : SettingsSectionViewModelBase
         };
 
         SaveCommand = new DelegateCommand(() => _ = SaveAsync());
+        OpenSettingsDirectoryCommand = new DelegateCommand(() => _settingsInteractionService.OpenSettingsDirectory());
     }
 
     public StorageSettingsViewModel StorageSection => _storageSection;
@@ -75,6 +78,8 @@ public sealed class GeneralSettingsViewModel : SettingsSectionViewModelBase
     public ObservableCollection<string> AvailableFontFamilies { get; } = new();
 
     public DelegateCommand SaveCommand { get; }
+
+    public DelegateCommand OpenSettingsDirectoryCommand { get; }
 
     public void LoadFrom(string fontFamily, double fontSize, double lineHeight)
     {

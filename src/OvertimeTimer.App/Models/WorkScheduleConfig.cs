@@ -8,9 +8,7 @@ public sealed class WorkScheduleConfig
 
     public int WeekCycleCount { get; set; } = 1;
 
-    public int CurrentCycleWeekIndex { get; set; } = 1;
-
-    public List<WeeklyCycleItem> WeeklyCycles { get; set; } = new();
+    public List<WeeklyCycleItem> WeeklyCycles { get; set; } = new() { new() { WeekIndex = 1 } };
 
     public int WorkDays { get; set; } = 5;
 

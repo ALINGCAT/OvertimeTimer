@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using OvertimeTimer.App.Localization;
 
@@ -26,5 +28,20 @@ public sealed class SettingsInteractionService : ISettingsInteractionService
             System.Windows.MessageBoxImage.Question);
 
         return result == System.Windows.MessageBoxResult.Yes;
+    }
+
+    public void OpenSettingsDirectory()
+    {
+        var path = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "OvertimeTimer");
+
+        Directory.CreateDirectory(path);
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = "explorer.exe",
+            Arguments = path,
+            UseShellExecute = true
+        });
     }
 }

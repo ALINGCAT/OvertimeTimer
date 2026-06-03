@@ -100,7 +100,7 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
         var anchorMonday = Config.AnchorDate.AddDays(-(((int)Config.AnchorDate.DayOfWeek + 6) % 7));
         var targetMonday = date.AddDays(-(((int)date.DayOfWeek + 6) % 7));
         var weekDiff = (targetMonday.DayNumber - anchorMonday.DayNumber) / 7;
-        var targetCycleWeekIndex = ((Config.CurrentCycleWeekIndex - 1 + weekDiff) % Config.WeekCycleCount + Config.WeekCycleCount) % Config.WeekCycleCount;
+        var targetCycleWeekIndex = (weekDiff % Config.WeekCycleCount + Config.WeekCycleCount) % Config.WeekCycleCount;
 
         WeeklyCycleItem? targetWeek = null;
         foreach (var item in Config.WeeklyCycles)

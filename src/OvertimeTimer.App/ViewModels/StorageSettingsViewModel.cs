@@ -11,7 +11,7 @@ public sealed class StorageSettingsViewModel : SettingsSectionViewModelBase
     private readonly ISettingsInteractionService _settingsInteractionService;
     private readonly Func<Task> _saveAsync;
     private readonly ILocalizationService _loc;
-    private string _diaryRootPath = Path.Combine(AppContext.BaseDirectory, "dailies");
+    private string _diaryRootPath = DiaryFileService.GetDefaultDiaryRoot();
     private DiaryStorageMode _diaryStorageMode = DiaryStorageMode.Flat;
 
     public StorageSettingsViewModel(
@@ -118,7 +118,7 @@ public sealed class StorageSettingsViewModel : SettingsSectionViewModelBase
     public void LoadFrom(DiaryStorageConfig diaryStorageConfig)
     {
         DiaryRootPath = string.IsNullOrWhiteSpace(diaryStorageConfig.RootPath)
-            ? Path.Combine(AppContext.BaseDirectory, "dailies")
+            ? DiaryFileService.GetDefaultDiaryRoot()
             : diaryStorageConfig.RootPath;
         DiaryStorageMode = diaryStorageConfig.Mode;
     }

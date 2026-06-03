@@ -5,8 +5,22 @@ namespace OvertimeTimer.App.Services;
 
 public sealed class DiaryFileService : IDiaryFileService
 {
-    private readonly string _defaultRootPath = Path.Combine(AppContext.BaseDirectory, "dailies");
+    private readonly string _defaultRootPath = GetDefaultDiaryRoot();
     private DiaryStorageConfig _config = new();
+
+    internal static string GetDefaultDiaryRoot()
+    {
+        var appDir = AppContext.BaseDirectory;
+
+        if (appDir.Contains("Temp\\.net") || appDir.Contains("Temp/.net"))
+        {
+            var exeDir = Path.GetDirectoryName(Environment.ProcessPath);
+            if (!string.IsNullOrEmpty(exeDir))
+                appDir = exeDir;
+        }
+
+        return Path.Combine(appDir, "dailies");
+    }
 
     public void Configure(DiaryStorageConfig config)
     {

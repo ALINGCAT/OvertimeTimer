@@ -127,10 +127,11 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Settings.WorkScheduleDesc"] = "配置按周或按天的工作日循环规则。";
         _strings["Settings.AppearanceDesc"] = "配置窗口背景、月历日期和提示点的颜色。";
         _strings["Settings.Save"] = "应用";
+        _strings["Settings.OpenConfigDir"] = "打开配置文件目录";
         _strings["Settings.Weekly"] = "按周算";
         _strings["Settings.Daily"] = "按天算";
         _strings["Settings.CycleCount"] = "周期次数";
-        _strings["Settings.CurrentWeekIndex"] = "当前周序号";
+        _strings["Settings.CycleHint"] = "本周为第一周";
         _strings["Settings.WorkDays"] = "工作天数";
         _strings["Settings.RestDays"] = "休息天数";
         _strings["Settings.TodayIsCycleDay"] = "今天是循环的第";

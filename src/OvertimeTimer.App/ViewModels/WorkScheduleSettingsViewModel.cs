@@ -12,7 +12,6 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
     private WorkScheduleMode _selectedMode = WorkScheduleMode.Weekly;
     private DateOnly _anchorDate = DateOnly.FromDateTime(DateTime.Today);
     private int _weekCycleCount = 1;
-    private int _currentCycleWeekIndex = 1;
     private int _workDays = 5;
     private int _restDays = 2;
     private int _anchorWorkDayIndex = 1;
@@ -97,16 +96,9 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
             var normalizedValue = Math.Max(1, value);
             if (SetProperty(ref _weekCycleCount, normalizedValue))
             {
-                ClampCurrentCycleWeekIndex();
                 EnsureWeeklyCycleItems();
             }
         }
-    }
-
-    public int CurrentCycleWeekIndex
-    {
-        get => _currentCycleWeekIndex;
-        set => SetProperty(ref _currentCycleWeekIndex, ClampCurrentCycleWeekIndex(value));
     }
 
     public ObservableCollection<WeeklyCycleItemViewModel> WeeklyCycleItems { get; }
@@ -150,7 +142,6 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
         SelectedMode = workScheduleConfig.Mode;
         AnchorDate = workScheduleConfig.AnchorDate;
         WeekCycleCount = workScheduleConfig.WeekCycleCount;
-        CurrentCycleWeekIndex = workScheduleConfig.CurrentCycleWeekIndex;
         WorkDays = workScheduleConfig.WorkDays;
         RestDays = workScheduleConfig.RestDays;
         AnchorWorkDayIndex = workScheduleConfig.AnchorWorkDayIndex;
@@ -162,7 +153,6 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
         }
 
         EnsureWeeklyCycleItems();
-        ClampCurrentCycleWeekIndex();
         ClampAnchorWorkDayIndex();
     }
 
@@ -173,7 +163,6 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
             Mode = SelectedMode,
             AnchorDate = AnchorDate,
             WeekCycleCount = WeekCycleCount,
-            CurrentCycleWeekIndex = CurrentCycleWeekIndex,
             WeeklyCycles = WeeklyCycleItems
                 .OrderBy(item => item.WeekIndex)
                 .Select(item => item.ToModel())
@@ -191,7 +180,6 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
 
     private async Task SaveCurrentSectionAsync()
     {
-        ClampCurrentCycleWeekIndex();
         EnsureWeeklyCycleItems();
 
         try
@@ -218,21 +206,6 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
         {
             WeeklyCycleItems.RemoveAt(WeeklyCycleItems.Count - 1);
         }
-    }
-
-    private void ClampCurrentCycleWeekIndex()
-    {
-        var clampedValue = ClampCurrentCycleWeekIndex(_currentCycleWeekIndex);
-        if (clampedValue != _currentCycleWeekIndex)
-        {
-            SetProperty(ref _currentCycleWeekIndex, clampedValue, nameof(CurrentCycleWeekIndex));
-        }
-    }
-
-    private int ClampCurrentCycleWeekIndex(int value)
-    {
-        var maxWeekIndex = Math.Max(1, WeekCycleCount);
-        return Math.Clamp(value, 1, maxWeekIndex);
     }
 
     private void ClampAnchorWorkDayIndex()

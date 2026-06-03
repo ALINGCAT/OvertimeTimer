@@ -5,4 +5,6 @@ public interface ISettingsInteractionService
     string? ChooseFolder(string initialPath);
 
     bool ConfirmCreateFolder(string path);
+
+    void OpenSettingsDirectory();
 }

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Services;
@@ -59,6 +60,15 @@ public partial class App : PrismApplication
             var localizationService = Container.Resolve<ILocalizationService>();
 
             var settingsDataStore = await settingsStoreService.LoadAsync();
+
+            var settingsFilePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "OvertimeTimer", "settings.json");
+            if (!File.Exists(settingsFilePath))
+            {
+                await settingsStoreService.SaveAsync(settingsDataStore);
+            }
+
             appearanceSettingsService.Apply(settingsDataStore.AppearanceConfig);
             appearanceSettingsService.ApplyPreviewSettings(settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight);
             diaryFileService.Configure(settingsDataStore.DiaryStorageConfig);
