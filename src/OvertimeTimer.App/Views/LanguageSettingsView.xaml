@@ -1,0 +1,12 @@
+<UserControl x:Class="OvertimeTimer.App.Views.LanguageSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Padding="20"
+            BorderBrush="{DynamicResource ShellBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
+        <TextBlock Foreground="{DynamicResource TextSecondaryBrush}"
+                   Text="语言设置分类已预留，后续将在这里接入界面语言与语言包配置。"
+                   TextWrapping="Wrap" />
+    </Border>
+</UserControl>

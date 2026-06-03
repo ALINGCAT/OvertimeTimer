@@ -1,0 +1,56 @@
+<UserControl x:Class="OvertimeTimer.App.Views.AppearanceSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ItemsControl Grid.Row="0" ItemsSource="{Binding AppearanceColorItems}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Label}" />
+                        <TextBox Grid.Column="1"
+                                 Margin="12,0,12,0"
+                                 Text="{Binding ColorText, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Grid.Column="2"
+                                Width="44"
+                                Height="24"
+                                Padding="0"
+                                Command="{Binding SelectColorCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="BorderThickness" Value="1" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource ShellBorderBrush}" />
+                                    <Setter Property="Background" Value="{Binding ColorText, Converter={StaticResource ColorTextToBrushConverter}}" />
+                                    <Setter Property="ToolTip" Value="{Binding ColorText}" />
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Grid Grid.Row="2" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" HorizontalAlignment="Left" Command="{Binding SaveCommand}" Content="保存设置" />
+            <TextBlock Grid.Column="1"
+                       Style="{StaticResource InlineSaveFeedbackTextStyle}"
+                       Visibility="{Binding HasSaveFeedback, Converter={StaticResource BoolToVisibility}}"
+                       Text="{Binding SaveFeedbackMessage}" />
+        </Grid>
+    </Grid>
+</UserControl>

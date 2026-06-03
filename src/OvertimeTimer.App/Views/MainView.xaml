@@ -68,13 +68,13 @@
                              Columns="7"
                              Width="322"
                              Margin="0,0,0,4">
-                    <TextBlock HorizontalAlignment="Center" Text="周一" />
-                    <TextBlock HorizontalAlignment="Center" Text="周二" />
-                    <TextBlock HorizontalAlignment="Center" Text="周三" />
-                    <TextBlock HorizontalAlignment="Center" Text="周四" />
-                    <TextBlock HorizontalAlignment="Center" Text="周五" />
-                    <TextBlock HorizontalAlignment="Center" Text="周六" />
-                    <TextBlock HorizontalAlignment="Center" Text="周日" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周一" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周二" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周三" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周四" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周五" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周六" />
+                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource SectionCaptionTextStyle}" Text="周日" />
                 </UniformGrid>
 
                 <ItemsControl Grid.Row="2"
@@ -91,89 +91,30 @@
                             <Border Margin="4,2,4,2" Background="Transparent">
                                 <Button Command="{Binding DataContext.SelectDayCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                         CommandParameter="{Binding}"
+                                        Style="{StaticResource CalendarDayButtonStyle}"
                                         Width="38"
                                         Height="38"
                                         Padding="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Cursor="Hand">
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="OverridesDefaultStyle" Value="True" />
-                                            <Setter Property="Background" Value="Transparent" />
-                                            <Setter Property="BorderBrush" Value="{DynamicResource ShellBorderBrush}" />
-                                            <Setter Property="BorderThickness" Value="1" />
-                                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border x:Name="Root"
-                                                                Background="{TemplateBinding Background}"
-                                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                                CornerRadius="6">
-                                                            <Grid>
-                                                                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                                                            </Grid>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseDirectlyOver" Value="True">
-                                                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSoftBrush}" />
-                                                                <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                                            </Trigger>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSoftBrush}" />
-                                                                <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                                            </Trigger>
-                                                            <Trigger Property="IsPressed" Value="True">
-                                                                <Setter TargetName="Root" Property="Background" Value="#FFD9EAFD" />
-                                                                <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                                            </Trigger>
-                                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                                <Setter TargetName="Root" Property="BorderBrush" Value="#FFF59E0B" />
-                                                                <Setter TargetName="Root" Property="BorderThickness" Value="2" />
-                                                            </DataTrigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </Button.Style>
                                     <Grid>
                                         <TextBlock HorizontalAlignment="Center"
                                                    VerticalAlignment="Center"
                                                    FontWeight="SemiBold"
-                                                   Text="{Binding DayNumber}">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsToday}" Value="True">
-                                                            <Setter Property="Foreground" Value="#FF22C55E" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsInCurrentMonth}" Value="False">
-                                                            <Setter Property="Foreground" Value="#FFE2E8F0" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsRestDayOvertimeHighlighted}" Value="True">
-                                                            <Setter Property="Foreground" Value="{DynamicResource OvertimeBrush}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
+                                                   Style="{StaticResource CalendarDayTextStyle}"
+                                                   Text="{Binding DayNumber}" />
 
                                         <TextBlock HorizontalAlignment="Left"
                                                    VerticalAlignment="Top"
                                                    Margin="4,3,0,0"
-                                                   Foreground="{DynamicResource OvertimeBrush}"
+                                                   Foreground="{DynamicResource CalendarOvertimeDotBrush}"
                                                    Text="●"
                                                    Visibility="{Binding HasOvertime, Converter={StaticResource BoolToVisibility}}" />
                                         <TextBlock HorizontalAlignment="Right"
                                                    VerticalAlignment="Bottom"
                                                    Margin="0,0,4,3"
-                                                   Foreground="{DynamicResource DiaryBrush}"
+                                                   Foreground="{DynamicResource CalendarDiaryDotBrush}"
                                                    Text="●"
                                                    Visibility="{Binding HasDiary, Converter={StaticResource BoolToVisibility}}" />
                                     </Grid>
@@ -275,7 +216,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock Margin="0,0,0,8" Foreground="{DynamicResource TextSecondaryBrush}" Text="Markdown 日记" />
+                        <TextBlock Margin="0,0,0,8" Style="{StaticResource SectionCaptionTextStyle}" Text="Markdown 日记" />
                         <hc:TextBox Grid.Row="1"
                                     AcceptsReturn="True"
                                     TextWrapping="Wrap"
@@ -290,7 +231,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock Margin="0,0,0,8" Foreground="{DynamicResource TextSecondaryBrush}" Text="预览" />
+                        <TextBlock Margin="0,0,0,8" Style="{StaticResource SectionCaptionTextStyle}" Text="预览" />
                         <Border Grid.Row="1" Background="{DynamicResource AccentSoftBrush}" CornerRadius="8" Padding="12">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <TextBlock Text="{Binding SelectedDayRecord.DiaryPreview}" TextWrapping="Wrap" />

@@ -18,6 +18,11 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IStatusMessageService, StatusMessageService>();
         containerRegistry.RegisterSingleton<IMonthSelectionDialogService, MonthSelectionDialogService>();
         containerRegistry.RegisterSingleton<ISettingsDialogService, SettingsDialogService>();
+        containerRegistry.RegisterSingleton<ISettingsInteractionService, SettingsInteractionService>();
+        containerRegistry.RegisterSingleton<IColorSelectionService, ColorSelectionService>();
+        containerRegistry.RegisterSingleton<ISettingsStoreService, SettingsStoreService>();
+        containerRegistry.RegisterSingleton<ISettingsPersistenceCoordinator, SettingsPersistenceCoordinator>();
+        containerRegistry.RegisterSingleton<IAppearanceSettingsService, AppearanceSettingsService>();
         containerRegistry.Register<MainWindowViewModel>();
         containerRegistry.Register<MainViewModel>();
         containerRegistry.Register<SettingsViewModel>();
@@ -29,6 +34,22 @@ public partial class App : PrismApplication
         if (MainWindow is not null)
         {
             MainWindow.DataContext = Container.Resolve<MainWindowViewModel>();
+        }
+
+        _ = InitializeAppearanceAsync();
+    }
+
+    private async Task InitializeAppearanceAsync()
+    {
+        try
+        {
+            var settingsStoreService = Container.Resolve<ISettingsStoreService>();
+            var appearanceSettingsService = Container.Resolve<IAppearanceSettingsService>();
+            var settingsDataStore = await settingsStoreService.LoadAsync();
+            appearanceSettingsService.Apply(settingsDataStore.AppearanceConfig);
+        }
+        catch
+        {
         }
     }
 }

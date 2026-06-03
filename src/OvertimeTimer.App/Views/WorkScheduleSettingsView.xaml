@@ -1,0 +1,109 @@
+<UserControl x:Class="OvertimeTimer.App.Views.WorkScheduleSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <RadioButton HorizontalAlignment="Left" Content="按周算" IsChecked="{Binding IsWeeklyMode}" />
+            <RadioButton Margin="92,0,0,0" HorizontalAlignment="Left" Content="按天算" IsChecked="{Binding IsDailyMode}" />
+        </Grid>
+
+        <Grid Grid.Row="1"
+              Margin="0,12,0,0"
+              Visibility="{Binding IsWeeklyMode, Converter={StaticResource BoolToVisibility}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="周期次数" />
+                <hc:NumericUpDown Grid.Column="1" Margin="8,0,24,0" Minimum="1" Maximum="52" Value="{Binding WeekCycleCount}" />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="当前周序号" />
+                <hc:NumericUpDown Grid.Column="3" Margin="8,0,0,0" Minimum="1" Maximum="52" Value="{Binding CurrentCycleWeekIndex}" />
+            </Grid>
+
+            <ItemsControl Grid.Row="1" Margin="0,12,0,0" ItemsSource="{Binding WeeklyCycleItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,8" Padding="12" BorderBrush="{DynamicResource ShellBorderBrush}" BorderThickness="1" CornerRadius="8">
+                            <Grid>
+                                <TextBlock FontWeight="SemiBold" Text="{Binding WeekIndex, StringFormat=第 {0} 周}" />
+                                <WrapPanel Margin="0,24,0,0">
+                                    <CheckBox Margin="0,0,12,8" Content="周一" IsChecked="{Binding MondayWork}" />
+                                    <CheckBox Margin="0,0,12,8" Content="周二" IsChecked="{Binding TuesdayWork}" />
+                                    <CheckBox Margin="0,0,12,8" Content="周三" IsChecked="{Binding WednesdayWork}" />
+                                    <CheckBox Margin="0,0,12,8" Content="周四" IsChecked="{Binding ThursdayWork}" />
+                                    <CheckBox Margin="0,0,12,8" Content="周五" IsChecked="{Binding FridayWork}" />
+                                    <CheckBox Margin="0,0,12,8" Content="周六" IsChecked="{Binding SaturdayWork}" />
+                                    <CheckBox Margin="0,0,12,8" Content="周日" IsChecked="{Binding SundayWork}" />
+                                </WrapPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+
+        <Grid Grid.Row="2"
+              Margin="0,12,0,0"
+              Visibility="{Binding IsDailyMode, Converter={StaticResource BoolToVisibility}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="工作天数" />
+                <hc:NumericUpDown Grid.Column="1" Margin="8,0,24,0" Minimum="1" Maximum="365" Value="{Binding WorkDays}" />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="休息天数" />
+                <hc:NumericUpDown Grid.Column="3" Margin="8,0,24,0" Minimum="0" Maximum="365" Value="{Binding RestDays}" />
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="今天是循环的第" />
+                <hc:NumericUpDown Grid.Column="1" Margin="8,0,8,0" Minimum="1" Maximum="{Binding AnchorWorkDayIndexMax}" Value="{Binding AnchorWorkDayIndex}" />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="天" />
+                <TextBlock Grid.Column="3" Margin="12,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" Text="{Binding TodayDescription}" />
+            </Grid>
+
+            <Grid Grid.Row="2" Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" HorizontalAlignment="Left" Command="{Binding SaveCommand}" Content="保存设置" />
+                <TextBlock Grid.Column="1"
+                           Style="{StaticResource InlineSaveFeedbackTextStyle}"
+                           Visibility="{Binding HasSaveFeedback, Converter={StaticResource BoolToVisibility}}"
+                           Text="{Binding SaveFeedbackMessage}" />
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

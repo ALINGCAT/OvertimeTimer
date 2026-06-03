@@ -1,3 +1,5 @@
+using OvertimeTimer.Core.Models;
+
 namespace OvertimeTimer.App.ViewModels;
 
 public sealed class WeeklyCycleItemViewModel : ViewModelBase
@@ -22,4 +24,33 @@ public sealed class WeeklyCycleItemViewModel : ViewModelBase
     public bool SaturdayWork { get; set; }
 
     public bool SundayWork { get; set; }
+
+    public static WeeklyCycleItemViewModel FromModel(WeeklyCycleItem model)
+    {
+        return new WeeklyCycleItemViewModel(model.WeekIndex)
+        {
+            MondayWork = model.MondayWork,
+            TuesdayWork = model.TuesdayWork,
+            WednesdayWork = model.WednesdayWork,
+            ThursdayWork = model.ThursdayWork,
+            FridayWork = model.FridayWork,
+            SaturdayWork = model.SaturdayWork,
+            SundayWork = model.SundayWork
+        };
+    }
+
+    public WeeklyCycleItem ToModel()
+    {
+        return new WeeklyCycleItem
+        {
+            WeekIndex = WeekIndex,
+            MondayWork = MondayWork,
+            TuesdayWork = TuesdayWork,
+            WednesdayWork = WednesdayWork,
+            ThursdayWork = ThursdayWork,
+            FridayWork = FridayWork,
+            SaturdayWork = SaturdayWork,
+            SundayWork = SundayWork
+        };
+    }
 }

@@ -5,95 +5,121 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:design="clr-namespace:OvertimeTimer.App.DesignTime"
+             xmlns:views="clr-namespace:OvertimeTimer.App.Views"
              xmlns:hc="https://handyorg.github.io/handycontrol"
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance Type=design:DesignSettingsViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="4">
-            <hc:Card Margin="0,0,0,16" Padding="16">
-                <StackPanel>
-                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="设置" />
-                    <TextBlock Margin="0,6,0,0" Foreground="{DynamicResource TextSecondaryBrush}" Text="{Binding SelectedDateDisplay}" />
-                </StackPanel>
-            </hc:Card>
+        <hc:Card Padding="16">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <hc:Card Padding="16">
-                <StackPanel>
-                    <TextBlock Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold" Text="工作日模式" />
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                        <RadioButton Margin="0,0,16,0" Content="按周算" IsChecked="{Binding IsWeeklyMode}" />
-                        <RadioButton Content="按天算" IsChecked="{Binding IsDailyMode}" />
-                    </StackPanel>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                    <StackPanel Visibility="{Binding IsWeeklyMode, Converter={StaticResource BoolToVisibility}}">
-                        <TextBlock Margin="0,0,0,8" Text="按周模式" />
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <TextBlock VerticalAlignment="Center" Text="周期次数" />
-                            <hc:NumericUpDown Width="80"
-                                              Margin="8,0,16,0"
-                                              Minimum="1"
-                                              Maximum="52"
-                                              Value="{Binding WeekCycleCount}" />
-                            <TextBlock VerticalAlignment="Center" Text="当前周序号" />
-                            <hc:NumericUpDown Width="80"
-                                              Margin="8,0,0,0"
-                                              Minimum="1"
-                                              Maximum="52"
-                                              Value="{Binding CurrentCycleWeekIndex}" />
-                        </StackPanel>
+                    <Button Grid.Row="0" Margin="0,0,0,8" Command="{Binding ShowWorkScheduleSectionCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsWorkScheduleSectionSelected}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="Foreground" Value="White" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock Text="工作日规则" />
+                    </Button>
 
-                        <ItemsControl ItemsSource="{Binding WeeklyCycleItems}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border BorderBrush="{DynamicResource ShellBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8">
-                                        <StackPanel>
-                                            <TextBlock Margin="0,0,0,8" FontWeight="SemiBold" Text="{Binding WeekIndex, StringFormat=第 {0} 周}" />
-                                            <WrapPanel>
-                                                <CheckBox Margin="0,0,12,8" Content="周一" IsChecked="{Binding MondayWork}" />
-                                                <CheckBox Margin="0,0,12,8" Content="周二" IsChecked="{Binding TuesdayWork}" />
-                                                <CheckBox Margin="0,0,12,8" Content="周三" IsChecked="{Binding WednesdayWork}" />
-                                                <CheckBox Margin="0,0,12,8" Content="周四" IsChecked="{Binding ThursdayWork}" />
-                                                <CheckBox Margin="0,0,12,8" Content="周五" IsChecked="{Binding FridayWork}" />
-                                                <CheckBox Margin="0,0,12,8" Content="周六" IsChecked="{Binding SaturdayWork}" />
-                                                <CheckBox Margin="0,0,12,8" Content="周日" IsChecked="{Binding SundayWork}" />
-                                            </WrapPanel>
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
+                    <Button Grid.Row="1" Margin="0,0,0,8" Command="{Binding ShowStorageSectionCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsStorageSectionSelected}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="Foreground" Value="White" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock Text="存储设置" />
+                    </Button>
 
-                    <StackPanel Visibility="{Binding IsDailyMode, Converter={StaticResource BoolToVisibility}}">
-                        <TextBlock Margin="0,0,0,8" Text="按天模式" />
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <TextBlock VerticalAlignment="Center" Text="工作天数" />
-                            <hc:NumericUpDown Width="80"
-                                              Margin="8,0,16,0"
-                                              Minimum="1"
-                                              Maximum="365"
-                                              Value="{Binding WorkDays}" />
-                            <TextBlock VerticalAlignment="Center" Text="休息天数" />
-                            <hc:NumericUpDown Width="80"
-                                              Margin="8,0,16,0"
-                                              Minimum="0"
-                                              Maximum="365"
-                                              Value="{Binding RestDays}" />
-                            <TextBlock VerticalAlignment="Center" Text="锚点工作日序号" />
-                            <hc:NumericUpDown Width="80"
-                                              Margin="8,0,0,0"
-                                              Minimum="1"
-                                              Maximum="365"
-                                              Value="{Binding AnchorWorkDayIndex}" />
-                        </StackPanel>
-                    </StackPanel>
+                    <Button Grid.Row="2" Margin="0,0,0,8" Command="{Binding ShowAppearanceSectionCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsAppearanceSectionSelected}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="Foreground" Value="White" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock Text="外观设置" />
+                    </Button>
 
-                    <Button HorizontalAlignment="Left"
-                            Command="{Binding SaveCommand}"
-                            Content="保存设置" />
-                </StackPanel>
-            </hc:Card>
-        </StackPanel>
+                    <Button Grid.Row="3" Command="{Binding ShowLanguageSectionCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLanguageSectionSelected}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="Foreground" Value="White" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock Text="语言设置" />
+                    </Button>
+                </Grid>
+
+                <Grid Grid.Column="1" Margin="16,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Text="{Binding CurrentSectionTitle}" />
+
+                    <TextBlock Grid.Row="1"
+                               Margin="0,6,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               Text="{Binding CurrentSectionDescription}" />
+
+                    <Grid Grid.Row="2" Margin="0,16,0,0">
+                        <Grid Visibility="{Binding IsWorkScheduleSectionSelected, Converter={StaticResource BoolToVisibility}}">
+                            <views:WorkScheduleSettingsView DataContext="{Binding WorkScheduleSection}" />
+                        </Grid>
+                        <Grid Visibility="{Binding IsStorageSectionSelected, Converter={StaticResource BoolToVisibility}}">
+                            <views:StorageSettingsView DataContext="{Binding StorageSection}" />
+                        </Grid>
+                        <Grid Visibility="{Binding IsAppearanceSectionSelected, Converter={StaticResource BoolToVisibility}}">
+                            <views:AppearanceSettingsView DataContext="{Binding AppearanceSection}" />
+                        </Grid>
+                        <Grid Visibility="{Binding IsLanguageSectionSelected, Converter={StaticResource BoolToVisibility}}">
+                            <views:LanguageSettingsView DataContext="{Binding LanguageSection}" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </hc:Card>
     </ScrollViewer>
 </UserControl>

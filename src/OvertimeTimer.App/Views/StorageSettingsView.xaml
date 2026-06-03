@@ -1,0 +1,44 @@
+<UserControl x:Class="OvertimeTimer.App.Views.StorageSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="日记根目录" />
+            <TextBox Grid.Column="1" Margin="12,0,12,0" Text="{Binding DiaryRootPath, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Column="2" Command="{Binding ChooseDiaryRootPathCommand}" Content="选择目录" />
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,12,0,0">
+            <RadioButton HorizontalAlignment="Left" Content="不分文件夹" IsChecked="{Binding IsFlatStorageMode}" />
+            <RadioButton Margin="112,0,0,0" HorizontalAlignment="Left" Content="按年分类" IsChecked="{Binding IsByYearStorageMode}" />
+            <RadioButton Margin="212,0,0,0" HorizontalAlignment="Left" Content="按月分类" IsChecked="{Binding IsByMonthStorageMode}" />
+        </Grid>
+
+        <TextBlock Grid.Row="2" Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}" Text="{Binding DiaryStorageModeDescription}" TextWrapping="Wrap" />
+
+        <Grid Grid.Row="3" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" HorizontalAlignment="Left" Command="{Binding SaveCommand}" Content="保存设置" />
+            <TextBlock Grid.Column="1"
+                       Style="{StaticResource InlineSaveFeedbackTextStyle}"
+                       Visibility="{Binding HasSaveFeedback, Converter={StaticResource BoolToVisibility}}"
+                       Text="{Binding SaveFeedbackMessage}" />
+        </Grid>
+    </Grid>
+</UserControl>

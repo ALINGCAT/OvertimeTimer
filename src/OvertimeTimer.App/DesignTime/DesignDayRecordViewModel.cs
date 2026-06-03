@@ -1,3 +1,5 @@
+using Prism.Commands;
+
 namespace OvertimeTimer.App.DesignTime;
 
 public sealed class DesignDayRecordViewModel
@@ -12,5 +14,9 @@ public sealed class DesignDayRecordViewModel
 
     public string DiaryPreview { get; } = "今天完成了设计时数据接线。";
 
-    public object SaveCommand { get; } = new object();
+    public bool IsDirty { get; } = false;
+
+    public string OvertimeDisplay { get; } = "2 小时 30 分钟";
+
+    public DelegateCommand SaveCommand { get; } = new(() => { });
 }

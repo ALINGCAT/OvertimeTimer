@@ -18,7 +18,8 @@ public sealed class DesignCalendarDayViewModel
 
     public bool HasDiary { get; }
 
-    public bool IsSelected { get; } = false;
+    public bool IsSelected { get; set; }
 
-    public bool IsRestDayOvertimeHighlighted { get; } = false;
+    public bool IsRestDay { get; } = false;
+
 }

@@ -1,126 +1,113 @@
-using System.Collections.ObjectModel;
-using Prism.Commands;
 using OvertimeTimer.App.Services;
-using OvertimeTimer.Core.Models;
+using Prism.Commands;
 
 namespace OvertimeTimer.App.ViewModels;
 
 public sealed class SettingsViewModel : ViewModelBase
 {
-    private readonly IStatusMessageService _statusMessageService;
-    private WorkScheduleMode _selectedMode = WorkScheduleMode.Weekly;
-    private DateOnly _anchorDate = DateOnly.FromDateTime(DateTime.Today);
-    private int _weekCycleCount = 1;
-    private int _currentCycleWeekIndex = 1;
-    private int _workDays = 5;
-    private int _restDays = 2;
-    private int _anchorWorkDayIndex = 1;
-    private string _statusText = "准备就绪";
+    private readonly ISettingsPersistenceCoordinator _settingsPersistenceCoordinator;
+    private SettingsSection _selectedSection = SettingsSection.WorkSchedule;
 
-    public SettingsViewModel(IStatusMessageService statusMessageService)
+    public SettingsViewModel(
+        IAppearanceSettingsService appearanceSettingsService,
+        IColorSelectionService colorSelectionService,
+        ISettingsInteractionService settingsInteractionService,
+        ISettingsPersistenceCoordinator settingsPersistenceCoordinator)
     {
-        _statusMessageService = statusMessageService;
-        WeeklyCycleItems = new ObservableCollection<WeeklyCycleItemViewModel>
-        {
-            new(1)
-        };
-        SaveCommand = new DelegateCommand(Save);
+        _settingsPersistenceCoordinator = settingsPersistenceCoordinator;
+
+        WorkScheduleSection = new WorkScheduleSettingsViewModel(SaveSettingsAsync);
+        StorageSection = new StorageSettingsViewModel(settingsInteractionService, SaveSettingsAsync);
+        AppearanceSection = new AppearanceSettingsViewModel(appearanceSettingsService, colorSelectionService, SaveSettingsAsync);
+        LanguageSection = new LanguageSettingsViewModel();
+
+        ShowWorkScheduleSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.WorkSchedule));
+        ShowStorageSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.Storage));
+        ShowAppearanceSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.Appearance));
+        ShowLanguageSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.Language));
+
+        _ = LoadSettingsAsync();
     }
 
-    public string SelectedDateDisplay => _anchorDate.ToString("yyyy-MM-dd");
-
-    public WorkScheduleMode SelectedMode
+    public string CurrentSectionTitle => SelectedSection switch
     {
-        get => _selectedMode;
-        set
+        SettingsSection.WorkSchedule => "工作日规则",
+        SettingsSection.Storage => "存储设置",
+        SettingsSection.Appearance => "外观设置",
+        SettingsSection.Language => "语言设置",
+        _ => string.Empty
+    };
+
+    public string CurrentSectionDescription => SelectedSection switch
+    {
+        SettingsSection.WorkSchedule => "配置按周或按天的工作日循环规则。",
+        SettingsSection.Storage => "配置日记文件的根目录和分组方式。",
+        SettingsSection.Appearance => "配置窗口背景、月历日期和提示点的颜色。",
+        SettingsSection.Language => "后续将在这里配置界面语言与语言包。",
+        _ => string.Empty
+    };
+
+    public SettingsSection SelectedSection
+    {
+        get => _selectedSection;
+        private set
         {
-            if (SetProperty(ref _selectedMode, value))
+            if (SetProperty(ref _selectedSection, value))
             {
-                RaisePropertyChanged(nameof(IsWeeklyMode));
-                RaisePropertyChanged(nameof(IsDailyMode));
+                RaisePropertyChanged(nameof(IsWorkScheduleSectionSelected));
+                RaisePropertyChanged(nameof(IsStorageSectionSelected));
+                RaisePropertyChanged(nameof(IsAppearanceSectionSelected));
+                RaisePropertyChanged(nameof(IsLanguageSectionSelected));
+                RaisePropertyChanged(nameof(CurrentSectionTitle));
+                RaisePropertyChanged(nameof(CurrentSectionDescription));
             }
         }
     }
 
-    public bool IsWeeklyMode
+    public bool IsWorkScheduleSectionSelected => SelectedSection == SettingsSection.WorkSchedule;
+
+    public bool IsStorageSectionSelected => SelectedSection == SettingsSection.Storage;
+
+    public bool IsAppearanceSectionSelected => SelectedSection == SettingsSection.Appearance;
+
+    public bool IsLanguageSectionSelected => SelectedSection == SettingsSection.Language;
+
+    public WorkScheduleSettingsViewModel WorkScheduleSection { get; }
+
+    public StorageSettingsViewModel StorageSection { get; }
+
+    public AppearanceSettingsViewModel AppearanceSection { get; }
+
+    public LanguageSettingsViewModel LanguageSection { get; }
+
+    public DelegateCommand ShowWorkScheduleSectionCommand { get; }
+
+    public DelegateCommand ShowStorageSectionCommand { get; }
+
+    public DelegateCommand ShowAppearanceSectionCommand { get; }
+
+    public DelegateCommand ShowLanguageSectionCommand { get; }
+
+    private void SelectSection(SettingsSection section)
     {
-        get => SelectedMode == WorkScheduleMode.Weekly;
-        set
+        SelectedSection = section;
+    }
+
+    private async Task LoadSettingsAsync()
+    {
+        try
         {
-            if (value)
-            {
-                SelectedMode = WorkScheduleMode.Weekly;
-            }
+            await _settingsPersistenceCoordinator.LoadAsync(WorkScheduleSection, StorageSection, AppearanceSection);
+        }
+        catch (Exception)
+        {
+            await WorkScheduleSection.ShowLoadFailedFeedbackAsync();
+            return;
         }
     }
 
-    public bool IsDailyMode
+    private async Task SaveSettingsAsync()
     {
-        get => SelectedMode == WorkScheduleMode.Daily;
-        set
-        {
-            if (value)
-            {
-                SelectedMode = WorkScheduleMode.Daily;
-            }
-        }
-    }
-
-    public DateOnly AnchorDate
-    {
-        get => _anchorDate;
-        set
-        {
-            if (SetProperty(ref _anchorDate, value))
-            {
-                RaisePropertyChanged(nameof(SelectedDateDisplay));
-            }
-        }
-    }
-
-    public int WeekCycleCount
-    {
-        get => _weekCycleCount;
-        set => SetProperty(ref _weekCycleCount, value);
-    }
-
-    public int CurrentCycleWeekIndex
-    {
-        get => _currentCycleWeekIndex;
-        set => SetProperty(ref _currentCycleWeekIndex, value);
-    }
-
-    public ObservableCollection<WeeklyCycleItemViewModel> WeeklyCycleItems { get; }
-
-    public int WorkDays
-    {
-        get => _workDays;
-        set => SetProperty(ref _workDays, value);
-    }
-
-    public int RestDays
-    {
-        get => _restDays;
-        set => SetProperty(ref _restDays, value);
-    }
-
-    public int AnchorWorkDayIndex
-    {
-        get => _anchorWorkDayIndex;
-        set => SetProperty(ref _anchorWorkDayIndex, value);
-    }
-
-    public string StatusText
-    {
-        get => _statusText;
-        private set => SetProperty(ref _statusText, value);
-    }
-
-    public DelegateCommand SaveCommand { get; }
-
-    private void Save()
-    {
-        _statusMessageService.Show("设置已保存（待接入持久化）");
-        StatusText = "设置已保存";
+        await _settingsPersistenceCoordinator.SaveAsync(WorkScheduleSection, StorageSection, AppearanceSection);
     }
 }

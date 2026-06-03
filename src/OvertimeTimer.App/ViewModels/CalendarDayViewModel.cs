@@ -25,8 +25,6 @@ public sealed class CalendarDayViewModel : ViewModelBase
 
     public bool IsToday { get; }
 
-    public bool IsRestDayOvertimeHighlighted => IsRestDay && HasOvertime;
-
     public bool IsSelected
     {
         get => _isSelected;
