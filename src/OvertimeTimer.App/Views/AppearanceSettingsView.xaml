@@ -24,6 +24,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -136,11 +138,41 @@
                 </Button.Style>
             </Button>
 
-            <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0"
+            <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
+                       Text="{loc:Loc Appearance.CalendarHoliday}" />
+            <TextBox Grid.Row="7" Grid.Column="1" Margin="0,0,12,8"
+                     Text="{Binding CalendarHolidayColor, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="7" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
+                    Command="{Binding ChooseColorCommand}" CommandParameter="CalendarHolidayColor">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource ShellBorderBrush}" />
+                        <Setter Property="Background" Value="{Binding CalendarHolidayColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
+                       Text="{loc:Loc Appearance.CalendarAdjustWorkday}" />
+            <TextBox Grid.Row="8" Grid.Column="1" Margin="0,0,12,8"
+                     Text="{Binding CalendarAdjustWorkdayColor, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="8" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
+                    Command="{Binding ChooseColorCommand}" CommandParameter="CalendarAdjustWorkdayColor">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource ShellBorderBrush}" />
+                        <Setter Property="Background" Value="{Binding CalendarAdjustWorkdayColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <TextBlock Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0"
                        Text="{loc:Loc Appearance.PreviewBackground}" />
-            <TextBox Grid.Row="7" Grid.Column="1" Margin="0,0,12,0"
+            <TextBox Grid.Row="9" Grid.Column="1" Margin="0,0,12,0"
                      Text="{Binding PreviewBackgroundColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="7" Grid.Column="2" Width="44" Height="24" Padding="0"
+            <Button Grid.Row="9" Grid.Column="2" Width="44" Height="24" Padding="0"
                     Command="{Binding ChooseColorCommand}" CommandParameter="PreviewBackgroundColor">
                 <Button.Style>
                     <Style TargetType="Button">

@@ -82,6 +82,20 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
         set => SetProperty(ref _previewBackgroundColor, value);
     }
 
+    private string _calendarHolidayColor = "#FF8B5CF6";
+    public string CalendarHolidayColor
+    {
+        get => _calendarHolidayColor;
+        set => SetProperty(ref _calendarHolidayColor, value);
+    }
+
+    private string _calendarAdjustWorkdayColor = "#FFB91C1C";
+    public string CalendarAdjustWorkdayColor
+    {
+        get => _calendarAdjustWorkdayColor;
+        set => SetProperty(ref _calendarAdjustWorkdayColor, value);
+    }
+
     public DelegateCommand SaveCommand { get; }
 
     public DelegateCommand<string> ChooseColorCommand { get; }
@@ -96,6 +110,8 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
         CalendarOvertimeDotColor = appearanceConfig.CalendarOvertimeDotColor;
         CalendarDiaryDotColor = appearanceConfig.CalendarDiaryDotColor;
         PreviewBackgroundColor = appearanceConfig.PreviewBackgroundColor;
+        CalendarHolidayColor = appearanceConfig.CalendarHolidayColor;
+        CalendarAdjustWorkdayColor = appearanceConfig.CalendarAdjustWorkdayColor;
     }
 
     public AppearanceConfig ToModel()
@@ -109,7 +125,9 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             CalendarOutOfMonthColor = CalendarOutOfMonthColor,
             CalendarOvertimeDotColor = CalendarOvertimeDotColor,
             CalendarDiaryDotColor = CalendarDiaryDotColor,
-            PreviewBackgroundColor = PreviewBackgroundColor
+            PreviewBackgroundColor = PreviewBackgroundColor,
+            CalendarHolidayColor = CalendarHolidayColor,
+            CalendarAdjustWorkdayColor = CalendarAdjustWorkdayColor
         };
     }
 
@@ -125,6 +143,8 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             nameof(CalendarOvertimeDotColor) => CalendarOvertimeDotColor,
             nameof(CalendarDiaryDotColor) => CalendarDiaryDotColor,
             nameof(PreviewBackgroundColor) => PreviewBackgroundColor,
+            nameof(CalendarHolidayColor) => CalendarHolidayColor,
+            nameof(CalendarAdjustWorkdayColor) => CalendarAdjustWorkdayColor,
             _ => "#FFFFFFFF"
         };
 
@@ -144,6 +164,8 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             case nameof(CalendarOvertimeDotColor): CalendarOvertimeDotColor = selectedColor; break;
             case nameof(CalendarDiaryDotColor): CalendarDiaryDotColor = selectedColor; break;
             case nameof(PreviewBackgroundColor): PreviewBackgroundColor = selectedColor; break;
+            case nameof(CalendarHolidayColor): CalendarHolidayColor = selectedColor; break;
+            case nameof(CalendarAdjustWorkdayColor): CalendarAdjustWorkdayColor = selectedColor; break;
         }
     }
 
@@ -180,7 +202,9 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             ("Appearance.CalendarOutOfMonth", () => CalendarOutOfMonthColor, v => CalendarOutOfMonthColor = v),
             ("Appearance.CalendarOvertimeDot", () => CalendarOvertimeDotColor, v => CalendarOvertimeDotColor = v),
             ("Appearance.CalendarDiaryDot", () => CalendarDiaryDotColor, v => CalendarDiaryDotColor = v),
-            ("Appearance.PreviewBackground", () => PreviewBackgroundColor, v => PreviewBackgroundColor = v)
+            ("Appearance.PreviewBackground", () => PreviewBackgroundColor, v => PreviewBackgroundColor = v),
+            ("Appearance.CalendarHoliday", () => CalendarHolidayColor, v => CalendarHolidayColor = v),
+            ("Appearance.CalendarAdjustWorkday", () => CalendarAdjustWorkdayColor, v => CalendarAdjustWorkdayColor = v)
         };
 
         foreach (var (labelKey, getter, setter) in fields)

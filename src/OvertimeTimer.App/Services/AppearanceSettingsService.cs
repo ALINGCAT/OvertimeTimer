@@ -45,6 +45,8 @@ public sealed class AppearanceSettingsService : IAppearanceSettingsService
         ApplyBrush(resources, "CalendarOvertimeDotBrush", appearanceConfig.CalendarOvertimeDotColor);
         ApplyBrush(resources, "CalendarDiaryDotBrush", appearanceConfig.CalendarDiaryDotColor);
         ApplyBrush(resources, "PreviewBackgroundBrush", appearanceConfig.PreviewBackgroundColor);
+        ApplyBrush(resources, "CalendarHolidayBrush", appearanceConfig.CalendarHolidayColor);
+        ApplyBrush(resources, "CalendarAdjustWorkdayBrush", appearanceConfig.CalendarAdjustWorkdayColor);
     }
 
     public void ApplyPreviewSettings(string fontFamily, double fontSize, double lineHeight)

@@ -128,9 +128,12 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Calendar.OvertimeHours"] = "加班时长";
         _strings["Calendar.Hours"] = "小时";
         _strings["Calendar.Minutes"] = "分钟";
-        _strings["Calendar.OvertimeFormat"] = "{0} 小时 {1} 分钟";
-        _strings["Calendar.DefaultOvertimeSummary"] = "0 小时 0 分钟";
+        _strings["Calendar.OvertimeFormat"] = "{0}小时{1}分钟";
+        _strings["Calendar.DefaultOvertimeSummary"] = "0小时0分钟";
         _strings["Calendar.MonthlyPrefix"] = "本月已加";
+        _strings["Calendar.WorkDaysRemaining"] = " 本月工作日剩余{0}天";
+        _strings["Calendar.Holiday"] = "节假日";
+        _strings["Calendar.AdjustWorkday"] = "调休";
         _strings["Calendar.TotalOvertime"] = "总计加班时长：{0}";
         _strings["Calendar.SelectedDateFormat"] = "当前选择的日期: {0}";
         _strings["Calendar.MarkdownDiary"] = "Markdown 日记";
@@ -195,6 +198,8 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Appearance.FontSize"] = "字号";
         _strings["Appearance.LineHeight"] = "行高";
         _strings["Appearance.PreviewBackground"] = "预览背景色";
+        _strings["Appearance.CalendarHoliday"] = "节假日文字色";
+        _strings["Appearance.CalendarAdjustWorkday"] = "调休文字色";
         _strings["Appearance.PreviewSection"] = "预览设置";
         _strings["Appearance.LanguageSection"] = "语言";
     }

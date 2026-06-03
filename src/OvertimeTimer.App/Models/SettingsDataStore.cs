@@ -15,4 +15,6 @@ public sealed class SettingsDataStore
     public double PreviewLineHeight { get; set; } = 12;
 
     public DateOnly? LastSelectedDate { get; set; }
+
+    public List<DayOverride> Overrides { get; set; } = new();
 }

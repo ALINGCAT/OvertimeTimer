@@ -16,7 +16,11 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
         "OvertimeTimer",
         "settings.json");
 
+    private readonly Dictionary<DateOnly, DayOverride> _overrides = new();
+
     public WorkScheduleConfig Config { get; private set; } = new();
+
+    public IReadOnlyList<DayOverride> Overrides => _overrides.Values.ToList().AsReadOnly();
 
     public event Action? ConfigChanged;
 
@@ -31,6 +35,7 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
         var json = File.ReadAllText(_settingsFilePath);
         var settingsDataStore = JsonSerializer.Deserialize<SettingsDataStore>(json, SerializerOptions);
         Config = settingsDataStore?.WorkScheduleConfig ?? new WorkScheduleConfig();
+        LoadOverrides(settingsDataStore);
     }
 
     public async Task LoadAsync(CancellationToken cancellationToken = default)
@@ -56,31 +61,63 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
             cancellationToken);
 
         Config = settingsDataStore?.WorkScheduleConfig ?? new WorkScheduleConfig();
+        LoadOverrides(settingsDataStore);
         ConfigChanged?.Invoke();
+    }
+
+    public DayOverride? GetOverride(DateOnly date)
+    {
+        return _overrides.TryGetValue(date, out var o) ? o : null;
+    }
+
+    public void AddOverride(DateOnly date, bool isHoliday)
+    {
+        _overrides[date] = new DayOverride { Date = date, IsHoliday = isHoliday };
+    }
+
+    public void RemoveOverride(DateOnly date)
+    {
+        _overrides.Remove(date);
     }
 
     public bool IsRestDay(DateOnly date)
     {
+        var o = GetOverride(date);
+        if (o is not null)
+            return o.IsHoliday;
+
         return !IsWorkDay(date);
     }
 
     public bool IsWorkDay(DateOnly date)
     {
+        var o = GetOverride(date);
+        if (o is not null)
+            return !o.IsHoliday;
+
         if (Config.Mode == WorkScheduleMode.Daily)
-        {
             return IsWorkDayByDaily(date);
-        }
 
         return IsWorkDayByWeekly(date);
+    }
+
+    private void LoadOverrides(SettingsDataStore? settingsDataStore)
+    {
+        _overrides.Clear();
+        if (settingsDataStore?.Overrides is null)
+            return;
+
+        foreach (var o in settingsDataStore.Overrides)
+        {
+            _overrides[o.Date] = o;
+        }
     }
 
     private bool IsWorkDayByDaily(DateOnly date)
     {
         var cycleLength = Config.WorkDays + Config.RestDays;
         if (cycleLength <= 0)
-        {
             return false;
-        }
 
         var anchorDate = Config.AnchorDate;
         var dayDiff = date.DayNumber - anchorDate.DayNumber;
@@ -93,9 +130,7 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
     private bool IsWorkDayByWeekly(DateOnly date)
     {
         if (Config.WeeklyCycles.Count == 0)
-        {
             return false;
-        }
 
         var anchorMonday = Config.AnchorDate.AddDays(-(((int)Config.AnchorDate.DayOfWeek + 6) % 7));
         var targetMonday = date.AddDays(-(((int)date.DayOfWeek + 6) % 7));

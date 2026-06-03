@@ -26,6 +26,8 @@
             <SolidColorBrush x:Key="CalendarOvertimeDotBrush" Color="#FFDC2626" />
             <SolidColorBrush x:Key="CalendarDiaryDotBrush" Color="#FF16A34A" />
             <SolidColorBrush x:Key="ShellBorderBrush" Color="#FFE2E8F0" />
+            <SolidColorBrush x:Key="CalendarHolidayBrush" Color="#FF8B5CF6" />
+            <SolidColorBrush x:Key="CalendarAdjustWorkdayBrush" Color="#FFB91C1C" />
             <FontFamily x:Key="PreviewFontFamily">Microsoft YaHei UI</FontFamily>
             <system:Double x:Key="PreviewFontSize">8</system:Double>
             <system:Double x:Key="PreviewLineHeight">12</system:Double>
@@ -101,11 +103,17 @@
                     <DataTrigger Binding="{Binding IsRestDay}" Value="True">
                         <Setter Property="Foreground" Value="{DynamicResource CalendarRestDayBrush}" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding IsToday}" Value="True">
-                        <Setter Property="Foreground" Value="{DynamicResource CalendarTodayBrush}" />
+                    <DataTrigger Binding="{Binding IsHoliday}" Value="True">
+                        <Setter Property="Foreground" Value="{DynamicResource CalendarHolidayBrush}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsAdjustWorkday}" Value="True">
+                        <Setter Property="Foreground" Value="{DynamicResource CalendarAdjustWorkdayBrush}" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding IsInCurrentMonth}" Value="False">
                         <Setter Property="Foreground" Value="{DynamicResource CalendarOutOfMonthBrush}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsToday}" Value="True">
+                        <Setter Property="Foreground" Value="{DynamicResource CalendarTodayBrush}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>

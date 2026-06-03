@@ -15,6 +15,9 @@
   "Calendar.OvertimeFormat": "{0} hrs {1} mins",
   "Calendar.DefaultOvertimeSummary": "0 hrs 0 mins",
   "Calendar.MonthlyPrefix": "MTD: ",
+  "Calendar.WorkDaysRemaining": " {0} work day(s) remaining",
+  "Calendar.Holiday": "Holiday",
+  "Calendar.AdjustWorkday": "Workday Adj.",
   "Calendar.TotalOvertime": "Total Overtime: {0}",
   "Calendar.SelectedDateFormat": "Selected Date: {0}",
   "Calendar.MarkdownDiary": "Markdown Diary",
@@ -79,6 +82,8 @@
   "Appearance.FontSize": "Font Size",
   "Appearance.LineHeight": "Line Height",
   "Appearance.PreviewBackground": "Preview Background",
+  "Appearance.CalendarHoliday": "Holiday Color",
+  "Appearance.CalendarAdjustWorkday": "Adj. Workday Color",
   "Appearance.PreviewSection": "Preview Settings",
   "Appearance.LanguageSection": "Language"
 }

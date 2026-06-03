@@ -50,7 +50,8 @@ public sealed class SettingsPersistenceCoordinator : ISettingsPersistenceCoordin
             AppearanceConfig = appearanceSection.ToModel(),
             PreviewFontFamily = generalSection.PreviewFontFamily,
             PreviewFontSize = generalSection.PreviewFontSize,
-            PreviewLineHeight = generalSection.PreviewLineHeight
+            PreviewLineHeight = generalSection.PreviewLineHeight,
+            Overrides = _workScheduleProvider.Overrides.ToList()
         };
 
         await _settingsStoreService.SaveAsync(settingsDataStore, cancellationToken);

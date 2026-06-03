@@ -12,9 +12,12 @@
   "Calendar.OvertimeHours": "加班时长",
   "Calendar.Hours": "小时",
   "Calendar.Minutes": "分钟",
-  "Calendar.OvertimeFormat": "{0} 小时 {1} 分钟",
-  "Calendar.DefaultOvertimeSummary": "0 小时 0 分钟",
+  "Calendar.OvertimeFormat": "{0}小时{1}分钟",
+  "Calendar.DefaultOvertimeSummary": "0小时0分钟",
   "Calendar.MonthlyPrefix": "本月已加",
+  "Calendar.WorkDaysRemaining": " 本月工作日剩余{0}天",
+  "Calendar.Holiday": "节假日",
+  "Calendar.AdjustWorkday": "调休",
   "Calendar.TotalOvertime": "总计加班时长：{0}",
   "Calendar.SelectedDateFormat": "当前选择的日期: {0}",
   "Calendar.MarkdownDiary": "Markdown 日记",
@@ -79,6 +82,8 @@
   "Appearance.FontSize": "字号",
   "Appearance.LineHeight": "行高",
   "Appearance.PreviewBackground": "预览背景色",
+  "Appearance.CalendarHoliday": "节假日文字色",
+  "Appearance.CalendarAdjustWorkday": "调休文字色",
   "Appearance.PreviewSection": "预览设置",
   "Appearance.LanguageSection": "语言"
 }

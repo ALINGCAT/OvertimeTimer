@@ -42,6 +42,9 @@ public sealed class MainViewModel : ViewModelBase
         SelectDayCommand = new DelegateCommand<CalendarDayViewModel>(SelectDay);
         OpenMonthPickerCommand = new DelegateCommand(OpenMonthPicker);
 
+        HolidayCommand = new DelegateCommand(ToggleHoliday, CanToggleHoliday);
+        AdjustWorkdayCommand = new DelegateCommand(ToggleAdjustWorkday, CanToggleAdjustWorkday);
+
         _workScheduleProvider.Load();
         _workScheduleProvider.ConfigChanged += () => _ = LoadMonthAsync(_displayedMonth);
 
@@ -93,7 +96,14 @@ public sealed class MainViewModel : ViewModelBase
     public CalendarDayViewModel? SelectedDay
     {
         get => _selectedDay;
-        private set => SetProperty(ref _selectedDay, value);
+        private set
+        {
+            if (SetProperty(ref _selectedDay, value))
+            {
+                HolidayCommand.RaiseCanExecuteChanged();
+                AdjustWorkdayCommand.RaiseCanExecuteChanged();
+            }
+        }
     }
 
     public DelegateCommand TodayCommand { get; }
@@ -101,6 +111,10 @@ public sealed class MainViewModel : ViewModelBase
     public DelegateCommand<CalendarDayViewModel> SelectDayCommand { get; }
 
     public DelegateCommand OpenMonthPickerCommand { get; }
+
+    public DelegateCommand HolidayCommand { get; }
+
+    public DelegateCommand AdjustWorkdayCommand { get; }
 
     public void GoToToday()
     {
@@ -139,6 +153,60 @@ public sealed class MainViewModel : ViewModelBase
         _ = LoadMonthAsync(_displayedMonth);
     }
 
+    private bool CanToggleHoliday()
+    {
+        var date = SelectedDate;
+        var existing = _workScheduleProvider.GetOverride(date);
+        if (existing is not null)
+            return existing.IsHoliday;
+
+        return _workScheduleProvider.IsWorkDay(date);
+    }
+
+    private void ToggleHoliday()
+    {
+        var date = SelectedDate;
+        var existing = _workScheduleProvider.GetOverride(date);
+
+        if (existing is not null && existing.IsHoliday)
+        {
+            _workScheduleProvider.RemoveOverride(date);
+        }
+        else
+        {
+            _workScheduleProvider.AddOverride(date, true);
+        }
+
+        _ = LoadMonthAsync(_displayedMonth);
+    }
+
+    private bool CanToggleAdjustWorkday()
+    {
+        var date = SelectedDate;
+        var existing = _workScheduleProvider.GetOverride(date);
+        if (existing is not null)
+            return !existing.IsHoliday;
+
+        return _workScheduleProvider.IsRestDay(date);
+    }
+
+    private void ToggleAdjustWorkday()
+    {
+        var date = SelectedDate;
+        var existing = _workScheduleProvider.GetOverride(date);
+
+        if (existing is not null && !existing.IsHoliday)
+        {
+            _workScheduleProvider.RemoveOverride(date);
+        }
+        else
+        {
+            _workScheduleProvider.AddOverride(date, false);
+        }
+
+        _ = LoadMonthAsync(_displayedMonth);
+    }
+
     private async Task LoadMonthAsync(DateOnly month)
     {
         CalendarDays.Clear();
@@ -162,6 +230,13 @@ public sealed class MainViewModel : ViewModelBase
                 IsRestDay = _workScheduleProvider.IsRestDay(date)
             };
 
+            var o = _workScheduleProvider.GetOverride(date);
+            if (o is not null)
+            {
+                day.IsHoliday = o.IsHoliday;
+                day.IsAdjustWorkday = !o.IsHoliday;
+            }
+
             var record = records.Find(r => r.Date == date);
             if (record is not null)
             {
@@ -183,6 +258,20 @@ public sealed class MainViewModel : ViewModelBase
         var totalHours = totalMinutes / 60;
         var remainingMinutes = totalMinutes % 60;
         MonthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + string.Format(_loc["Calendar.OvertimeFormat"], totalHours, remainingMinutes);
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var monthEndCalc = firstDay.AddMonths(1).AddDays(-1);
+        var daysRemaining = 0;
+        for (var d = today.AddDays(1); d <= monthEndCalc; d = d.AddDays(1))
+        {
+            if (_workScheduleProvider.IsWorkDay(d))
+                daysRemaining++;
+        }
+
+        if (daysRemaining > 0)
+        {
+            MonthlyOvertimeSummary += string.Format(_loc["Calendar.WorkDaysRemaining"], daysRemaining);
+        }
 
         UpdateSelectedDateLabel(SelectedDate);
         await SelectDayAsync(SelectedDate);
@@ -207,7 +296,15 @@ public sealed class MainViewModel : ViewModelBase
     private void UpdateSelectedDateLabel(DateOnly date)
     {
         var dayOfWeekName = GetLocalizedDayOfWeek(date.DayOfWeek);
-        SelectedDateLabel = string.Format(_loc["Calendar.SelectedDateFormat"], $"{date:yyyy-MM-dd} {dayOfWeekName}");
+        var label = string.Format(_loc["Calendar.SelectedDateFormat"], $"{date:yyyy-MM-dd} {dayOfWeekName}");
+
+        var o = _workScheduleProvider.GetOverride(date);
+        if (o is not null)
+        {
+            label += " " + (o.IsHoliday ? _loc["Calendar.Holiday"] : _loc["Calendar.AdjustWorkday"]);
+        }
+
+        SelectedDateLabel = label;
     }
 
     private string GetLocalizedDayOfWeek(DayOfWeek dayOfWeek) => dayOfWeek switch
