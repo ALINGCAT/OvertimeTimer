@@ -60,8 +60,7 @@ public sealed class SettingsPersistenceCoordinator : ISettingsPersistenceCoordin
             PreviewTextColor = previewSection.PreviewTextColor,
             PreviewLinkColor = previewSection.PreviewLinkColor,
             PreviewCodeBackgroundColor = previewSection.PreviewCodeBackgroundColor,
-            PreviewCodeFontFamily = previewSection.PreviewCodeFontFamily,
-            Overrides = _workScheduleProvider.Overrides.ToList()
+            PreviewCodeFontFamily = previewSection.PreviewCodeFontFamily
         };
 
         await _settingsStoreService.SaveAsync(settingsDataStore, cancellationToken);

@@ -16,6 +16,11 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
         "OvertimeTimer",
         "settings.json");
 
+    private readonly string _overridesFilePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "OvertimeTimer",
+        "overrides.json");
+
     private readonly Dictionary<DateOnly, DayOverride> _overrides = new();
 
     public WorkScheduleConfig Config { get; private set; } = new();
@@ -29,13 +34,15 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
         if (!File.Exists(_settingsFilePath))
         {
             Config = new WorkScheduleConfig();
-            return;
+        }
+        else
+        {
+            var json = File.ReadAllText(_settingsFilePath);
+            var settingsDataStore = JsonSerializer.Deserialize<SettingsDataStore>(json, SerializerOptions);
+            Config = settingsDataStore?.WorkScheduleConfig ?? new WorkScheduleConfig();
         }
 
-        var json = File.ReadAllText(_settingsFilePath);
-        var settingsDataStore = JsonSerializer.Deserialize<SettingsDataStore>(json, SerializerOptions);
-        Config = settingsDataStore?.WorkScheduleConfig ?? new WorkScheduleConfig();
-        LoadOverrides(settingsDataStore);
+        LoadOverridesFromFile();
     }
 
     public async Task LoadAsync(CancellationToken cancellationToken = default)
@@ -61,7 +68,7 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
             cancellationToken);
 
         Config = settingsDataStore?.WorkScheduleConfig ?? new WorkScheduleConfig();
-        LoadOverrides(settingsDataStore);
+        LoadOverridesFromFile();
         ConfigChanged?.Invoke();
     }
 
@@ -103,15 +110,26 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
         return IsWorkDayByWeekly(date);
     }
 
-    private void LoadOverrides(SettingsDataStore? settingsDataStore)
+    private void LoadOverridesFromFile()
     {
         _overrides.Clear();
-        if (settingsDataStore?.Overrides is null)
+        if (!File.Exists(_overridesFilePath))
             return;
 
-        foreach (var o in settingsDataStore.Overrides)
+        try
         {
-            _overrides[o.Date] = o;
+            var json = File.ReadAllText(_overridesFilePath);
+            var list = JsonSerializer.Deserialize<List<DayOverride>>(json, SerializerOptions);
+            if (list is null)
+                return;
+
+            foreach (var o in list)
+            {
+                _overrides[o.Date] = o;
+            }
+        }
+        catch
+        {
         }
     }
 
@@ -168,21 +186,9 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
     {
         try
         {
-            SettingsDataStore settingsDataStore;
-            if (File.Exists(_settingsFilePath))
-            {
-                var json = await File.ReadAllTextAsync(_settingsFilePath);
-                settingsDataStore = JsonSerializer.Deserialize<SettingsDataStore>(json, SerializerOptions) ?? new SettingsDataStore();
-            }
-            else
-            {
-                settingsDataStore = new SettingsDataStore();
-            }
-
-            settingsDataStore.Overrides = _overrides.Values.ToList();
-
-            Directory.CreateDirectory(Path.GetDirectoryName(_settingsFilePath)!);
-            var temporaryFilePath = $"{_settingsFilePath}.tmp";
+            var list = _overrides.Values.ToList();
+            Directory.CreateDirectory(Path.GetDirectoryName(_overridesFilePath)!);
+            var temporaryFilePath = $"{_overridesFilePath}.tmp";
 
             await using (var stream = new FileStream(
                              temporaryFilePath,
@@ -192,17 +198,17 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
                              4096,
                              FileOptions.Asynchronous))
             {
-                await JsonSerializer.SerializeAsync(stream, settingsDataStore, SerializerOptions);
+                await JsonSerializer.SerializeAsync(stream, list, SerializerOptions);
                 await stream.FlushAsync();
             }
 
-            if (File.Exists(_settingsFilePath))
+            if (File.Exists(_overridesFilePath))
             {
-                File.Replace(temporaryFilePath, _settingsFilePath, null);
+                File.Replace(temporaryFilePath, _overridesFilePath, null);
             }
             else
             {
-                File.Move(temporaryFilePath, _settingsFilePath);
+                File.Move(temporaryFilePath, _overridesFilePath);
             }
         }
         catch

@@ -25,6 +25,4 @@ public sealed class SettingsDataStore
     public string PreviewCodeFontFamily { get; set; } = "Consolas";
 
     public DateOnly? LastSelectedDate { get; set; }
-
-    public List<DayOverride> Overrides { get; set; } = new();
 }
