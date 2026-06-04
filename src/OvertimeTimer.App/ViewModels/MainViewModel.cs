@@ -160,7 +160,7 @@ public sealed class MainViewModel : ViewModelBase
         if (existing is not null)
             return existing.IsHoliday;
 
-        return _workScheduleProvider.IsWorkDay(date);
+        return true;
     }
 
     private void ToggleHoliday()

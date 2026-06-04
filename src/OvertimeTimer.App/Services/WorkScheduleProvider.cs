@@ -73,11 +73,13 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
     public void AddOverride(DateOnly date, bool isHoliday)
     {
         _overrides[date] = new DayOverride { Date = date, IsHoliday = isHoliday };
+        _ = SaveOverridesAsync();
     }
 
     public void RemoveOverride(DateOnly date)
     {
         _overrides.Remove(date);
+        _ = SaveOverridesAsync();
     }
 
     public bool IsRestDay(DateOnly date)
@@ -160,5 +162,51 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
             DayOfWeek.Sunday => targetWeek.SundayWork,
             _ => false
         };
+    }
+
+    private async Task SaveOverridesAsync()
+    {
+        try
+        {
+            SettingsDataStore settingsDataStore;
+            if (File.Exists(_settingsFilePath))
+            {
+                var json = await File.ReadAllTextAsync(_settingsFilePath);
+                settingsDataStore = JsonSerializer.Deserialize<SettingsDataStore>(json, SerializerOptions) ?? new SettingsDataStore();
+            }
+            else
+            {
+                settingsDataStore = new SettingsDataStore();
+            }
+
+            settingsDataStore.Overrides = _overrides.Values.ToList();
+
+            Directory.CreateDirectory(Path.GetDirectoryName(_settingsFilePath)!);
+            var temporaryFilePath = $"{_settingsFilePath}.tmp";
+
+            await using (var stream = new FileStream(
+                             temporaryFilePath,
+                             FileMode.Create,
+                             FileAccess.Write,
+                             FileShare.None,
+                             4096,
+                             FileOptions.Asynchronous))
+            {
+                await JsonSerializer.SerializeAsync(stream, settingsDataStore, SerializerOptions);
+                await stream.FlushAsync();
+            }
+
+            if (File.Exists(_settingsFilePath))
+            {
+                File.Replace(temporaryFilePath, _settingsFilePath, null);
+            }
+            else
+            {
+                File.Move(temporaryFilePath, _settingsFilePath);
+            }
+        }
+        catch
+        {
+        }
     }
 }
