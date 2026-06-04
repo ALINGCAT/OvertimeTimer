@@ -25,7 +25,7 @@
   "Calendar.Save": "保存",
   "Calendar.Setting": "设置",
   "Calendar.WeekLabelFormat": "第 {0} 周",
-  "Diary.Saved": "{0}已保存",
+  "Diary.Saved": "{0} 已保存",
   "Diary.SaveFailed": "保存失败，请重试。",
   "MonthPicker.Title": "选择年月",
   "MonthPicker.Year": "年",

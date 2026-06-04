@@ -126,12 +126,25 @@ public sealed class DayRecordViewModel : ViewModelBase
                 var safeCodeFont = codeFont.Replace("'", "").Replace("\"", "");
 
                 return $@"<html><head><meta charset='utf-8'><style>
-body {{ font-family: '{safeFont}'; font-size: {fontSize}px; line-height: 1.6;
-       color: {textColor}; background: {bgColor}; padding: 12px; margin: 0; }}
+body {{ font-family: '{safeFont}'; font-size: {fontSize}px; line-height: 1.5; word-wrap: break-word;
+       color: {textColor}; background: {bgColor}; padding: 16px; margin: 0; }}
+h1, h2 {{ border-bottom: 1px solid #D8DEE4; padding-bottom: 0.3em; }}
+h1 {{ font-size: 2em; margin: 4px 0 8px; }}
+h2 {{ font-size: 1.5em; margin: 4px 0 8px; }}
+h3 {{ font-size: 1.25em; margin: 4px 0 8px; }}
+h4 {{ font-size: 1.1em; margin: 4px 0 8px; }}
+table {{ border-collapse: collapse; width: 100%; margin: 8px 0; }}
+th, td {{ border: 1px solid #D1D5DB; padding: 6px 13px; text-align: left; }}
+th {{ background: rgba(0,0,0,0.04); font-weight: 600; }}
+tr:nth-child(odd) {{ background: rgba(0,0,0,0.02); }}
+tr:nth-child(even) {{ background: rgba(0,0,0,0.06); }}
+code {{ background: {codeBg}; padding: .2em .4em; border-radius: 6px; font-size: 85%; font-family: '{safeCodeFont}'; }}
+pre {{ background: {codeBg}; padding: 16px; border-radius: 6px; overflow-x: auto; line-height: 1.45; }}
+pre code {{ background: none; padding: 0; font-size: 100%; }}
+blockquote {{ border-left: 4px solid #D8DEE4; color: #656D76; padding: 0 16px; margin: 8px 0; }}
 a {{ color: {linkColor}; }}
-code {{ background: {codeBg}; font-family: '{safeCodeFont}'; padding: 2px 6px; border-radius: 4px; }}
-pre {{ background: {codeBg}; padding: 12px; border-radius: 6px; overflow-x: auto; }}
-pre code {{ background: none; padding: 0; }}
+ul, ol {{ padding-left: 2em; }}
+img {{ max-width: 100%; }}
 </style></head><body>{body}</body></html>";
             }
             catch (Exception ex)

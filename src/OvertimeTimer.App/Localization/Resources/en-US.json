@@ -25,7 +25,7 @@
   "Calendar.Save": "Save",
   "Calendar.Setting": "Settings",
   "Calendar.WeekLabelFormat": "Week {0}",
-  "Diary.Saved": "Today's record saved.",
+  "Diary.Saved": "{0} saved.",
   "Diary.SaveFailed": "Save failed. Please try again.",
   "MonthPicker.Title": "Select Month",
   "MonthPicker.Year": "",
