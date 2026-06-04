@@ -70,7 +70,10 @@ public partial class App : PrismApplication
             }
 
             appearanceSettingsService.Apply(settingsDataStore.AppearanceConfig);
-            appearanceSettingsService.ApplyPreviewSettings(settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight);
+            appearanceSettingsService.ApplyPreviewSettings(
+                settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight,
+                settingsDataStore.PreviewBackgroundColor, settingsDataStore.PreviewTextColor, settingsDataStore.PreviewLinkColor,
+                settingsDataStore.PreviewCodeBackgroundColor, settingsDataStore.PreviewCodeFontFamily);
             diaryFileService.Configure(settingsDataStore.DiaryStorageConfig);
         }
         catch (Exception ex)

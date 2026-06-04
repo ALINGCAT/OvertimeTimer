@@ -26,14 +26,15 @@ public sealed class MainViewModel : ViewModelBase
         IRecordStoreService recordStoreService,
         IDiaryFileService diaryFileService,
         IWorkScheduleProvider workScheduleProvider,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IAppearanceSettingsService appearanceSettingsService)
     {
         _monthSelectionDialogService = monthSelectionDialogService;
         _recordStoreService = recordStoreService;
         _diaryFileService = diaryFileService;
         _workScheduleProvider = workScheduleProvider;
         _loc = localizationService;
-        _dayRecordViewModel = new DayRecordViewModel(statusMessageService, recordStoreService, diaryFileService, localizationService);
+        _dayRecordViewModel = new DayRecordViewModel(statusMessageService, recordStoreService, diaryFileService, localizationService, appearanceSettingsService);
         _dayRecordViewModel.Saved += () => _ = LoadMonthAsync(_displayedMonth);
         _monthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + _loc["Calendar.DefaultOvertimeSummary"];
         CalendarDays = new ObservableCollection<CalendarDayViewModel>();

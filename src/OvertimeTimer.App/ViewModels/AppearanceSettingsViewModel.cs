@@ -109,26 +109,8 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
         CalendarOutOfMonthColor = appearanceConfig.CalendarOutOfMonthColor;
         CalendarOvertimeDotColor = appearanceConfig.CalendarOvertimeDotColor;
         CalendarDiaryDotColor = appearanceConfig.CalendarDiaryDotColor;
-        PreviewBackgroundColor = appearanceConfig.PreviewBackgroundColor;
         CalendarHolidayColor = appearanceConfig.CalendarHolidayColor;
         CalendarAdjustWorkdayColor = appearanceConfig.CalendarAdjustWorkdayColor;
-    }
-
-    public AppearanceConfig ToModel()
-    {
-        return new AppearanceConfig
-        {
-            WindowBackgroundColor = WindowBackgroundColor,
-            CalendarWorkdayColor = CalendarWorkdayColor,
-            CalendarRestDayColor = CalendarRestDayColor,
-            CalendarTodayColor = CalendarTodayColor,
-            CalendarOutOfMonthColor = CalendarOutOfMonthColor,
-            CalendarOvertimeDotColor = CalendarOvertimeDotColor,
-            CalendarDiaryDotColor = CalendarDiaryDotColor,
-            PreviewBackgroundColor = PreviewBackgroundColor,
-            CalendarHolidayColor = CalendarHolidayColor,
-            CalendarAdjustWorkdayColor = CalendarAdjustWorkdayColor
-        };
     }
 
     private void ChooseColor(string propertyName)
@@ -142,7 +124,6 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             nameof(CalendarOutOfMonthColor) => CalendarOutOfMonthColor,
             nameof(CalendarOvertimeDotColor) => CalendarOvertimeDotColor,
             nameof(CalendarDiaryDotColor) => CalendarDiaryDotColor,
-            nameof(PreviewBackgroundColor) => PreviewBackgroundColor,
             nameof(CalendarHolidayColor) => CalendarHolidayColor,
             nameof(CalendarAdjustWorkdayColor) => CalendarAdjustWorkdayColor,
             _ => "#FFFFFFFF"
@@ -163,10 +144,25 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             case nameof(CalendarOutOfMonthColor): CalendarOutOfMonthColor = selectedColor; break;
             case nameof(CalendarOvertimeDotColor): CalendarOvertimeDotColor = selectedColor; break;
             case nameof(CalendarDiaryDotColor): CalendarDiaryDotColor = selectedColor; break;
-            case nameof(PreviewBackgroundColor): PreviewBackgroundColor = selectedColor; break;
             case nameof(CalendarHolidayColor): CalendarHolidayColor = selectedColor; break;
             case nameof(CalendarAdjustWorkdayColor): CalendarAdjustWorkdayColor = selectedColor; break;
         }
+    }
+
+    public AppearanceConfig ToModel()
+    {
+        return new AppearanceConfig
+        {
+            WindowBackgroundColor = WindowBackgroundColor,
+            CalendarWorkdayColor = CalendarWorkdayColor,
+            CalendarRestDayColor = CalendarRestDayColor,
+            CalendarTodayColor = CalendarTodayColor,
+            CalendarOutOfMonthColor = CalendarOutOfMonthColor,
+            CalendarOvertimeDotColor = CalendarOvertimeDotColor,
+            CalendarDiaryDotColor = CalendarDiaryDotColor,
+            CalendarHolidayColor = CalendarHolidayColor,
+            CalendarAdjustWorkdayColor = CalendarAdjustWorkdayColor
+        };
     }
 
     private async Task SaveCurrentSectionAsync()
@@ -202,7 +198,6 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             ("Appearance.CalendarOutOfMonth", () => CalendarOutOfMonthColor, v => CalendarOutOfMonthColor = v),
             ("Appearance.CalendarOvertimeDot", () => CalendarOvertimeDotColor, v => CalendarOvertimeDotColor = v),
             ("Appearance.CalendarDiaryDot", () => CalendarDiaryDotColor, v => CalendarDiaryDotColor = v),
-            ("Appearance.PreviewBackground", () => PreviewBackgroundColor, v => PreviewBackgroundColor = v),
             ("Appearance.CalendarHoliday", () => CalendarHolidayColor, v => CalendarHolidayColor = v),
             ("Appearance.CalendarAdjustWorkday", () => CalendarAdjustWorkdayColor, v => CalendarAdjustWorkdayColor = v)
         };

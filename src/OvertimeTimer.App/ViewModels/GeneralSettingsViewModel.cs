@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Windows.Media;
 using Prism.Commands;
 using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Services;
@@ -25,11 +24,6 @@ public sealed class GeneralSettingsViewModel : SettingsSectionViewModelBase
         _selectedLanguage = AvailableLanguages.FirstOrDefault(
             l => l.Code == localizationService.CurrentLanguage);
 
-        foreach (var family in Fonts.SystemFontFamilies.OrderBy(f => f.Source))
-        {
-            AvailableFontFamilies.Add(family.Source);
-        }
-
         _storageSection.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName == nameof(SettingsSectionViewModelBase.HasSaveFeedback)
@@ -54,47 +48,15 @@ public sealed class GeneralSettingsViewModel : SettingsSectionViewModelBase
         set => SetProperty(ref _selectedLanguage, value);
     }
 
-    private string _previewFontFamily = "Microsoft YaHei UI";
-    public string PreviewFontFamily
-    {
-        get => _previewFontFamily;
-        set => SetProperty(ref _previewFontFamily, value);
-    }
-
-    private double _previewFontSize = 8;
-    public double PreviewFontSize
-    {
-        get => _previewFontSize;
-        set => SetProperty(ref _previewFontSize, value);
-    }
-
-    private double _previewLineHeight = 12;
-    public double PreviewLineHeight
-    {
-        get => _previewLineHeight;
-        set => SetProperty(ref _previewLineHeight, value);
-    }
-
-    public ObservableCollection<string> AvailableFontFamilies { get; } = new();
-
     public DelegateCommand SaveCommand { get; }
 
     public DelegateCommand OpenSettingsDirectoryCommand { get; }
-
-    public void LoadFrom(string fontFamily, double fontSize, double lineHeight)
-    {
-        PreviewFontFamily = fontFamily;
-        PreviewFontSize = fontSize;
-        PreviewLineHeight = lineHeight;
-    }
 
     private async Task SaveAsync()
     {
         var saved = await _storageSection.SaveAsync();
         if (!saved)
-        {
             return;
-        }
 
         if (_selectedLanguage is not null && _selectedLanguage.Code != _localizationService.CurrentLanguage)
         {

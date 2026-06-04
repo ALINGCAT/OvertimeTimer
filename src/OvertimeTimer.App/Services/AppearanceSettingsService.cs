@@ -9,6 +9,8 @@ namespace OvertimeTimer.App.Services;
 
 public sealed class AppearanceSettingsService : IAppearanceSettingsService
 {
+    public event Action? PreviewSettingsChanged;
+
     public bool TryNormalizeColor(string colorText, out string normalizedColor)
     {
         normalizedColor = string.Empty;
@@ -44,12 +46,13 @@ public sealed class AppearanceSettingsService : IAppearanceSettingsService
         ApplyBrush(resources, "CalendarOutOfMonthBrush", appearanceConfig.CalendarOutOfMonthColor);
         ApplyBrush(resources, "CalendarOvertimeDotBrush", appearanceConfig.CalendarOvertimeDotColor);
         ApplyBrush(resources, "CalendarDiaryDotBrush", appearanceConfig.CalendarDiaryDotColor);
-        ApplyBrush(resources, "PreviewBackgroundBrush", appearanceConfig.PreviewBackgroundColor);
         ApplyBrush(resources, "CalendarHolidayBrush", appearanceConfig.CalendarHolidayColor);
         ApplyBrush(resources, "CalendarAdjustWorkdayBrush", appearanceConfig.CalendarAdjustWorkdayColor);
     }
 
-    public void ApplyPreviewSettings(string fontFamily, double fontSize, double lineHeight)
+    public void ApplyPreviewSettings(string fontFamily, double fontSize, double lineHeight,
+        string backgroundColor, string textColor, string linkColor,
+        string codeBackgroundColor, string codeFontFamily)
     {
         var resources = Application.Current?.Resources;
         if (resources is null)
@@ -60,6 +63,13 @@ public sealed class AppearanceSettingsService : IAppearanceSettingsService
         resources["PreviewFontFamily"] = new System.Windows.Media.FontFamily(fontFamily);
         resources["PreviewFontSize"] = fontSize;
         resources["PreviewLineHeight"] = lineHeight;
+        resources["PreviewBackgroundColor"] = backgroundColor;
+        resources["PreviewTextColor"] = textColor;
+        resources["PreviewLinkColor"] = linkColor;
+        resources["PreviewCodeBackgroundColor"] = codeBackgroundColor;
+        resources["PreviewCodeFontFamily"] = codeFontFamily;
+
+        PreviewSettingsChanged?.Invoke();
     }
 
     private static void ApplyBrush(ResourceDictionary resources, string resourceKey, string colorText)

@@ -32,10 +32,12 @@ public sealed class SettingsViewModel : ViewModelBase
         GeneralSection = new GeneralSettingsViewModel(settingsInteractionService, SaveSettingsAsync, localizationService);
         WorkScheduleSection = new WorkScheduleSettingsViewModel(SaveSettingsAsync, localizationService);
         AppearanceSection = new AppearanceSettingsViewModel(appearanceSettingsService, colorSelectionService, SaveSettingsAsync, localizationService);
+        PreviewSection = new PreviewSettingsViewModel(appearanceSettingsService, colorSelectionService, SaveSettingsAsync, localizationService);
 
         ShowGeneralSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.General));
         ShowWorkScheduleSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.WorkSchedule));
         ShowAppearanceSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.Appearance));
+        ShowPreviewSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.Preview));
 
         _ = LoadSettingsAsync();
     }
@@ -45,6 +47,7 @@ public sealed class SettingsViewModel : ViewModelBase
         SettingsSection.General => _loc["Settings.General"],
         SettingsSection.WorkSchedule => _loc["Settings.WorkSchedule"],
         SettingsSection.Appearance => _loc["Settings.Appearance"],
+        SettingsSection.Preview => _loc["Settings.Preview"],
         _ => string.Empty
     };
 
@@ -53,6 +56,7 @@ public sealed class SettingsViewModel : ViewModelBase
         SettingsSection.General => _loc["Settings.GeneralDesc"],
         SettingsSection.WorkSchedule => _loc["Settings.WorkScheduleDesc"],
         SettingsSection.Appearance => _loc["Settings.AppearanceDesc"],
+        SettingsSection.Preview => _loc["Settings.PreviewDesc"],
         _ => string.Empty
     };
 
@@ -66,6 +70,7 @@ public sealed class SettingsViewModel : ViewModelBase
                 RaisePropertyChanged(nameof(IsGeneralSectionSelected));
                 RaisePropertyChanged(nameof(IsWorkScheduleSectionSelected));
                 RaisePropertyChanged(nameof(IsAppearanceSectionSelected));
+                RaisePropertyChanged(nameof(IsPreviewSectionSelected));
                 RaisePropertyChanged(nameof(CurrentSectionTitle));
                 RaisePropertyChanged(nameof(CurrentSectionDescription));
             }
@@ -78,11 +83,15 @@ public sealed class SettingsViewModel : ViewModelBase
 
     public bool IsAppearanceSectionSelected => SelectedSection == SettingsSection.Appearance;
 
+    public bool IsPreviewSectionSelected => SelectedSection == SettingsSection.Preview;
+
     public GeneralSettingsViewModel GeneralSection { get; }
 
     public WorkScheduleSettingsViewModel WorkScheduleSection { get; }
 
     public AppearanceSettingsViewModel AppearanceSection { get; }
+
+    public PreviewSettingsViewModel PreviewSection { get; }
 
     public DelegateCommand ShowGeneralSectionCommand { get; }
 
@@ -90,16 +99,16 @@ public sealed class SettingsViewModel : ViewModelBase
 
     public DelegateCommand ShowAppearanceSectionCommand { get; }
 
-    private void SelectSection(SettingsSection section)
-    {
-        SelectedSection = section;
-    }
+    public DelegateCommand ShowPreviewSectionCommand { get; }
+
+    private void SelectSection(SettingsSection section) => SelectedSection = section;
 
     private async Task LoadSettingsAsync()
     {
         try
         {
-            await _settingsPersistenceCoordinator.LoadAsync(WorkScheduleSection, GeneralSection.StorageSection, AppearanceSection, GeneralSection);
+            await _settingsPersistenceCoordinator.LoadAsync(
+                WorkScheduleSection, GeneralSection.StorageSection, AppearanceSection, GeneralSection, PreviewSection);
         }
         catch (Exception)
         {
@@ -111,6 +120,7 @@ public sealed class SettingsViewModel : ViewModelBase
 
     private async Task SaveSettingsAsync()
     {
-        await _settingsPersistenceCoordinator.SaveAsync(WorkScheduleSection, GeneralSection.StorageSection, AppearanceSection, GeneralSection);
+        await _settingsPersistenceCoordinator.SaveAsync(
+            WorkScheduleSection, GeneralSection.StorageSection, AppearanceSection, GeneralSection, PreviewSection);
     }
 }

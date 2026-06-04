@@ -9,6 +9,7 @@ public interface ISettingsPersistenceCoordinator
         StorageSettingsViewModel storageSection,
         AppearanceSettingsViewModel appearanceSection,
         GeneralSettingsViewModel generalSection,
+        PreviewSettingsViewModel previewSection,
         CancellationToken cancellationToken = default);
 
     Task SaveAsync(
@@ -16,5 +17,6 @@ public interface ISettingsPersistenceCoordinator
         StorageSettingsViewModel storageSection,
         AppearanceSettingsViewModel appearanceSection,
         GeneralSettingsViewModel generalSection,
+        PreviewSettingsViewModel previewSection,
         CancellationToken cancellationToken = default);
 }

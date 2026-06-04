@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using Markdig;
 using Prism.Commands;
 using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Services;
@@ -11,6 +13,8 @@ public sealed class DayRecordViewModel : ViewModelBase
     private readonly IRecordStoreService _recordStoreService;
     private readonly IDiaryFileService _diaryFileService;
     private readonly ILocalizationService _loc;
+    private readonly IAppearanceSettingsService _appearanceSettingsService;
+    private static readonly MarkdownPipeline Pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
     private DateOnly _date = DateOnly.FromDateTime(DateTime.Today);
     private int _overtimeHours;
     private int _overtimeMinutes;
@@ -21,12 +25,14 @@ public sealed class DayRecordViewModel : ViewModelBase
         IStatusMessageService statusMessageService,
         IRecordStoreService recordStoreService,
         IDiaryFileService diaryFileService,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IAppearanceSettingsService appearanceSettingsService)
     {
         _statusMessageService = statusMessageService;
         _recordStoreService = recordStoreService;
         _diaryFileService = diaryFileService;
         _loc = localizationService;
+        _appearanceSettingsService = appearanceSettingsService;
         SaveCommand = new DelegateCommand(() => _ = SaveAsync());
 
         _loc.PropertyChanged += (_, e) =>
@@ -36,6 +42,8 @@ public sealed class DayRecordViewModel : ViewModelBase
                 RaisePropertyChanged(nameof(OvertimeDisplay));
             }
         };
+
+        _appearanceSettingsService.PreviewSettingsChanged += () => RaisePropertyChanged(nameof(HtmlPreview));
     }
 
     public DateOnly Date
@@ -87,7 +95,49 @@ public sealed class DayRecordViewModel : ViewModelBase
         {
             if (SetProperty(ref _diaryMarkdown, value))
             {
+                Debug.WriteLine($"[DiaryMarkdown] changed, len={value?.Length}, raising HtmlPreview");
+                RaisePropertyChanged(nameof(HtmlPreview));
                 IsDirty = true;
+            }
+        }
+    }
+
+    public string HtmlPreview
+    {
+        get
+        {
+            try
+            {
+                var resources = System.Windows.Application.Current.Resources;
+                var bgColor = StripAlpha(resources["PreviewBackgroundColor"] as string ?? "#FFF5F0E1");
+
+                if (string.IsNullOrWhiteSpace(DiaryMarkdown))
+                    return $"<html><body style='margin:0;background:{bgColor}'></body></html>";
+
+                var body = Markdown.ToHtml(DiaryMarkdown, Pipeline);
+                var fontFamily = (resources["PreviewFontFamily"] as System.Windows.Media.FontFamily)?.Source ?? "Microsoft YaHei UI";
+                var fontSize = resources["PreviewFontSize"] as double? ?? 14;
+                var textColor = StripAlpha(resources["PreviewTextColor"] as string ?? "#0F172A");
+                var linkColor = StripAlpha(resources["PreviewLinkColor"] as string ?? "#3B82F6");
+                var codeBg = StripAlpha(resources["PreviewCodeBackgroundColor"] as string ?? "#F3F4F6");
+                var codeFont = resources["PreviewCodeFontFamily"] as string ?? "Consolas";
+
+                var safeFont = fontFamily.Replace("'", "").Replace("\"", "");
+                var safeCodeFont = codeFont.Replace("'", "").Replace("\"", "");
+
+                return $@"<html><head><meta charset='utf-8'><style>
+body {{ font-family: '{safeFont}'; font-size: {fontSize}px; line-height: 1.6;
+       color: {textColor}; background: {bgColor}; padding: 12px; margin: 0; }}
+a {{ color: {linkColor}; }}
+code {{ background: {codeBg}; font-family: '{safeCodeFont}'; padding: 2px 6px; border-radius: 4px; }}
+pre {{ background: {codeBg}; padding: 12px; border-radius: 6px; overflow-x: auto; }}
+pre code {{ background: none; padding: 0; }}
+</style></head><body>{body}</body></html>";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[HtmlPreview error] {ex.Message}");
+                return $@"<html><body><pre>Render error: {ex.Message}</pre></body></html>";
             }
         }
     }
@@ -150,12 +200,19 @@ public sealed class DayRecordViewModel : ViewModelBase
             }
 
             IsDirty = false;
-            _statusMessageService.Show(_loc["Diary.Saved"]);
+            _statusMessageService.Show(string.Format(_loc["Diary.Saved"], DateDisplay));
             Saved?.Invoke();
         }
         catch (Exception)
         {
             _statusMessageService.Show(_loc["Diary.SaveFailed"]);
         }
+    }
+
+    private static string StripAlpha(string? color)
+    {
+        if (string.IsNullOrEmpty(color) || color.Length < 7 || !color.StartsWith("#"))
+            return color ?? "#000";
+        return "#" + color.Substring(3, 6);
     }
 }

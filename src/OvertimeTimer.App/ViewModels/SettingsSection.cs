@@ -4,5 +4,6 @@ public enum SettingsSection
 {
     General,
     WorkSchedule,
-    Appearance
+    Appearance,
+    Preview
 }

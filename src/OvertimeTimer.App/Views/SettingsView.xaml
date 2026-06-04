@@ -24,6 +24,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Button Grid.Row="0" Margin="0,0,0,8" Command="{Binding ShowGeneralSectionCommand}">
@@ -56,7 +57,7 @@
                         <TextBlock Text="{loc:Loc Settings.WorkSchedule}" />
                     </Button>
 
-                    <Button Grid.Row="2" Command="{Binding ShowAppearanceSectionCommand}">
+                    <Button Grid.Row="2" Margin="0,0,0,8" Command="{Binding ShowAppearanceSectionCommand}">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
                                 <Style.Triggers>
@@ -69,6 +70,21 @@
                             </Style>
                         </Button.Style>
                         <TextBlock Text="{loc:Loc Settings.Appearance}" />
+                    </Button>
+
+                    <Button Grid.Row="3" Command="{Binding ShowPreviewSectionCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource SettingsTabButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPreviewSectionSelected}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                        <Setter Property="Foreground" Value="White" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock Text="{loc:Loc Settings.Preview}" />
                     </Button>
                 </Grid>
 
@@ -98,6 +114,9 @@
                         </Grid>
                         <Grid Visibility="{Binding IsAppearanceSectionSelected, Converter={StaticResource BoolToVisibility}}">
                             <views:AppearanceSettingsView DataContext="{Binding AppearanceSection}" />
+                        </Grid>
+                        <Grid Visibility="{Binding IsPreviewSectionSelected, Converter={StaticResource BoolToVisibility}}">
+                            <views:PreviewSettingsView DataContext="{Binding PreviewSection}" />
                         </Grid>
                     </Grid>
                 </Grid>

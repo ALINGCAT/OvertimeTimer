@@ -8,5 +8,9 @@ public interface IAppearanceSettingsService
 
     void Apply(AppearanceConfig appearanceConfig);
 
-    void ApplyPreviewSettings(string fontFamily, double fontSize, double lineHeight);
+    void ApplyPreviewSettings(string fontFamily, double fontSize, double lineHeight,
+        string backgroundColor, string textColor, string linkColor,
+        string codeBackgroundColor, string codeFontFamily);
+
+    event Action? PreviewSettingsChanged;
 }

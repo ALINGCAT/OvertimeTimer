@@ -18,9 +18,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" FontWeight="SemiBold" Text="日记存储" />
@@ -46,49 +43,20 @@
 
         <Separator Grid.Row="4" Margin="0,16,0,4" />
 
-        <TextBlock Grid.Row="5" FontWeight="SemiBold" Margin="0,4,0,0" Text="{loc:Loc Appearance.PreviewSection}" />
+        <TextBlock Grid.Row="5" FontWeight="SemiBold" Text="{loc:Loc Language.Language}" />
 
         <Grid Grid.Row="6" Margin="0,8,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-
-            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="{loc:Loc Appearance.PreviewFont}" />
-            <ComboBox Grid.Row="0" Grid.Column="1" Margin="12,0,0,8" IsEditable="True"
-                      ItemsSource="{Binding AvailableFontFamilies}"
-                      Text="{Binding PreviewFontFamily, UpdateSourceTrigger=LostFocus}" />
-
-            <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="{loc:Loc Appearance.FontSize}" />
-            <hc:NumericUpDown Grid.Row="1" Grid.Column="1" Width="80" HorizontalAlignment="Left" Margin="12,0,0,8"
-                              Minimum="8" Maximum="32" Value="{Binding PreviewFontSize}" />
-
-            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="{loc:Loc Appearance.LineHeight}" />
-            <hc:NumericUpDown Grid.Row="2" Grid.Column="1" Width="80" HorizontalAlignment="Left" Margin="12,0,0,8"
-                              Minimum="12" Maximum="48" Value="{Binding PreviewLineHeight}" />
-        </Grid>
-
-        <Separator Grid.Row="7" Margin="0,16,0,8" />
-
-        <TextBlock Grid.Row="8" FontWeight="SemiBold" Text="{loc:Loc Language.Language}" />
-
-        <Grid Grid.Row="9" Margin="0,8,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <ComboBox Grid.Column="0" Width="140" Margin="10 0 0 0 "
+            <ComboBox Grid.Column="0" Width="140"
                       ItemsSource="{Binding AvailableLanguages}"
                       DisplayMemberPath="Name"
                       SelectedItem="{Binding SelectedLanguage}" />
         </Grid>
 
-        <Grid Grid.Row="10" Margin="0,16,0,0">
+        <Grid Grid.Row="7" Margin="0,16,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />

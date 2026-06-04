@@ -141,7 +141,7 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Calendar.Save"] = "保存";
         _strings["Calendar.Setting"] = "设置";
         _strings["Calendar.WeekLabelFormat"] = "第 {0} 周";
-        _strings["Diary.Saved"] = "当日情况已保存";
+        _strings["Diary.Saved"] = "{0}已保存";
         _strings["Diary.SaveFailed"] = "保存失败，请重试。";
         _strings["MonthPicker.Title"] = "选择年月";
         _strings["MonthPicker.Year"] = "年";
@@ -152,9 +152,11 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Settings.General"] = "通用设置";
         _strings["Settings.WorkSchedule"] = "工作日规则";
         _strings["Settings.Appearance"] = "外观设置";
+        _strings["Settings.Preview"] = "预览设置";
         _strings["Settings.GeneralDesc"] = "配置日记文件存储、分组方式和界面语言。";
         _strings["Settings.WorkScheduleDesc"] = "配置按周或按天的工作日循环规则。";
         _strings["Settings.AppearanceDesc"] = "配置窗口背景、月历日期和提示点的颜色。";
+        _strings["Settings.PreviewDesc"] = "配置 Markdown 预览的字体、颜色等显示效果。";
         _strings["Settings.Save"] = "应用";
         _strings["Settings.OpenConfigDir"] = "打开配置文件目录";
         _strings["Settings.Weekly"] = "按周算";
@@ -200,6 +202,11 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Appearance.PreviewBackground"] = "预览背景色";
         _strings["Appearance.CalendarHoliday"] = "节假日文字色";
         _strings["Appearance.CalendarAdjustWorkday"] = "调休文字色";
+        _strings["Appearance.PreviewBackground"] = "背景色";
+        _strings["Appearance.PreviewText"] = "文字色";
+        _strings["Appearance.PreviewLink"] = "链接色";
+        _strings["Appearance.PreviewCodeBackground"] = "代码块背景色";
+        _strings["Appearance.PreviewCodeFont"] = "代码块字体";
         _strings["Appearance.PreviewSection"] = "预览设置";
         _strings["Appearance.LanguageSection"] = "语言";
     }

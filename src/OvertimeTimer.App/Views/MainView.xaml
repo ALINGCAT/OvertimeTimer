@@ -7,7 +7,7 @@
              xmlns:design="clr-namespace:OvertimeTimer.App.DesignTime"
              xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:loc="clr-namespace:OvertimeTimer.App.Localization"
-             xmlns:mdxam="clr-namespace:MdXaml;assembly=MdXaml"
+             xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance Type=design:DesignMainViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d">
@@ -226,6 +226,7 @@
                                     AcceptsReturn="True"
                                     TextWrapping="Wrap"
                                     Padding="5"
+                                    BorderThickness="2"
                                     VerticalScrollBarVisibility="Auto"
                                     VerticalContentAlignment="Top"
                                     Text="{Binding SelectedDayRecord.DiaryMarkdown, UpdateSourceTrigger=PropertyChanged}" />
@@ -238,17 +239,22 @@
                         </Grid.RowDefinitions>
                         <TextBlock Margin="0,0,0,8" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.Preview}" />
                         <Border Grid.Row="1"
-                                Padding="5"
                                 BorderBrush="{DynamicResource ShellBorderBrush}"
-                                BorderThickness="1"
-                                CornerRadius="6"
-                                Background="{DynamicResource PreviewBackgroundBrush}">
-                            <mdxam:MarkdownScrollViewer
-                                Background="Transparent"
-                                TextElement.FontFamily="{DynamicResource PreviewFontFamily}"
-                                TextElement.FontSize="{DynamicResource PreviewFontSize}"
-                                Block.LineHeight="{DynamicResource PreviewLineHeight}"
-                                Markdown="{Binding SelectedDayRecord.DiaryMarkdown}" />
+                                BorderThickness="2"
+                                CornerRadius="6">
+                            <Grid>
+                                <wv2:WebView2 x:Name="PreviewWebView"
+                                              HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch" />
+                                <TextBlock x:Name="PreviewErrorText"
+                                           Visibility="Collapsed"
+                                           Foreground="Red"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           TextWrapping="Wrap"
+                                           Margin="12"
+                                           Text="预览初始化失败，请安装 WebView2 运行时。&#x0a;https://go.microsoft.com/fwlink/p/?LinkId=2124703" />
+                            </Grid>
                         </Border>
                     </Grid>
                 </Grid>

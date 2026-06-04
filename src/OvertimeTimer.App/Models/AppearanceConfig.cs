@@ -16,8 +16,6 @@ public sealed class AppearanceConfig
 
     public string CalendarDiaryDotColor { get; set; } = "#FF16A34A";
 
-    public string PreviewBackgroundColor { get; set; } = "#FFF5F0E1";
-
     public string CalendarHolidayColor { get; set; } = "#FF8B5CF6";
 
     public string CalendarAdjustWorkdayColor { get; set; } = "#FFB91C1C";

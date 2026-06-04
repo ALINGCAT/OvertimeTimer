@@ -27,13 +27,17 @@ public sealed class SettingsPersistenceCoordinator : ISettingsPersistenceCoordin
         StorageSettingsViewModel storageSection,
         AppearanceSettingsViewModel appearanceSection,
         GeneralSettingsViewModel generalSection,
+        PreviewSettingsViewModel previewSection,
         CancellationToken cancellationToken = default)
     {
         var settingsDataStore = await _settingsStoreService.LoadAsync(cancellationToken);
         workScheduleSection.LoadFrom(settingsDataStore.WorkScheduleConfig);
         storageSection.LoadFrom(settingsDataStore.DiaryStorageConfig);
         appearanceSection.LoadFrom(settingsDataStore.AppearanceConfig);
-        generalSection.LoadFrom(settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight);
+        previewSection.LoadFrom(settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight,
+            settingsDataStore.PreviewBackgroundColor, settingsDataStore.PreviewTextColor,
+            settingsDataStore.PreviewLinkColor, settingsDataStore.PreviewCodeBackgroundColor,
+            settingsDataStore.PreviewCodeFontFamily);
     }
 
     public async Task SaveAsync(
@@ -41,6 +45,7 @@ public sealed class SettingsPersistenceCoordinator : ISettingsPersistenceCoordin
         StorageSettingsViewModel storageSection,
         AppearanceSettingsViewModel appearanceSection,
         GeneralSettingsViewModel generalSection,
+        PreviewSettingsViewModel previewSection,
         CancellationToken cancellationToken = default)
     {
         var settingsDataStore = new SettingsDataStore
@@ -48,15 +53,23 @@ public sealed class SettingsPersistenceCoordinator : ISettingsPersistenceCoordin
             WorkScheduleConfig = workScheduleSection.ToModel(),
             DiaryStorageConfig = storageSection.ToModel(),
             AppearanceConfig = appearanceSection.ToModel(),
-            PreviewFontFamily = generalSection.PreviewFontFamily,
-            PreviewFontSize = generalSection.PreviewFontSize,
-            PreviewLineHeight = generalSection.PreviewLineHeight,
+            PreviewFontFamily = previewSection.PreviewFontFamily,
+            PreviewFontSize = previewSection.PreviewFontSize,
+            PreviewLineHeight = previewSection.PreviewLineHeight,
+            PreviewBackgroundColor = previewSection.PreviewBackgroundColor,
+            PreviewTextColor = previewSection.PreviewTextColor,
+            PreviewLinkColor = previewSection.PreviewLinkColor,
+            PreviewCodeBackgroundColor = previewSection.PreviewCodeBackgroundColor,
+            PreviewCodeFontFamily = previewSection.PreviewCodeFontFamily,
             Overrides = _workScheduleProvider.Overrides.ToList()
         };
 
         await _settingsStoreService.SaveAsync(settingsDataStore, cancellationToken);
         _diaryFileService.Configure(settingsDataStore.DiaryStorageConfig);
-        _appearanceSettingsService.ApplyPreviewSettings(settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight);
+        _appearanceSettingsService.ApplyPreviewSettings(
+            settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight,
+            settingsDataStore.PreviewBackgroundColor, settingsDataStore.PreviewTextColor, settingsDataStore.PreviewLinkColor,
+            settingsDataStore.PreviewCodeBackgroundColor, settingsDataStore.PreviewCodeFontFamily);
         await _workScheduleProvider.LoadAsync(cancellationToken);
     }
 }
