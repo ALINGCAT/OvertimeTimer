@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Markdig;
 using Prism.Commands;
 using OvertimeTimer.App.Localization;
@@ -95,7 +94,6 @@ public sealed class DayRecordViewModel : ViewModelBase
         {
             if (SetProperty(ref _diaryMarkdown, value))
             {
-                Debug.WriteLine($"[DiaryMarkdown] changed, len={value?.Length}, raising HtmlPreview");
                 RaisePropertyChanged(nameof(HtmlPreview));
                 IsDirty = true;
             }
@@ -106,26 +104,24 @@ public sealed class DayRecordViewModel : ViewModelBase
     {
         get
         {
-            try
-            {
-                var resources = System.Windows.Application.Current.Resources;
-                var bgColor = StripAlpha(resources["PreviewBackgroundColor"] as string ?? "#FFF5F0E1");
+            var resources = System.Windows.Application.Current.Resources;
+            var bgColor = StripAlpha(resources["PreviewBackgroundColor"] as string ?? "#FFF5F0E1");
 
-                if (string.IsNullOrWhiteSpace(DiaryMarkdown))
-                    return $"<html><body style='margin:0;background:{bgColor}'></body></html>";
+            if (string.IsNullOrWhiteSpace(DiaryMarkdown))
+                return $"<html><body style='margin:0;background:{bgColor}'></body></html>";
 
-                var body = Markdown.ToHtml(DiaryMarkdown, Pipeline);
-                var fontFamily = (resources["PreviewFontFamily"] as System.Windows.Media.FontFamily)?.Source ?? "Microsoft YaHei UI";
-                var fontSize = resources["PreviewFontSize"] as double? ?? 14;
-                var textColor = StripAlpha(resources["PreviewTextColor"] as string ?? "#0F172A");
-                var linkColor = StripAlpha(resources["PreviewLinkColor"] as string ?? "#3B82F6");
-                var codeBg = StripAlpha(resources["PreviewCodeBackgroundColor"] as string ?? "#F3F4F6");
-                var codeFont = resources["PreviewCodeFontFamily"] as string ?? "Consolas";
+            var body = Markdown.ToHtml(DiaryMarkdown, Pipeline);
+            var fontFamily = (resources["PreviewFontFamily"] as System.Windows.Media.FontFamily)?.Source ?? "Microsoft YaHei UI";
+            var fontSize = resources["PreviewFontSize"] as double? ?? 14;
+            var textColor = StripAlpha(resources["PreviewTextColor"] as string ?? "#0F172A");
+            var linkColor = StripAlpha(resources["PreviewLinkColor"] as string ?? "#3B82F6");
+            var codeBg = StripAlpha(resources["PreviewCodeBackgroundColor"] as string ?? "#F3F4F6");
+            var codeFont = resources["PreviewCodeFontFamily"] as string ?? "Consolas";
 
-                var safeFont = fontFamily.Replace("'", "").Replace("\"", "");
-                var safeCodeFont = codeFont.Replace("'", "").Replace("\"", "");
+            var safeFont = fontFamily.Replace("'", "").Replace("\"", "");
+            var safeCodeFont = codeFont.Replace("'", "").Replace("\"", "");
 
-                return $@"<html><head><meta charset='utf-8'><style>
+            return $@"<html><head><meta charset='utf-8'><style>
 body {{ font-family: '{safeFont}'; font-size: {fontSize}px; line-height: 1.5; word-wrap: break-word;
        color: {textColor}; background: {bgColor}; padding: 16px; margin: 0; }}
 h1, h2 {{ border-bottom: 1px solid #D8DEE4; padding-bottom: 0.3em; }}
@@ -146,12 +142,6 @@ a {{ color: {linkColor}; }}
 ul, ol {{ padding-left: 2em; }}
 img {{ max-width: 100%; }}
 </style></head><body>{body}</body></html>";
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[HtmlPreview error] {ex.Message}");
-                return $@"<html><body><pre>Render error: {ex.Message}</pre></body></html>";
-            }
         }
     }
 

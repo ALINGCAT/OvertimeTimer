@@ -96,6 +96,20 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
         set => SetProperty(ref _calendarAdjustWorkdayColor, value);
     }
 
+    private string _cardBackgroundColor = "#FFFFFFFF";
+    public string CardBackgroundColor
+    {
+        get => _cardBackgroundColor;
+        set => SetProperty(ref _cardBackgroundColor, value);
+    }
+
+    private string _cardBorderColor = "#FFE5E7EB";
+    public string CardBorderColor
+    {
+        get => _cardBorderColor;
+        set => SetProperty(ref _cardBorderColor, value);
+    }
+
     public DelegateCommand SaveCommand { get; }
 
     public DelegateCommand<string> ChooseColorCommand { get; }
@@ -111,6 +125,8 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
         CalendarDiaryDotColor = appearanceConfig.CalendarDiaryDotColor;
         CalendarHolidayColor = appearanceConfig.CalendarHolidayColor;
         CalendarAdjustWorkdayColor = appearanceConfig.CalendarAdjustWorkdayColor;
+        CardBackgroundColor = appearanceConfig.CardBackgroundColor;
+        CardBorderColor = appearanceConfig.CardBorderColor;
     }
 
     private void ChooseColor(string propertyName)
@@ -126,6 +142,8 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             nameof(CalendarDiaryDotColor) => CalendarDiaryDotColor,
             nameof(CalendarHolidayColor) => CalendarHolidayColor,
             nameof(CalendarAdjustWorkdayColor) => CalendarAdjustWorkdayColor,
+            nameof(CardBackgroundColor) => CardBackgroundColor,
+            nameof(CardBorderColor) => CardBorderColor,
             _ => "#FFFFFFFF"
         };
 
@@ -146,6 +164,8 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             case nameof(CalendarDiaryDotColor): CalendarDiaryDotColor = selectedColor; break;
             case nameof(CalendarHolidayColor): CalendarHolidayColor = selectedColor; break;
             case nameof(CalendarAdjustWorkdayColor): CalendarAdjustWorkdayColor = selectedColor; break;
+            case nameof(CardBackgroundColor): CardBackgroundColor = selectedColor; break;
+            case nameof(CardBorderColor): CardBorderColor = selectedColor; break;
         }
     }
 
@@ -161,7 +181,9 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             CalendarOvertimeDotColor = CalendarOvertimeDotColor,
             CalendarDiaryDotColor = CalendarDiaryDotColor,
             CalendarHolidayColor = CalendarHolidayColor,
-            CalendarAdjustWorkdayColor = CalendarAdjustWorkdayColor
+            CalendarAdjustWorkdayColor = CalendarAdjustWorkdayColor,
+            CardBackgroundColor = CardBackgroundColor,
+            CardBorderColor = CardBorderColor
         };
     }
 
@@ -199,7 +221,9 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             ("Appearance.CalendarOvertimeDot", () => CalendarOvertimeDotColor, v => CalendarOvertimeDotColor = v),
             ("Appearance.CalendarDiaryDot", () => CalendarDiaryDotColor, v => CalendarDiaryDotColor = v),
             ("Appearance.CalendarHoliday", () => CalendarHolidayColor, v => CalendarHolidayColor = v),
-            ("Appearance.CalendarAdjustWorkday", () => CalendarAdjustWorkdayColor, v => CalendarAdjustWorkdayColor = v)
+            ("Appearance.CalendarAdjustWorkday", () => CalendarAdjustWorkdayColor, v => CalendarAdjustWorkdayColor = v),
+            ("Appearance.CardBackground", () => CardBackgroundColor, v => CardBackgroundColor = v),
+            ("Appearance.CardBorder", () => CardBorderColor, v => CardBorderColor = v)
         };
 
         foreach (var (labelKey, getter, setter) in fields)

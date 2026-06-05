@@ -48,6 +48,8 @@ public sealed class AppearanceSettingsService : IAppearanceSettingsService
         ApplyBrush(resources, "CalendarDiaryDotBrush", appearanceConfig.CalendarDiaryDotColor);
         ApplyBrush(resources, "CalendarHolidayBrush", appearanceConfig.CalendarHolidayColor);
         ApplyBrush(resources, "CalendarAdjustWorkdayBrush", appearanceConfig.CalendarAdjustWorkdayColor);
+        ApplyBrush(resources, "CardBackgroundBrush", appearanceConfig.CardBackgroundColor);
+        ApplyBrush(resources, "CardBorderBrush", appearanceConfig.CardBorderColor);
     }
 
     public void ApplyPreviewSettings(string fontFamily, double fontSize, double lineHeight,

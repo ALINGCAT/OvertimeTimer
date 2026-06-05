@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -33,7 +32,6 @@ public partial class MainView : System.Windows.Controls.UserControl
         {
             vm.SelectedDayRecord.PropertyChanged += (_, e) =>
             {
-                Debug.WriteLine($"[DayRecord.PropertyChanged] prop={e.PropertyName}");
                 if (e.PropertyName == nameof(ViewModels.DayRecordViewModel.HtmlPreview))
                 {
                     RefreshPreview();
@@ -47,10 +45,8 @@ public partial class MainView : System.Windows.Controls.UserControl
             var env = await CoreWebView2Environment.CreateAsync(null, userDataDir);
             await PreviewWebView.EnsureCoreWebView2Async(env);
         }
-        catch (Exception ex)
+        catch
         {
-            Debug.WriteLine($"WebView2 init failed: {ex.Message}");
-            PreviewErrorText.Visibility = Visibility.Visible;
             return;
         }
 
@@ -60,14 +56,10 @@ public partial class MainView : System.Windows.Controls.UserControl
 
     private void RefreshPreview()
     {
-        Debug.WriteLine($"[RefreshPreview] webViewInit={_webViewInitialized}, vm={DataContext != null}");
-
         if (!_webViewInitialized || DataContext is not ViewModels.MainViewModel vm)
             return;
 
-        var html = vm.SelectedDayRecord.HtmlPreview;
-        Debug.WriteLine($"[NavigateToString] len={html.Length}, start={html.Substring(0, Math.Min(html.Length, 120))}");
-        PreviewWebView.CoreWebView2.NavigateToString(html);
+        PreviewWebView.CoreWebView2.NavigateToString(vm.SelectedDayRecord.HtmlPreview);
     }
 
     private static void OnNumericPaste(object sender, DataObjectPastingEventArgs e)

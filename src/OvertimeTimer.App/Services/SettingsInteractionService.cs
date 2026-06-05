@@ -44,4 +44,25 @@ public sealed class SettingsInteractionService : ISettingsInteractionService
             UseShellExecute = true
         });
     }
+
+    public string? SaveFile(string filter, string defaultFileName)
+    {
+        using var dialog = new System.Windows.Forms.SaveFileDialog
+        {
+            Filter = filter,
+            FileName = defaultFileName
+        };
+
+        return dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK ? dialog.FileName : null;
+    }
+
+    public string? OpenFile(string filter)
+    {
+        using var dialog = new System.Windows.Forms.OpenFileDialog
+        {
+            Filter = filter
+        };
+
+        return dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK ? dialog.FileName : null;
+    }
 }

@@ -7,4 +7,8 @@ public interface ISettingsInteractionService
     bool ConfirmCreateFolder(string path);
 
     void OpenSettingsDirectory();
+
+    string? SaveFile(string filter, string defaultFileName);
+
+    string? OpenFile(string filter);
 }

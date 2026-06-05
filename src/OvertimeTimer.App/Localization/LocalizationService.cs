@@ -158,6 +158,8 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Settings.AppearanceDesc"] = "配置窗口背景、月历日期和提示点的颜色。";
         _strings["Settings.PreviewDesc"] = "配置 Markdown 预览的字体、颜色等显示效果。";
         _strings["Settings.Save"] = "应用";
+        _strings["Settings.ExportCss"] = "导出样式";
+        _strings["Settings.ImportCss"] = "导入样式";
         _strings["Settings.OpenConfigDir"] = "打开配置文件目录";
         _strings["Settings.Weekly"] = "按周算";
         _strings["Settings.Daily"] = "按天算";
@@ -202,6 +204,8 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Appearance.PreviewBackground"] = "预览背景色";
         _strings["Appearance.CalendarHoliday"] = "节假日文字色";
         _strings["Appearance.CalendarAdjustWorkday"] = "调休文字色";
+        _strings["Appearance.CardBackground"] = "卡片背景色";
+        _strings["Appearance.CardBorder"] = "卡片边框色";
         _strings["Appearance.PreviewBackground"] = "背景色";
         _strings["Appearance.PreviewText"] = "文字色";
         _strings["Appearance.PreviewLink"] = "链接色";

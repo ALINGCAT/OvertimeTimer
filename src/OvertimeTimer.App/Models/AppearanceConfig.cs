@@ -19,4 +19,8 @@ public sealed class AppearanceConfig
     public string CalendarHolidayColor { get; set; } = "#FF8B5CF6";
 
     public string CalendarAdjustWorkdayColor { get; set; } = "#FFB91C1C";
+
+    public string CardBackgroundColor { get; set; } = "#FFFFFFFF";
+
+    public string CardBorderColor { get; set; } = "#FFE5E7EB";
 }

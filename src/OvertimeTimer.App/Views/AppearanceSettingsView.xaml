@@ -25,6 +25,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -48,10 +50,40 @@
             </Button>
 
             <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
-                       Text="{loc:Loc Appearance.CalendarWorkday}" />
+                       Text="{loc:Loc Appearance.CardBackground}" />
             <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,12,8"
-                     Text="{Binding CalendarWorkdayColor, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding CardBackgroundColor, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="1" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
+                    Command="{Binding ChooseColorCommand}" CommandParameter="CardBackgroundColor">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource ShellBorderBrush}" />
+                        <Setter Property="Background" Value="{Binding CardBackgroundColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
+                       Text="{loc:Loc Appearance.CardBorder}" />
+            <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,12,8"
+                     Text="{Binding CardBorderColor, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="2" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
+                    Command="{Binding ChooseColorCommand}" CommandParameter="CardBorderColor">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource ShellBorderBrush}" />
+                        <Setter Property="Background" Value="{Binding CardBorderColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
+                       Text="{loc:Loc Appearance.CalendarWorkday}" />
+            <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,12,8"
+                     Text="{Binding CalendarWorkdayColor, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="3" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
                     Command="{Binding ChooseColorCommand}" CommandParameter="CalendarWorkdayColor">
                 <Button.Style>
                     <Style TargetType="Button">
@@ -62,11 +94,11 @@
                 </Button.Style>
             </Button>
 
-            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
+            <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
                        Text="{loc:Loc Appearance.CalendarRestDay}" />
-            <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,12,8"
+            <TextBox Grid.Row="4" Grid.Column="1" Margin="0,0,12,8"
                      Text="{Binding CalendarRestDayColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="2" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
+            <Button Grid.Row="4" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
                     Command="{Binding ChooseColorCommand}" CommandParameter="CalendarRestDayColor">
                 <Button.Style>
                     <Style TargetType="Button">
@@ -77,11 +109,11 @@
                 </Button.Style>
             </Button>
 
-            <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
+            <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
                        Text="{loc:Loc Appearance.CalendarToday}" />
-            <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,12,8"
+            <TextBox Grid.Row="5" Grid.Column="1" Margin="0,0,12,8"
                      Text="{Binding CalendarTodayColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="3" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
+            <Button Grid.Row="5" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
                     Command="{Binding ChooseColorCommand}" CommandParameter="CalendarTodayColor">
                 <Button.Style>
                     <Style TargetType="Button">
@@ -92,11 +124,11 @@
                 </Button.Style>
             </Button>
 
-            <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
+            <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
                        Text="{loc:Loc Appearance.CalendarOutOfMonth}" />
-            <TextBox Grid.Row="4" Grid.Column="1" Margin="0,0,12,8"
+            <TextBox Grid.Row="6" Grid.Column="1" Margin="0,0,12,8"
                      Text="{Binding CalendarOutOfMonthColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="4" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
+            <Button Grid.Row="6" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
                     Command="{Binding ChooseColorCommand}" CommandParameter="CalendarOutOfMonthColor">
                 <Button.Style>
                     <Style TargetType="Button">
@@ -107,11 +139,11 @@
                 </Button.Style>
             </Button>
 
-            <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
+            <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
                        Text="{loc:Loc Appearance.CalendarOvertimeDot}" />
-            <TextBox Grid.Row="5" Grid.Column="1" Margin="0,0,12,8"
+            <TextBox Grid.Row="7" Grid.Column="1" Margin="0,0,12,8"
                      Text="{Binding CalendarOvertimeDotColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="5" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
+            <Button Grid.Row="7" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
                     Command="{Binding ChooseColorCommand}" CommandParameter="CalendarOvertimeDotColor">
                 <Button.Style>
                     <Style TargetType="Button">
@@ -122,11 +154,11 @@
                 </Button.Style>
             </Button>
 
-            <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
+            <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
                        Text="{loc:Loc Appearance.CalendarDiaryDot}" />
-            <TextBox Grid.Row="6" Grid.Column="1" Margin="0,0,12,8"
+            <TextBox Grid.Row="8" Grid.Column="1" Margin="0,0,12,8"
                      Text="{Binding CalendarDiaryDotColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="6" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
+            <Button Grid.Row="8" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
                     Command="{Binding ChooseColorCommand}" CommandParameter="CalendarDiaryDotColor">
                 <Button.Style>
                     <Style TargetType="Button">
@@ -137,11 +169,11 @@
                 </Button.Style>
             </Button>
 
-            <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
+            <TextBlock Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8"
                        Text="{loc:Loc Appearance.CalendarHoliday}" />
-            <TextBox Grid.Row="7" Grid.Column="1" Margin="0,0,12,8"
+            <TextBox Grid.Row="9" Grid.Column="1" Margin="0,0,12,8"
                      Text="{Binding CalendarHolidayColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="7" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
+            <Button Grid.Row="9" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8"
                     Command="{Binding ChooseColorCommand}" CommandParameter="CalendarHolidayColor">
                 <Button.Style>
                     <Style TargetType="Button">
@@ -152,11 +184,11 @@
                 </Button.Style>
             </Button>
 
-            <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0"
+            <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0"
                        Text="{loc:Loc Appearance.CalendarAdjustWorkday}" />
-            <TextBox Grid.Row="8" Grid.Column="1" Margin="0,0,12,0"
+            <TextBox Grid.Row="10" Grid.Column="1" Margin="0,0,12,0"
                      Text="{Binding CalendarAdjustWorkdayColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="8" Grid.Column="2" Width="44" Height="24" Padding="0"
+            <Button Grid.Row="10" Grid.Column="2" Width="44" Height="24" Padding="0"
                     Command="{Binding ChooseColorCommand}" CommandParameter="CalendarAdjustWorkdayColor">
                 <Button.Style>
                     <Style TargetType="Button">

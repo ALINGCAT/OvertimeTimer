@@ -20,7 +20,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <hc:Card Grid.Column="0" Margin="0,0,6,0" Padding="16">
+        <hc:Card Grid.Column="0" Margin="0,0,6,0" Padding="16" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}">
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -205,7 +205,7 @@
             </Grid>
         </hc:Card>
 
-        <hc:Card Grid.Column="1" Margin="6,0,0,0" Padding="16">
+        <hc:Card Grid.Column="1" Margin="6,0,0,0" Padding="16" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}">
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -240,21 +240,12 @@
                         <TextBlock Margin="0,0,0,8" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.Preview}" />
                         <Border Grid.Row="1"
                                 BorderBrush="{DynamicResource ShellBorderBrush}"
-                                BorderThickness="2"
-                                CornerRadius="6">
-                            <Grid>
-                                <wv2:WebView2 x:Name="PreviewWebView"
-                                              HorizontalAlignment="Stretch"
-                                              VerticalAlignment="Stretch" />
-                                <TextBlock x:Name="PreviewErrorText"
-                                           Visibility="Collapsed"
-                                           Foreground="Red"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center"
-                                           TextWrapping="Wrap"
-                                           Margin="12"
-                                           Text="预览初始化失败，请安装 WebView2 运行时。&#x0a;https://go.microsoft.com/fwlink/p/?LinkId=2124703" />
-                            </Grid>
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="0">
+                            <wv2:WebView2 x:Name="PreviewWebView"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch" />
                         </Border>
                     </Grid>
                 </Grid>

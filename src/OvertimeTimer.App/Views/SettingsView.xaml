@@ -12,7 +12,7 @@
              d:DataContext="{d:DesignInstance Type=design:DesignSettingsViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <hc:Card Padding="16">
+        <hc:Card Padding="16" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}">
             <Grid Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

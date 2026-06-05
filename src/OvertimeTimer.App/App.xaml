@@ -28,6 +28,8 @@
             <SolidColorBrush x:Key="ShellBorderBrush" Color="#FFE2E8F0" />
             <SolidColorBrush x:Key="CalendarHolidayBrush" Color="#FF8B5CF6" />
             <SolidColorBrush x:Key="CalendarAdjustWorkdayBrush" Color="#FFB91C1C" />
+            <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="CardBorderBrush" Color="#FFE5E7EB" />
             <FontFamily x:Key="PreviewFontFamily">Microsoft YaHei UI</FontFamily>
             <system:Double x:Key="PreviewFontSize">8</system:Double>
             <system:Double x:Key="PreviewLineHeight">12</system:Double>
