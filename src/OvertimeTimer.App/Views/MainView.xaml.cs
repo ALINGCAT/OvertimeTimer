@@ -10,6 +10,7 @@ namespace OvertimeTimer.App.Views;
 public partial class MainView : System.Windows.Controls.UserControl
 {
     private bool _webViewInitialized;
+    private bool _htmlLoaded;
 
     public MainView()
     {
@@ -59,7 +60,21 @@ public partial class MainView : System.Windows.Controls.UserControl
         if (!_webViewInitialized || DataContext is not ViewModels.MainViewModel vm)
             return;
 
-        PreviewWebView.CoreWebView2.NavigateToString(vm.SelectedDayRecord.HtmlPreview);
+        if (!_htmlLoaded)
+        {
+            PreviewWebView.CoreWebView2.NavigateToString(vm.SelectedDayRecord.HtmlPreview);
+            _htmlLoaded = true;
+        }
+        else
+        {
+            var body = vm.SelectedDayRecord.BodyHtml
+                .Replace("\\", "\\\\")
+                .Replace("'", "\\'")
+                .Replace("\r\n", "")
+                .Replace("\n", "");
+            PreviewWebView.CoreWebView2.ExecuteScriptAsync(
+                $"document.body.innerHTML='{body}';");
+        }
     }
 
     private static void OnNumericPaste(object sender, DataObjectPastingEventArgs e)

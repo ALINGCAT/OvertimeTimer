@@ -145,6 +145,17 @@ img {{ max-width: 100%; }}
         }
     }
 
+    public string BodyHtml
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(DiaryMarkdown))
+                return "";
+
+            return Markdown.ToHtml(DiaryMarkdown, Pipeline);
+        }
+    }
+
     public bool IsDirty
     {
         get => _isDirty;
