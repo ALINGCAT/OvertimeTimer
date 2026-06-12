@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Prism.Commands;
 using OvertimeTimer.App.Localization;
+using OvertimeTimer.App.Models;
 using OvertimeTimer.App.Services;
 
 namespace OvertimeTimer.App.ViewModels;
@@ -45,6 +46,7 @@ public sealed class MainViewModel : ViewModelBase
 
         HolidayCommand = new DelegateCommand(ToggleHoliday, CanToggleHoliday);
         AdjustWorkdayCommand = new DelegateCommand(ToggleAdjustWorkday, CanToggleAdjustWorkday);
+        LeaveCommand = new DelegateCommand(ToggleLeave, CanToggleLeave);
 
         _workScheduleProvider.Load();
         _workScheduleProvider.ConfigChanged += () => _ = LoadMonthAsync(_displayedMonth);
@@ -103,6 +105,7 @@ public sealed class MainViewModel : ViewModelBase
             {
                 HolidayCommand.RaiseCanExecuteChanged();
                 AdjustWorkdayCommand.RaiseCanExecuteChanged();
+                LeaveCommand.RaiseCanExecuteChanged();
             }
         }
     }
@@ -116,6 +119,8 @@ public sealed class MainViewModel : ViewModelBase
     public DelegateCommand HolidayCommand { get; }
 
     public DelegateCommand AdjustWorkdayCommand { get; }
+
+    public DelegateCommand LeaveCommand { get; }
 
     public void GoToToday()
     {
@@ -159,7 +164,7 @@ public sealed class MainViewModel : ViewModelBase
         var date = SelectedDate;
         var existing = _workScheduleProvider.GetOverride(date);
         if (existing is not null)
-            return existing.IsHoliday;
+            return existing.Type == OverrideType.Holiday;
 
         return true;
     }
@@ -169,13 +174,13 @@ public sealed class MainViewModel : ViewModelBase
         var date = SelectedDate;
         var existing = _workScheduleProvider.GetOverride(date);
 
-        if (existing is not null && existing.IsHoliday)
+        if (existing is not null && existing.Type == OverrideType.Holiday)
         {
             _workScheduleProvider.RemoveOverride(date);
         }
         else
         {
-            _workScheduleProvider.AddOverride(date, true);
+            _workScheduleProvider.AddOverride(date, OverrideType.Holiday);
         }
 
         _ = LoadMonthAsync(_displayedMonth);
@@ -186,7 +191,7 @@ public sealed class MainViewModel : ViewModelBase
         var date = SelectedDate;
         var existing = _workScheduleProvider.GetOverride(date);
         if (existing is not null)
-            return !existing.IsHoliday;
+            return existing.Type == OverrideType.AdjustWorkday;
 
         return _workScheduleProvider.IsRestDay(date);
     }
@@ -196,13 +201,40 @@ public sealed class MainViewModel : ViewModelBase
         var date = SelectedDate;
         var existing = _workScheduleProvider.GetOverride(date);
 
-        if (existing is not null && !existing.IsHoliday)
+        if (existing is not null && existing.Type == OverrideType.AdjustWorkday)
         {
             _workScheduleProvider.RemoveOverride(date);
         }
         else
         {
-            _workScheduleProvider.AddOverride(date, false);
+            _workScheduleProvider.AddOverride(date, OverrideType.AdjustWorkday);
+        }
+
+        _ = LoadMonthAsync(_displayedMonth);
+    }
+
+    private bool CanToggleLeave()
+    {
+        var date = SelectedDate;
+        var existing = _workScheduleProvider.GetOverride(date);
+        if (existing is not null)
+            return existing.Type == OverrideType.Leave;
+
+        return true;
+    }
+
+    private void ToggleLeave()
+    {
+        var date = SelectedDate;
+        var existing = _workScheduleProvider.GetOverride(date);
+
+        if (existing is not null && existing.Type == OverrideType.Leave)
+        {
+            _workScheduleProvider.RemoveOverride(date);
+        }
+        else
+        {
+            _workScheduleProvider.AddOverride(date, OverrideType.Leave);
         }
 
         _ = LoadMonthAsync(_displayedMonth);
@@ -234,8 +266,9 @@ public sealed class MainViewModel : ViewModelBase
             var o = _workScheduleProvider.GetOverride(date);
             if (o is not null)
             {
-                day.IsHoliday = o.IsHoliday;
-                day.IsAdjustWorkday = !o.IsHoliday;
+                day.IsHoliday = o.Type == OverrideType.Holiday;
+                day.IsAdjustWorkday = o.Type == OverrideType.AdjustWorkday;
+                day.IsLeave = o.Type == OverrideType.Leave;
             }
 
             var record = records.Find(r => r.Date == date);
@@ -302,7 +335,13 @@ public sealed class MainViewModel : ViewModelBase
         var o = _workScheduleProvider.GetOverride(date);
         if (o is not null)
         {
-            label += " " + (o.IsHoliday ? _loc["Calendar.Holiday"] : _loc["Calendar.AdjustWorkday"]);
+            label += " " + o.Type switch
+            {
+                OverrideType.Holiday => _loc["Calendar.Holiday"],
+                OverrideType.AdjustWorkday => _loc["Calendar.AdjustWorkday"],
+                OverrideType.Leave => _loc["Calendar.Leave"],
+                _ => ""
+            };
         }
 
         SelectedDateLabel = label;

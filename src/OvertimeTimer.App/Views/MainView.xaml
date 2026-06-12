@@ -196,6 +196,11 @@
                                 HorizontalAlignment="Left"
                                 Command="{Binding AdjustWorkdayCommand}"
                                 Content="{loc:Loc Calendar.AdjustWorkday}" />
+                        <Button Grid.Column="2"
+                                Margin="8,0,0,0"
+                                HorizontalAlignment="Left"
+                                Command="{Binding LeaveCommand}"
+                                Content="{loc:Loc Calendar.Leave}" />
                         <Button Grid.Column="3"
                                 HorizontalAlignment="Right"
                                 Command="{Binding SelectedDayRecord.SaveCommand}"

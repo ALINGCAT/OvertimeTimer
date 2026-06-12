@@ -8,6 +8,7 @@ public sealed class CalendarDayViewModel : ViewModelBase
     private bool _hasDiary;
     private bool _isHoliday;
     private bool _isAdjustWorkday;
+    private bool _isLeave;
 
     public CalendarDayViewModel(DateOnly date, bool isInCurrentMonth)
     {
@@ -52,6 +53,12 @@ public sealed class CalendarDayViewModel : ViewModelBase
     {
         get => _isAdjustWorkday;
         set => SetProperty(ref _isAdjustWorkday, value);
+    }
+
+    public bool IsLeave
+    {
+        get => _isLeave;
+        set => SetProperty(ref _isLeave, value);
     }
 
     public bool IsSelected

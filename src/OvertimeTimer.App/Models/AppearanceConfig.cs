@@ -23,4 +23,6 @@ public sealed class AppearanceConfig
     public string CardBackgroundColor { get; set; } = "#FFFFFFFF";
 
     public string CardBorderColor { get; set; } = "#FFE5E7EB";
+
+    public string CalendarLeaveColor { get; set; } = "#FF3B82F6";
 }

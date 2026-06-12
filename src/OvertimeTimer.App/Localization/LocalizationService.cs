@@ -134,6 +134,7 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Calendar.WorkDaysRemaining"] = " 本月工作日剩余{0}天";
         _strings["Calendar.Holiday"] = "节假日";
         _strings["Calendar.AdjustWorkday"] = "调休";
+        _strings["Calendar.Leave"] = "请假";
         _strings["Calendar.TotalOvertime"] = "总计加班时长：{0}";
         _strings["Calendar.SelectedDateFormat"] = "当前选择的日期: {0}";
         _strings["Calendar.MarkdownDiary"] = "Markdown 日记";
@@ -206,6 +207,7 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Appearance.CalendarAdjustWorkday"] = "调休文字色";
         _strings["Appearance.CardBackground"] = "卡片背景色";
         _strings["Appearance.CardBorder"] = "卡片边框色";
+        _strings["Appearance.CalendarLeave"] = "请假文字色";
         _strings["Appearance.PreviewBackground"] = "背景色";
         _strings["Appearance.PreviewText"] = "文字色";
         _strings["Appearance.PreviewLink"] = "链接色";

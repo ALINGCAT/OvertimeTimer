@@ -9,7 +9,7 @@ public interface IWorkScheduleProvider
     bool IsRestDay(DateOnly date);
     bool IsWorkDay(DateOnly date);
     DayOverride? GetOverride(DateOnly date);
-    void AddOverride(DateOnly date, bool isHoliday);
+    void AddOverride(DateOnly date, OverrideType type);
     void RemoveOverride(DateOnly date);
     void Load();
     Task LoadAsync(CancellationToken cancellationToken = default);

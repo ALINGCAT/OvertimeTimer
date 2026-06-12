@@ -77,9 +77,9 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
         return _overrides.TryGetValue(date, out var o) ? o : null;
     }
 
-    public void AddOverride(DateOnly date, bool isHoliday)
+    public void AddOverride(DateOnly date, OverrideType type)
     {
-        _overrides[date] = new DayOverride { Date = date, IsHoliday = isHoliday };
+        _overrides[date] = new DayOverride { Date = date, Type = type };
         _ = SaveOverridesAsync();
     }
 
@@ -93,7 +93,7 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
     {
         var o = GetOverride(date);
         if (o is not null)
-            return o.IsHoliday;
+            return o.Type is OverrideType.Holiday or OverrideType.Leave;
 
         return !IsWorkDay(date);
     }
@@ -102,7 +102,7 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
     {
         var o = GetOverride(date);
         if (o is not null)
-            return !o.IsHoliday;
+            return o.Type == OverrideType.AdjustWorkday;
 
         if (Config.Mode == WorkScheduleMode.Daily)
             return IsWorkDayByDaily(date);
