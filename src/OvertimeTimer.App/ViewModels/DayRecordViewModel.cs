@@ -123,7 +123,7 @@ public sealed class DayRecordViewModel : ViewModelBase
 
             return $@"<html><head><meta charset='utf-8'><style>
 body {{ font-family: '{safeFont}'; font-size: {fontSize}px; line-height: 1.5; word-wrap: break-word;
-       color: {textColor}; background: {bgColor}; padding: 16px; padding-right: 8px; margin: 0; word-wrap: break-word; overflow-x: hidden; }}
+       color: {textColor}; background: {bgColor}; padding: 8px; padding-left: 12px; margin: 0; word-wrap: break-word; overflow-x: hidden; }}
 h1, h2 {{ border-bottom: 1px solid #D8DEE4; padding-bottom: 0.3em; }}
 h1 {{ font-size: 2em; margin: 4px 0 8px; }}
 h2 {{ font-size: 1.5em; margin: 4px 0 8px; }}

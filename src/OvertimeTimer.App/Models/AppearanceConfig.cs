@@ -2,15 +2,15 @@ namespace OvertimeTimer.App.Models;
 
 public sealed class AppearanceConfig
 {
-    public string WindowBackgroundColor { get; set; } = "#FFFFF7ED";
+    public string WindowBackgroundColor { get; set; } = "#FFF0F9FF";
 
-    public string CalendarWorkdayColor { get; set; } = "#FF431407";
+    public string CalendarWorkdayColor { get; set; } = "#FF0C4A6E";
 
-    public string CalendarRestDayColor { get; set; } = "#FF9A3412";
+    public string CalendarRestDayColor { get; set; } = "#FF7DD3FC";
 
-    public string CalendarTodayColor { get; set; } = "#FF16A34A";
+    public string CalendarTodayColor { get; set; } = "#FF22C55E";
 
-    public string CalendarOutOfMonthColor { get; set; } = "#FFFED7AA";
+    public string CalendarOutOfMonthColor { get; set; } = "#FFE0F2FE";
 
     public string CalendarOvertimeDotColor { get; set; } = "#FFDC2626";
 
@@ -20,11 +20,11 @@ public sealed class AppearanceConfig
 
     public string CalendarAdjustWorkdayColor { get; set; } = "#FFB91C1C";
 
-    public string CardBackgroundColor { get; set; } = "#FFFFFBEB";
+    public string CardBackgroundColor { get; set; } = "#FFFFFFFF";
 
-    public string CardBorderColor { get; set; } = "#FFFDE68A";
+    public string CardBorderColor { get; set; } = "#FFBAE6FD";
 
-    public string CalendarLeaveColor { get; set; } = "#FF3B82F6";
+    public string CalendarLeaveColor { get; set; } = "#FF0284C7";
 
-    public string CalendarDayBorderColor { get; set; } = "#FFD4D4D8";
+    public string CalendarDayBorderColor { get; set; } = "#FFBAE6FD";
 }

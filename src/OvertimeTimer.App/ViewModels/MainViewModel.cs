@@ -36,7 +36,7 @@ public sealed class MainViewModel : ViewModelBase
         _workScheduleProvider = workScheduleProvider;
         _loc = localizationService;
         _dayRecordViewModel = new DayRecordViewModel(statusMessageService, recordStoreService, diaryFileService, localizationService, appearanceSettingsService);
-        _dayRecordViewModel.Saved += () => _ = LoadMonthAsync(_displayedMonth);
+        _dayRecordViewModel.Saved += () => _ = RefreshMonthStatsAsync();
         _monthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + _loc["Calendar.DefaultOvertimeSummary"];
         CalendarDays = new ObservableCollection<CalendarDayViewModel>();
 
@@ -155,7 +155,9 @@ public sealed class MainViewModel : ViewModelBase
 
     private void SetDisplayedMonth(DateOnly month)
     {
-        _displayedMonth = new DateOnly(month.Year, month.Month, 1);
+        var normalized = new DateOnly(month.Year, month.Month, 1);
+        if (normalized == _displayedMonth) return;
+        _displayedMonth = normalized;
         _ = LoadMonthAsync(_displayedMonth);
     }
 
@@ -309,6 +311,46 @@ public sealed class MainViewModel : ViewModelBase
 
         UpdateSelectedDateLabel(SelectedDate);
         await SelectDayAsync(SelectedDate);
+    }
+
+    private async Task RefreshMonthStatsAsync()
+    {
+        var records = await _recordStoreService.LoadAllAsync();
+        var firstDay = _displayedMonth;
+        var monthEnd = firstDay.AddMonths(1).AddDays(-1);
+        int totalMinutes = 0;
+
+        foreach (var day in CalendarDays)
+        {
+            if (day.Date < firstDay || day.Date > monthEnd)
+            {
+                day.HasOvertime = false;
+                day.HasDiary = false;
+                continue;
+            }
+
+            var record = records.Find(r => r.Date == day.Date);
+            day.HasOvertime = record is not null && (record.OvertimeHours > 0 || record.OvertimeMinutes > 0);
+            if (record is not null)
+                totalMinutes += record.OvertimeHours * 60 + record.OvertimeMinutes;
+
+            day.HasDiary = await _diaryFileService.ExistsAsync(day.Date);
+        }
+
+        var totalHours = totalMinutes / 60;
+        var remainingMinutes = totalMinutes % 60;
+        MonthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + string.Format(_loc["Calendar.OvertimeFormat"], totalHours, remainingMinutes);
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var daysRemaining = 0;
+        for (var d = today.AddDays(1); d <= monthEnd; d = d.AddDays(1))
+        {
+            if (_workScheduleProvider.IsWorkDay(d))
+                daysRemaining++;
+        }
+
+        if (daysRemaining > 0)
+            MonthlyOvertimeSummary += string.Format(_loc["Calendar.WorkDaysRemaining"], daysRemaining);
     }
 
     private async Task SelectDayAsync(DateOnly date)

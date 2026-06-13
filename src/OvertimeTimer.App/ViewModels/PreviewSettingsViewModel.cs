@@ -50,13 +50,13 @@ public sealed class PreviewSettingsViewModel : SettingsSectionViewModelBase
             PreviewCodeBackgroundColor, PreviewCodeFontFamily);
     }
 
-    private string _previewBackgroundColor = "#FFFFFBEB";
+    private string _previewBackgroundColor = "#FFFFFFFF";
     public string PreviewBackgroundColor { get => _previewBackgroundColor; set => SetProperty(ref _previewBackgroundColor, value); }
-    private string _previewTextColor = "#FF431407";
+    private string _previewTextColor = "#FF0C4A6E";
     public string PreviewTextColor { get => _previewTextColor; set => SetProperty(ref _previewTextColor, value); }
-    private string _previewLinkColor = "#FFEA580C";
+    private string _previewLinkColor = "#FF0284C7";
     public string PreviewLinkColor { get => _previewLinkColor; set => SetProperty(ref _previewLinkColor, value); }
-    private string _previewCodeBackgroundColor = "#FFFED7AA";
+    private string _previewCodeBackgroundColor = "#FFE0F2FE";
     public string PreviewCodeBackgroundColor { get => _previewCodeBackgroundColor; set => SetProperty(ref _previewCodeBackgroundColor, value); }
     private string _previewCodeFontFamily = "Consolas";
     public string PreviewCodeFontFamily { get => _previewCodeFontFamily; set => SetProperty(ref _previewCodeFontFamily, value); }

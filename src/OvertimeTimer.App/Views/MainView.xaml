@@ -248,9 +248,10 @@
                                 BorderThickness="2"
                                 CornerRadius="6"
                                 Padding="0">
-                            <wv2:WebView2 x:Name="PreviewWebView"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch" />
+                             <wv2:WebView2 x:Name="PreviewWebView"
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch"
+                                           Margin="2" />
                         </Border>
                     </Grid>
                 </Grid>
