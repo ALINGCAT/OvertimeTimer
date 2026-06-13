@@ -123,7 +123,7 @@ public sealed class DayRecordViewModel : ViewModelBase
 
             return $@"<html><head><meta charset='utf-8'><style>
 body {{ font-family: '{safeFont}'; font-size: {fontSize}px; line-height: 1.5; word-wrap: break-word;
-       color: {textColor}; background: {bgColor}; padding: 16px; margin: 0; }}
+       color: {textColor}; background: {bgColor}; padding: 16px; padding-right: 8px; margin: 0; word-wrap: break-word; overflow-x: hidden; }}
 h1, h2 {{ border-bottom: 1px solid #D8DEE4; padding-bottom: 0.3em; }}
 h1 {{ font-size: 2em; margin: 4px 0 8px; }}
 h2 {{ font-size: 1.5em; margin: 4px 0 8px; }}
@@ -134,8 +134,8 @@ th, td {{ border: 1px solid #D1D5DB; padding: 6px 13px; text-align: left; }}
 th {{ background: rgba(0,0,0,0.04); font-weight: 600; }}
 tr:nth-child(odd) {{ background: rgba(0,0,0,0.02); }}
 tr:nth-child(even) {{ background: rgba(0,0,0,0.06); }}
-code {{ background: {codeBg}; padding: .2em .4em; border-radius: 6px; font-size: 85%; font-family: '{safeCodeFont}'; }}
-pre {{ background: {codeBg}; padding: 16px; border-radius: 6px; overflow-x: auto; line-height: 1.45; }}
+code {{ background: {codeBg}; padding: .2em .4em; border-radius: 6px; font-size: 85%; font-family: '{safeCodeFont}'; word-break: break-all; }}
+pre {{ background: {codeBg}; padding: 16px; border-radius: 6px; overflow-x: auto; line-height: 1.45; white-space: pre-wrap; word-break: break-all; }}
 pre code {{ background: none; padding: 0; font-size: 100%; }}
 blockquote {{ border-left: 4px solid #D8DEE4; color: #656D76; padding: 0 16px; margin: 8px 0; }}
 a {{ color: {linkColor}; }}

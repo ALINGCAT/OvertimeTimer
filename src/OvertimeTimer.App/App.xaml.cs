@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Services;
@@ -11,10 +10,7 @@ namespace OvertimeTimer.App;
 
 public partial class App : PrismApplication
 {
-    protected override Window CreateShell()
-    {
-        return Container.Resolve<MainWindow>();
-    }
+    protected override Window CreateShell() => Container.Resolve<MainWindow>();
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
@@ -44,9 +40,7 @@ public partial class App : PrismApplication
     {
         base.OnInitialized();
         if (MainWindow is not null)
-        {
             MainWindow.DataContext = Container.Resolve<MainWindowViewModel>();
-        }
 
         _ = InitializeAsync();
     }
@@ -55,30 +49,23 @@ public partial class App : PrismApplication
     {
         try
         {
-            var settingsStoreService = Container.Resolve<ISettingsStoreService>();
+            var store = Container.Resolve<ISettingsStoreService>();
             var appearanceSettingsService = Container.Resolve<IAppearanceSettingsService>();
             var diaryFileService = Container.Resolve<IDiaryFileService>();
 
-            var settingsDataStore = await settingsStoreService.LoadAsync();
-
-            var settingsFilePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "OvertimeTimer", "settings.json");
-            if (!File.Exists(settingsFilePath))
-            {
-                await settingsStoreService.SaveAsync(settingsDataStore);
-            }
-
-            appearanceSettingsService.Apply(settingsDataStore.AppearanceConfig);
+            var apData = await store.LoadAppearanceAsync();
+            appearanceSettingsService.Apply(apData.AppearanceConfig);
             appearanceSettingsService.ApplyPreviewSettings(
-                settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight,
-                settingsDataStore.PreviewBackgroundColor, settingsDataStore.PreviewTextColor, settingsDataStore.PreviewLinkColor,
-                settingsDataStore.PreviewCodeBackgroundColor, settingsDataStore.PreviewCodeFontFamily);
-            diaryFileService.Configure(settingsDataStore.DiaryStorageConfig);
+                apData.PreviewFontFamily, apData.PreviewFontSize, apData.PreviewLineHeight,
+                apData.PreviewBackgroundColor, apData.PreviewTextColor, apData.PreviewLinkColor,
+                apData.PreviewCodeBackgroundColor, apData.PreviewCodeFontFamily);
+
+            var stData = await store.LoadStorageAsync();
+            diaryFileService.Configure(stData.DiaryConfig);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"App initialization failed: {ex}");
+            Debug.WriteLine($"App init failed: {ex}");
         }
     }
 }

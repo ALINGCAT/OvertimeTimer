@@ -6,76 +6,32 @@ namespace OvertimeTimer.App.Services;
 
 public sealed class WorkScheduleProvider : IWorkScheduleProvider
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
-
-    private readonly string _settingsFilePath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "OvertimeTimer",
-        "settings.json");
-
+    private static readonly JsonSerializerOptions SerializerOptions = new() { PropertyNameCaseInsensitive = true };
+    private readonly ISettingsStoreService _store;
     private readonly string _overridesFilePath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "OvertimeTimer",
-        "overrides.json");
-
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OvertimeTimer", "overrides.json");
     private readonly Dictionary<DateOnly, DayOverride> _overrides = new();
 
     public WorkScheduleConfig Config { get; private set; } = new();
-
     public IReadOnlyList<DayOverride> Overrides => _overrides.Values.ToList().AsReadOnly();
-
     public event Action? ConfigChanged;
+
+    public WorkScheduleProvider(ISettingsStoreService store) { _store = store; }
 
     public void Load()
     {
-        if (!File.Exists(_settingsFilePath))
-        {
-            Config = new WorkScheduleConfig();
-        }
-        else
-        {
-            var json = File.ReadAllText(_settingsFilePath);
-            var settingsDataStore = JsonSerializer.Deserialize<SettingsDataStore>(json, SerializerOptions);
-            Config = settingsDataStore?.WorkScheduleConfig ?? new WorkScheduleConfig();
-        }
-
+        Config = Task.Run(() => _store.LoadWorkScheduleAsync()).Result;
         LoadOverridesFromFile();
     }
 
-    public async Task LoadAsync(CancellationToken cancellationToken = default)
+    public async Task LoadAsync(CancellationToken ct = default)
     {
-        if (!File.Exists(_settingsFilePath))
-        {
-            Config = new WorkScheduleConfig();
-            ConfigChanged?.Invoke();
-            return;
-        }
-
-        await using var stream = new FileStream(
-            _settingsFilePath,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.Read,
-            4096,
-            FileOptions.Asynchronous);
-
-        var settingsDataStore = await JsonSerializer.DeserializeAsync<SettingsDataStore>(
-            stream,
-            SerializerOptions,
-            cancellationToken);
-
-        Config = settingsDataStore?.WorkScheduleConfig ?? new WorkScheduleConfig();
+        Config = await _store.LoadWorkScheduleAsync(ct);
         LoadOverridesFromFile();
         ConfigChanged?.Invoke();
     }
 
-    public DayOverride? GetOverride(DateOnly date)
-    {
-        return _overrides.TryGetValue(date, out var o) ? o : null;
-    }
+    public DayOverride? GetOverride(DateOnly date) => _overrides.TryGetValue(date, out var o) ? o : null;
 
     public void AddOverride(DateOnly date, OverrideType type)
     {
@@ -92,94 +48,29 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
     public bool IsRestDay(DateOnly date)
     {
         var o = GetOverride(date);
-        if (o is not null)
-            return o.Type is OverrideType.Holiday or OverrideType.Leave;
-
+        if (o is not null) return o.Type is OverrideType.Holiday or OverrideType.Leave;
         return !IsWorkDay(date);
     }
 
     public bool IsWorkDay(DateOnly date)
     {
         var o = GetOverride(date);
-        if (o is not null)
-            return o.Type == OverrideType.AdjustWorkday;
-
-        if (Config.Mode == WorkScheduleMode.Daily)
-            return IsWorkDayByDaily(date);
-
-        return IsWorkDayByWeekly(date);
+        if (o is not null) return o.Type == OverrideType.AdjustWorkday;
+        return Config.Mode == WorkScheduleMode.Daily ? IsWorkDayByDaily(date) : IsWorkDayByWeekly(date);
     }
 
     private void LoadOverridesFromFile()
     {
         _overrides.Clear();
-        if (!File.Exists(_overridesFilePath))
-            return;
-
+        if (!File.Exists(_overridesFilePath)) return;
         try
         {
             var json = File.ReadAllText(_overridesFilePath);
             var list = JsonSerializer.Deserialize<List<DayOverride>>(json, SerializerOptions);
-            if (list is null)
-                return;
-
-            foreach (var o in list)
-            {
-                _overrides[o.Date] = o;
-            }
+            if (list is null) return;
+            foreach (var o in list) _overrides[o.Date] = o;
         }
-        catch
-        {
-        }
-    }
-
-    private bool IsWorkDayByDaily(DateOnly date)
-    {
-        var cycleLength = Config.WorkDays + Config.RestDays;
-        if (cycleLength <= 0)
-            return false;
-
-        var anchorDate = Config.AnchorDate;
-        var dayDiff = date.DayNumber - anchorDate.DayNumber;
-        var anchorPosition = Config.AnchorWorkDayIndex - 1;
-        var position = ((anchorPosition + dayDiff) % cycleLength + cycleLength) % cycleLength;
-
-        return position < Config.WorkDays;
-    }
-
-    private bool IsWorkDayByWeekly(DateOnly date)
-    {
-        if (Config.WeeklyCycles.Count == 0)
-            return false;
-
-        var anchorMonday = Config.AnchorDate.AddDays(-(((int)Config.AnchorDate.DayOfWeek + 6) % 7));
-        var targetMonday = date.AddDays(-(((int)date.DayOfWeek + 6) % 7));
-        var weekDiff = (targetMonday.DayNumber - anchorMonday.DayNumber) / 7;
-        var targetCycleWeekIndex = (weekDiff % Config.WeekCycleCount + Config.WeekCycleCount) % Config.WeekCycleCount;
-
-        WeeklyCycleItem? targetWeek = null;
-        foreach (var item in Config.WeeklyCycles)
-        {
-            if (item.WeekIndex - 1 == targetCycleWeekIndex)
-            {
-                targetWeek = item;
-                break;
-            }
-        }
-
-        targetWeek ??= Config.WeeklyCycles[targetCycleWeekIndex % Config.WeeklyCycles.Count];
-
-        return date.DayOfWeek switch
-        {
-            DayOfWeek.Monday => targetWeek.MondayWork,
-            DayOfWeek.Tuesday => targetWeek.TuesdayWork,
-            DayOfWeek.Wednesday => targetWeek.WednesdayWork,
-            DayOfWeek.Thursday => targetWeek.ThursdayWork,
-            DayOfWeek.Friday => targetWeek.FridayWork,
-            DayOfWeek.Saturday => targetWeek.SaturdayWork,
-            DayOfWeek.Sunday => targetWeek.SundayWork,
-            _ => false
-        };
+        catch { }
     }
 
     private async Task SaveOverridesAsync()
@@ -188,31 +79,37 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
         {
             var list = _overrides.Values.ToList();
             Directory.CreateDirectory(Path.GetDirectoryName(_overridesFilePath)!);
-            var temporaryFilePath = $"{_overridesFilePath}.tmp";
-
-            await using (var stream = new FileStream(
-                             temporaryFilePath,
-                             FileMode.Create,
-                             FileAccess.Write,
-                             FileShare.None,
-                             4096,
-                             FileOptions.Asynchronous))
-            {
-                await JsonSerializer.SerializeAsync(stream, list, SerializerOptions);
-                await stream.FlushAsync();
-            }
-
-            if (File.Exists(_overridesFilePath))
-            {
-                File.Replace(temporaryFilePath, _overridesFilePath, null);
-            }
-            else
-            {
-                File.Move(temporaryFilePath, _overridesFilePath);
-            }
+            var tmp = _overridesFilePath + ".tmp";
+            await File.WriteAllTextAsync(tmp, JsonSerializer.Serialize(list, SerializerOptions));
+            if (File.Exists(_overridesFilePath)) File.Replace(tmp, _overridesFilePath, null);
+            else File.Move(tmp, _overridesFilePath);
         }
-        catch
+        catch { }
+    }
+
+    private bool IsWorkDayByDaily(DateOnly date)
+    {
+        var cl = Config.WorkDays + Config.RestDays;
+        if (cl <= 0) return false;
+        var diff = date.DayNumber - Config.AnchorDate.DayNumber;
+        var pos = ((Config.AnchorWorkDayIndex - 1 + diff) % cl + cl) % cl;
+        return pos < Config.WorkDays;
+    }
+
+    private bool IsWorkDayByWeekly(DateOnly date)
+    {
+        if (Config.WeeklyCycles.Count == 0) return false;
+        var am = Config.AnchorDate.AddDays(-(((int)Config.AnchorDate.DayOfWeek + 6) % 7));
+        var tm = date.AddDays(-(((int)date.DayOfWeek + 6) % 7));
+        var wd = (tm.DayNumber - am.DayNumber) / 7;
+        var idx = (wd % Config.WeekCycleCount + Config.WeekCycleCount) % Config.WeekCycleCount;
+        var tw = Config.WeeklyCycles.Find(c => c.WeekIndex - 1 == idx) ?? Config.WeeklyCycles[idx % Config.WeeklyCycles.Count];
+        return date.DayOfWeek switch
         {
-        }
+            DayOfWeek.Monday => tw.MondayWork, DayOfWeek.Tuesday => tw.TuesdayWork,
+            DayOfWeek.Wednesday => tw.WednesdayWork, DayOfWeek.Thursday => tw.ThursdayWork,
+            DayOfWeek.Friday => tw.FridayWork, DayOfWeek.Saturday => tw.SaturdayWork,
+            DayOfWeek.Sunday => tw.SundayWork, _ => false
+        };
     }
 }

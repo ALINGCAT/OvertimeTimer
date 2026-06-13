@@ -33,6 +33,8 @@ public sealed class StorageSettingsViewModel : SettingsSectionViewModelBase
                 RaisePropertyChanged(nameof(DiaryStoragePathStatus));
             }
         };
+
+        PropertyChanged += (_, _) => ScheduleAutoSave(SaveAsync);
     }
 
     public string DiaryRootPath
@@ -143,23 +145,9 @@ public sealed class StorageSettingsViewModel : SettingsSectionViewModelBase
 
     public async Task<bool> SaveAsync()
     {
-        if (!TryValidateDiaryRootPath(out var feedbackMessage, out var isError))
-        {
-            _ = ShowSaveFeedbackAsync(feedbackMessage, isError);
-            return false;
-        }
-
-        try
-        {
-            await _saveAsync();
-        }
-        catch (Exception)
-        {
-            _ = ShowSaveFeedbackAsync(_loc["Settings.SaveFailed"], true);
-            return false;
-        }
-
-        _ = ShowSaveFeedbackAsync(_loc["Settings.Saved"], false);
+        if (!TryValidateDiaryRootPath(out _, out var isError)) return !isError;
+        try { await _saveAsync(); }
+        catch { return false; }
         return true;
     }
 

@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Prism.Commands;
 using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Services;
@@ -22,102 +23,79 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
         _colorSelectionService = colorSelectionService;
         _saveAsync = saveAsync;
         _loc = localizationService;
-        SaveCommand = new DelegateCommand(() => _ = SaveCurrentSectionAsync());
         ChooseColorCommand = new DelegateCommand<string>(ChooseColor);
+
+        foreach (var preset in AppearancePresets.All)
+            AvailablePresets.Add(preset);
+
+        PropertyChanged += (_, _) =>
+        {
+            if (!_matchingPreset) MatchPreset();
+            ScheduleAutoSave(() => SaveCurrentSectionAsync());
+        };
+    }
+
+    public ObservableCollection<AppearancePresets.Preset> AvailablePresets { get; } = new();
+
+    private PreviewSettingsViewModel? _previewSection;
+
+    public void SetPreviewSection(PreviewSettingsViewModel previewSection) => _previewSection = previewSection;
+
+    public event Action<AppearancePresets.Preset>? PresetSelected;
+
+    private AppearancePresets.Preset? _selectedPreset;
+    public AppearancePresets.Preset? SelectedPreset
+    {
+        get => _selectedPreset;
+        set
+        {
+            if (value is null || !SetProperty(ref _selectedPreset, value)) return;
+
+            WindowBackgroundColor = value.Config.WindowBackgroundColor;
+            CalendarWorkdayColor = value.Config.CalendarWorkdayColor;
+            CalendarRestDayColor = value.Config.CalendarRestDayColor;
+            CalendarTodayColor = value.Config.CalendarTodayColor;
+            CalendarOutOfMonthColor = value.Config.CalendarOutOfMonthColor;
+            CalendarOvertimeDotColor = value.Config.CalendarOvertimeDotColor;
+            CalendarDiaryDotColor = value.Config.CalendarDiaryDotColor;
+            CalendarHolidayColor = value.Config.CalendarHolidayColor;
+            CalendarAdjustWorkdayColor = value.Config.CalendarAdjustWorkdayColor;
+            CalendarLeaveColor = value.Config.CalendarLeaveColor;
+            CardBackgroundColor = value.Config.CardBackgroundColor;
+            CardBorderColor = value.Config.CardBorderColor;
+            CalendarDayBorderColor = value.Config.CalendarDayBorderColor;
+
+            _previewSection?.ApplyPreset(value);
+            PresetSelected?.Invoke(value);
+        }
     }
 
     private string _windowBackgroundColor = "#FFEAF3FF";
-    public string WindowBackgroundColor
-    {
-        get => _windowBackgroundColor;
-        set => SetProperty(ref _windowBackgroundColor, value);
-    }
-
+    public string WindowBackgroundColor { get => _windowBackgroundColor; set => SetProperty(ref _windowBackgroundColor, value); }
     private string _calendarWorkdayColor = "#FF0F172A";
-    public string CalendarWorkdayColor
-    {
-        get => _calendarWorkdayColor;
-        set => SetProperty(ref _calendarWorkdayColor, value);
-    }
-
+    public string CalendarWorkdayColor { get => _calendarWorkdayColor; set => SetProperty(ref _calendarWorkdayColor, value); }
     private string _calendarRestDayColor = "#FF94A3B8";
-    public string CalendarRestDayColor
-    {
-        get => _calendarRestDayColor;
-        set => SetProperty(ref _calendarRestDayColor, value);
-    }
-
+    public string CalendarRestDayColor { get => _calendarRestDayColor; set => SetProperty(ref _calendarRestDayColor, value); }
     private string _calendarTodayColor = "#FF22C55E";
-    public string CalendarTodayColor
-    {
-        get => _calendarTodayColor;
-        set => SetProperty(ref _calendarTodayColor, value);
-    }
-
+    public string CalendarTodayColor { get => _calendarTodayColor; set => SetProperty(ref _calendarTodayColor, value); }
     private string _calendarOutOfMonthColor = "#FFE2E8F0";
-    public string CalendarOutOfMonthColor
-    {
-        get => _calendarOutOfMonthColor;
-        set => SetProperty(ref _calendarOutOfMonthColor, value);
-    }
-
+    public string CalendarOutOfMonthColor { get => _calendarOutOfMonthColor; set => SetProperty(ref _calendarOutOfMonthColor, value); }
     private string _calendarOvertimeDotColor = "#FFDC2626";
-    public string CalendarOvertimeDotColor
-    {
-        get => _calendarOvertimeDotColor;
-        set => SetProperty(ref _calendarOvertimeDotColor, value);
-    }
-
+    public string CalendarOvertimeDotColor { get => _calendarOvertimeDotColor; set => SetProperty(ref _calendarOvertimeDotColor, value); }
     private string _calendarDiaryDotColor = "#FF16A34A";
-    public string CalendarDiaryDotColor
-    {
-        get => _calendarDiaryDotColor;
-        set => SetProperty(ref _calendarDiaryDotColor, value);
-    }
-
-    private string _previewBackgroundColor = "#FFF5F0E1";
-    public string PreviewBackgroundColor
-    {
-        get => _previewBackgroundColor;
-        set => SetProperty(ref _previewBackgroundColor, value);
-    }
-
+    public string CalendarDiaryDotColor { get => _calendarDiaryDotColor; set => SetProperty(ref _calendarDiaryDotColor, value); }
     private string _calendarHolidayColor = "#FF8B5CF6";
-    public string CalendarHolidayColor
-    {
-        get => _calendarHolidayColor;
-        set => SetProperty(ref _calendarHolidayColor, value);
-    }
-
+    public string CalendarHolidayColor { get => _calendarHolidayColor; set => SetProperty(ref _calendarHolidayColor, value); }
     private string _calendarAdjustWorkdayColor = "#FFB91C1C";
-    public string CalendarAdjustWorkdayColor
-    {
-        get => _calendarAdjustWorkdayColor;
-        set => SetProperty(ref _calendarAdjustWorkdayColor, value);
-    }
-
-    private string _cardBackgroundColor = "#FFFFFFFF";
-    public string CardBackgroundColor
-    {
-        get => _cardBackgroundColor;
-        set => SetProperty(ref _cardBackgroundColor, value);
-    }
-
-    private string _cardBorderColor = "#FFE5E7EB";
-    public string CardBorderColor
-    {
-        get => _cardBorderColor;
-        set => SetProperty(ref _cardBorderColor, value);
-    }
-
+    public string CalendarAdjustWorkdayColor { get => _calendarAdjustWorkdayColor; set => SetProperty(ref _calendarAdjustWorkdayColor, value); }
     private string _calendarLeaveColor = "#FF3B82F6";
-    public string CalendarLeaveColor
-    {
-        get => _calendarLeaveColor;
-        set => SetProperty(ref _calendarLeaveColor, value);
-    }
-
-    public DelegateCommand SaveCommand { get; }
+    public string CalendarLeaveColor { get => _calendarLeaveColor; set => SetProperty(ref _calendarLeaveColor, value); }
+    private string _calendarDayBorderColor = "#FFD4D4D8";
+    public string CalendarDayBorderColor { get => _calendarDayBorderColor; set => SetProperty(ref _calendarDayBorderColor, value); }
+    private string _cardBackgroundColor = "#FFFFFBEB";
+    public string CardBackgroundColor { get => _cardBackgroundColor; set => SetProperty(ref _cardBackgroundColor, value); }
+    private string _cardBorderColor = "#FFFDE68A";
+    public string CardBorderColor { get => _cardBorderColor; set => SetProperty(ref _cardBorderColor, value); }
 
     public DelegateCommand<string> ChooseColorCommand { get; }
 
@@ -135,6 +113,54 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
         CardBackgroundColor = appearanceConfig.CardBackgroundColor;
         CardBorderColor = appearanceConfig.CardBorderColor;
         CalendarLeaveColor = appearanceConfig.CalendarLeaveColor;
+        CalendarDayBorderColor = appearanceConfig.CalendarDayBorderColor;
+
+        MatchPreset();
+    }
+
+    private bool _matchingPreset;
+
+    private void MatchPreset()
+    {
+        _matchingPreset = true;
+        var config = ToModel();
+        foreach (var preset in AppearancePresets.All)
+        {
+            if (preset.IsMatch(config))
+            {
+                _selectedPreset = preset;
+                RaisePropertyChanged(nameof(SelectedPreset));
+                _matchingPreset = false;
+                return;
+            }
+        }
+
+        if (_selectedPreset is not null)
+        {
+            _selectedPreset = null;
+            RaisePropertyChanged(nameof(SelectedPreset));
+        }
+        _matchingPreset = false;
+    }
+
+    public AppearanceConfig ToModel()
+    {
+        return new AppearanceConfig
+        {
+            WindowBackgroundColor = WindowBackgroundColor,
+            CalendarWorkdayColor = CalendarWorkdayColor,
+            CalendarRestDayColor = CalendarRestDayColor,
+            CalendarTodayColor = CalendarTodayColor,
+            CalendarOutOfMonthColor = CalendarOutOfMonthColor,
+            CalendarOvertimeDotColor = CalendarOvertimeDotColor,
+            CalendarDiaryDotColor = CalendarDiaryDotColor,
+            CalendarHolidayColor = CalendarHolidayColor,
+            CalendarAdjustWorkdayColor = CalendarAdjustWorkdayColor,
+            CardBackgroundColor = CardBackgroundColor,
+            CardBorderColor = CardBorderColor,
+            CalendarLeaveColor = CalendarLeaveColor,
+            CalendarDayBorderColor = CalendarDayBorderColor
+        };
     }
 
     private void ChooseColor(string propertyName)
@@ -157,10 +183,7 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
         };
 
         var selectedColor = _colorSelectionService.ChooseColor(currentColor);
-        if (string.IsNullOrWhiteSpace(selectedColor))
-        {
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(selectedColor)) return;
 
         switch (propertyName)
         {
@@ -176,48 +199,19 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             case nameof(CardBackgroundColor): CardBackgroundColor = selectedColor; break;
             case nameof(CardBorderColor): CardBorderColor = selectedColor; break;
             case nameof(CalendarLeaveColor): CalendarLeaveColor = selectedColor; break;
+            case nameof(CalendarDayBorderColor): CalendarDayBorderColor = selectedColor; break;
         }
-    }
-
-    public AppearanceConfig ToModel()
-    {
-        return new AppearanceConfig
-        {
-            WindowBackgroundColor = WindowBackgroundColor,
-            CalendarWorkdayColor = CalendarWorkdayColor,
-            CalendarRestDayColor = CalendarRestDayColor,
-            CalendarTodayColor = CalendarTodayColor,
-            CalendarOutOfMonthColor = CalendarOutOfMonthColor,
-            CalendarOvertimeDotColor = CalendarOvertimeDotColor,
-            CalendarDiaryDotColor = CalendarDiaryDotColor,
-            CalendarHolidayColor = CalendarHolidayColor,
-            CalendarAdjustWorkdayColor = CalendarAdjustWorkdayColor,
-            CardBackgroundColor = CardBackgroundColor,
-            CardBorderColor = CardBorderColor,
-            CalendarLeaveColor = CalendarLeaveColor
-        };
     }
 
     private async Task SaveCurrentSectionAsync()
     {
-        if (!TryNormalizeAppearanceColors(out var feedbackMessage))
-        {
-            _ = ShowSaveFeedbackAsync(feedbackMessage, true);
-            return;
-        }
-
+        if (!TryNormalizeAppearanceColors(out _)) return;
         try
         {
             _appearanceSettingsService.Apply(ToModel());
             await _saveAsync();
         }
-        catch (Exception)
-        {
-            _ = ShowSaveFeedbackAsync(_loc["Settings.SaveFailed"], true);
-            return;
-        }
-
-        _ = ShowSaveFeedbackAsync(_loc["Settings.Saved"], false);
+        catch { }
     }
 
     private bool TryNormalizeAppearanceColors(out string feedbackMessage)
@@ -235,7 +229,8 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             ("Appearance.CalendarAdjustWorkday", () => CalendarAdjustWorkdayColor, v => CalendarAdjustWorkdayColor = v),
             ("Appearance.CardBackground", () => CardBackgroundColor, v => CardBackgroundColor = v),
             ("Appearance.CardBorder", () => CardBorderColor, v => CardBorderColor = v),
-            ("Appearance.CalendarLeave", () => CalendarLeaveColor, v => CalendarLeaveColor = v)
+            ("Appearance.CalendarLeave", () => CalendarLeaveColor, v => CalendarLeaveColor = v),
+            ("Appearance.CalendarDayBorder", () => CalendarDayBorderColor, v => CalendarDayBorderColor = v)
         };
 
         foreach (var (labelKey, getter, setter) in fields)
@@ -245,7 +240,6 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
                 feedbackMessage = string.Format(_loc["Settings.AppearanceColorFormatError"], _loc[labelKey]);
                 return false;
             }
-
             setter(normalizedColor);
         }
 

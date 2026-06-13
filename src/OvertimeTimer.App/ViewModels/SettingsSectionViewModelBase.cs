@@ -47,4 +47,17 @@ public abstract class SettingsSectionViewModelBase : ViewModelBase
         {
         }
     }
+
+    private CancellationTokenSource? _autoSaveCts;
+
+    protected void ScheduleAutoSave(Func<Task> save)
+    {
+        _autoSaveCts?.Cancel();
+        _autoSaveCts = new CancellationTokenSource();
+        var token = _autoSaveCts.Token;
+        _ = Task.Delay(100, token).ContinueWith(_ =>
+        {
+            if (!token.IsCancellationRequested) save();
+        }, TaskScheduler.Default);
+    }
 }

@@ -208,6 +208,10 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Appearance.CardBackground"] = "卡片背景色";
         _strings["Appearance.CardBorder"] = "卡片边框色";
         _strings["Appearance.CalendarLeave"] = "请假文字色";
+        _strings["Appearance.CalendarDayBorder"] = "月历边框色";
+        _strings["Appearance.Presets"] = "外观预设";
+        _strings["Appearance.Preset.Custom"] = "自定义";
+        _strings["Appearance.Preset.WarmBrown"] = "暖棕";
         _strings["Appearance.PreviewBackground"] = "背景色";
         _strings["Appearance.PreviewText"] = "文字色";
         _strings["Appearance.PreviewLink"] = "链接色";
@@ -215,5 +219,13 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Appearance.PreviewCodeFont"] = "代码块字体";
         _strings["Appearance.PreviewSection"] = "预览设置";
         _strings["Appearance.LanguageSection"] = "语言";
+        _strings["Appearance.Preset.SkyBlue"] = "淡蓝（默认）";
+        _strings["Appearance.Preset.Dark"] = "深色";
+        _strings["Appearance.Preset.WarmBrown"] = "暖棕";
+        _strings["Appearance.Preset.SageGreen"] = "豆沙绿";
+        _strings["Appearance.Preset.LightGray"] = "浅灰";
+        _strings["Appearance.Preset.CherryBlossom"] = "樱花粉";
+        _strings["Appearance.Preset.OceanBlue"] = "海洋蓝";
+        _strings["Appearance.Preset.DarkPurple"] = "暗紫";
     }
 }

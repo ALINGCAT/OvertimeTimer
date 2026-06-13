@@ -51,6 +51,7 @@ public sealed class AppearanceSettingsService : IAppearanceSettingsService
         ApplyBrush(resources, "CardBackgroundBrush", appearanceConfig.CardBackgroundColor);
         ApplyBrush(resources, "CardBorderBrush", appearanceConfig.CardBorderColor);
         ApplyBrush(resources, "CalendarLeaveBrush", appearanceConfig.CalendarLeaveColor);
+        ApplyBrush(resources, "CalendarDayBorderBrush", appearanceConfig.CalendarDayBorderColor);
     }
 
     public void ApplyPreviewSettings(string fontFamily, double fontSize, double lineHeight,

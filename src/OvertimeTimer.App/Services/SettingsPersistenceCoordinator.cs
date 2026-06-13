@@ -5,70 +5,57 @@ namespace OvertimeTimer.App.Services;
 
 public sealed class SettingsPersistenceCoordinator : ISettingsPersistenceCoordinator
 {
-    private readonly ISettingsStoreService _settingsStoreService;
+    private readonly ISettingsStoreService _store;
     private readonly IDiaryFileService _diaryFileService;
     private readonly IWorkScheduleProvider _workScheduleProvider;
     private readonly IAppearanceSettingsService _appearanceSettingsService;
 
     public SettingsPersistenceCoordinator(
-        ISettingsStoreService settingsStoreService,
-        IDiaryFileService diaryFileService,
-        IWorkScheduleProvider workScheduleProvider,
-        IAppearanceSettingsService appearanceSettingsService)
+        ISettingsStoreService store, IDiaryFileService diaryFileService,
+        IWorkScheduleProvider workScheduleProvider, IAppearanceSettingsService appearanceSettingsService)
     {
-        _settingsStoreService = settingsStoreService;
+        _store = store;
         _diaryFileService = diaryFileService;
         _workScheduleProvider = workScheduleProvider;
         _appearanceSettingsService = appearanceSettingsService;
     }
 
-    public async Task LoadAsync(
-        WorkScheduleSettingsViewModel workScheduleSection,
-        StorageSettingsViewModel storageSection,
-        AppearanceSettingsViewModel appearanceSection,
-        GeneralSettingsViewModel generalSection,
-        PreviewSettingsViewModel previewSection,
-        CancellationToken cancellationToken = default)
+    public async Task LoadAsync(WorkScheduleSettingsViewModel ws, StorageSettingsViewModel ss, AppearanceSettingsViewModel ap,
+        GeneralSettingsViewModel gs, PreviewSettingsViewModel ps, CancellationToken ct = default)
     {
-        var settingsDataStore = await _settingsStoreService.LoadAsync(cancellationToken);
-        workScheduleSection.LoadFrom(settingsDataStore.WorkScheduleConfig);
-        storageSection.LoadFrom(settingsDataStore.DiaryStorageConfig);
-        appearanceSection.LoadFrom(settingsDataStore.AppearanceConfig);
-        previewSection.LoadFrom(settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight,
-            settingsDataStore.PreviewBackgroundColor, settingsDataStore.PreviewTextColor,
-            settingsDataStore.PreviewLinkColor, settingsDataStore.PreviewCodeBackgroundColor,
-            settingsDataStore.PreviewCodeFontFamily);
+        var wc = await _store.LoadWorkScheduleAsync(ct);
+        ws.LoadFrom(wc);
+
+        var ad = await _store.LoadAppearanceAsync(ct);
+        ap.LoadFrom(ad.AppearanceConfig);
+        ps.LoadFrom(ad.PreviewFontFamily, ad.PreviewFontSize, ad.PreviewLineHeight,
+            ad.PreviewBackgroundColor, ad.PreviewTextColor, ad.PreviewLinkColor,
+            ad.PreviewCodeBackgroundColor, ad.PreviewCodeFontFamily);
+
+        var sd = await _store.LoadStorageAsync(ct);
+        ss.LoadFrom(sd.DiaryConfig);
     }
 
-    public async Task SaveAsync(
-        WorkScheduleSettingsViewModel workScheduleSection,
-        StorageSettingsViewModel storageSection,
-        AppearanceSettingsViewModel appearanceSection,
-        GeneralSettingsViewModel generalSection,
-        PreviewSettingsViewModel previewSection,
-        CancellationToken cancellationToken = default)
+    public async Task SaveAsync(WorkScheduleSettingsViewModel ws, StorageSettingsViewModel ss, AppearanceSettingsViewModel ap,
+        GeneralSettingsViewModel gs, PreviewSettingsViewModel ps, CancellationToken ct = default)
     {
-        var settingsDataStore = new SettingsDataStore
-        {
-            WorkScheduleConfig = workScheduleSection.ToModel(),
-            DiaryStorageConfig = storageSection.ToModel(),
-            AppearanceConfig = appearanceSection.ToModel(),
-            PreviewFontFamily = previewSection.PreviewFontFamily,
-            PreviewFontSize = previewSection.PreviewFontSize,
-            PreviewLineHeight = previewSection.PreviewLineHeight,
-            PreviewBackgroundColor = previewSection.PreviewBackgroundColor,
-            PreviewTextColor = previewSection.PreviewTextColor,
-            PreviewLinkColor = previewSection.PreviewLinkColor,
-            PreviewCodeBackgroundColor = previewSection.PreviewCodeBackgroundColor,
-            PreviewCodeFontFamily = previewSection.PreviewCodeFontFamily
-        };
+        await _store.SaveWorkScheduleAsync(ws.ToModel(), ct);
 
-        await _settingsStoreService.SaveAsync(settingsDataStore, cancellationToken);
-        _diaryFileService.Configure(settingsDataStore.DiaryStorageConfig);
-        _appearanceSettingsService.ApplyPreviewSettings(
-            settingsDataStore.PreviewFontFamily, settingsDataStore.PreviewFontSize, settingsDataStore.PreviewLineHeight,
-            settingsDataStore.PreviewBackgroundColor, settingsDataStore.PreviewTextColor, settingsDataStore.PreviewLinkColor,
-            settingsDataStore.PreviewCodeBackgroundColor, settingsDataStore.PreviewCodeFontFamily);
-        await _workScheduleProvider.LoadAsync(cancellationToken);
+        await _store.SaveAppearanceAsync(new AppearanceDataStore
+        {
+            AppearanceConfig = ap.ToModel(),
+            PreviewFontFamily = ps.PreviewFontFamily, PreviewFontSize = ps.PreviewFontSize,
+            PreviewLineHeight = ps.PreviewLineHeight, PreviewBackgroundColor = ps.PreviewBackgroundColor,
+            PreviewTextColor = ps.PreviewTextColor, PreviewLinkColor = ps.PreviewLinkColor,
+            PreviewCodeBackgroundColor = ps.PreviewCodeBackgroundColor, PreviewCodeFontFamily = ps.PreviewCodeFontFamily
+        }, ct);
+
+        await _store.SaveStorageAsync(new StorageDataStore { DiaryConfig = ss.ToModel() }, ct);
+
+        _diaryFileService.Configure(ss.ToModel());
+        _appearanceSettingsService.ApplyPreviewSettings(ps.PreviewFontFamily, ps.PreviewFontSize, ps.PreviewLineHeight,
+            ps.PreviewBackgroundColor, ps.PreviewTextColor, ps.PreviewLinkColor,
+            ps.PreviewCodeBackgroundColor, ps.PreviewCodeFontFamily);
+        await _workScheduleProvider.LoadAsync(ct);
     }
 }

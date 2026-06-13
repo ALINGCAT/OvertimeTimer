@@ -20,11 +20,11 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
     {
         _saveAsync = saveAsync;
         _loc = localizationService;
+        SaveCommand = new DelegateCommand(() => _ = SaveCurrentSectionAsync());
         WeeklyCycleItems = new ObservableCollection<WeeklyCycleItemViewModel>
         {
             new(1)
         };
-        SaveCommand = new DelegateCommand(() => _ = SaveCurrentSectionAsync());
 
         _loc.PropertyChanged += (_, e) =>
         {
@@ -135,8 +135,6 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
         set => SetProperty(ref _anchorWorkDayIndex, ClampAnchorWorkDayIndex(value));
     }
 
-    public DelegateCommand SaveCommand { get; }
-
     public void LoadFrom(WorkScheduleConfig workScheduleConfig)
     {
         SelectedMode = workScheduleConfig.Mode;
@@ -173,6 +171,8 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
         };
     }
 
+    public DelegateCommand SaveCommand { get; }
+
     public Task ShowLoadFailedFeedbackAsync()
     {
         return ShowSaveFeedbackAsync(_loc["Settings.LoadFailed"], true);
@@ -181,18 +181,9 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
     private async Task SaveCurrentSectionAsync()
     {
         EnsureWeeklyCycleItems();
-
-        try
-        {
-            await _saveAsync();
-        }
-        catch (Exception)
-        {
-            await ShowSaveFeedbackAsync(_loc["Settings.SaveFailed"], true);
-            return;
-        }
-
-        await ShowSaveFeedbackAsync(_loc["Settings.Saved"], false);
+        try { await _saveAsync(); }
+        catch { await ShowSaveFeedbackAsync("保存失败", true); return; }
+        await ShowSaveFeedbackAsync("保存成功", false);
     }
 
     private void EnsureWeeklyCycleItems()

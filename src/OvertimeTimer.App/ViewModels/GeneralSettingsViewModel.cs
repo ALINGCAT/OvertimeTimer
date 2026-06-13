@@ -21,58 +21,50 @@ public sealed class GeneralSettingsViewModel : SettingsSectionViewModelBase
         _settingsInteractionService = settingsInteractionService;
         _storageSection = new StorageSettingsViewModel(settingsInteractionService, saveAsync, localizationService);
         AvailableLanguages = new ObservableCollection<LanguageItem>(localizationService.AvailableLanguages);
-        _selectedLanguage = AvailableLanguages.FirstOrDefault(
-            l => l.Code == localizationService.CurrentLanguage);
+        _selectedLanguage = AvailableLanguages.FirstOrDefault(l => l.Code == localizationService.CurrentLanguage);
 
         _storageSection.PropertyChanged += (_, args) =>
         {
-            if (args.PropertyName == nameof(SettingsSectionViewModelBase.HasSaveFeedback)
-                || args.PropertyName == nameof(SettingsSectionViewModelBase.SaveFeedbackMessage))
+            if (args.PropertyName == nameof(HasSaveFeedback) || args.PropertyName == nameof(SaveFeedbackMessage))
             {
                 RaisePropertyChanged(nameof(HasSaveFeedback));
                 RaisePropertyChanged(nameof(SaveFeedbackMessage));
             }
         };
 
-        SaveCommand = new DelegateCommand(() => _ = SaveAsync());
         OpenSettingsDirectoryCommand = new DelegateCommand(() => _settingsInteractionService.OpenSettingsDirectory());
+        SaveCommand = new DelegateCommand(() => _ = SaveAsync());
     }
 
     public StorageSettingsViewModel StorageSection => _storageSection;
-
     public ObservableCollection<LanguageItem> AvailableLanguages { get; }
-
     public LanguageItem? SelectedLanguage
     {
         get => _selectedLanguage;
-        set => SetProperty(ref _selectedLanguage, value);
+        set
+        {
+            if (SetProperty(ref _selectedLanguage, value) && value is not null)
+                _ = SetLanguageAsync(value);
+        }
     }
-
-    public DelegateCommand SaveCommand { get; }
-
     public DelegateCommand OpenSettingsDirectoryCommand { get; }
+    public DelegateCommand SaveCommand { get; }
 
     private async Task SaveAsync()
     {
         var saved = await _storageSection.SaveAsync();
         if (!saved)
-            return;
-
-        if (_selectedLanguage is not null && _selectedLanguage.Code != _localizationService.CurrentLanguage)
         {
-            await SetLanguageAsync(_selectedLanguage);
+            await ShowSaveFeedbackAsync("保存失败", true);
+            return;
         }
+
+        await ShowSaveFeedbackAsync("保存成功", false);
     }
 
     private async Task SetLanguageAsync(LanguageItem language)
     {
-        try
-        {
-            await _localizationService.SetLanguageAsync(language.Code);
-        }
-        catch (Exception)
-        {
-            await ShowSaveFeedbackAsync(_localizationService["Language.SwitchFailed"], true);
-        }
+        try { await _localizationService.SetLanguageAsync(language.Code); }
+        catch { await ShowSaveFeedbackAsync(_localizationService["Language.SwitchFailed"], true); }
     }
 }

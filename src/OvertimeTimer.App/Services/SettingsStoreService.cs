@@ -6,66 +6,44 @@ namespace OvertimeTimer.App.Services;
 
 public sealed class SettingsStoreService : ISettingsStoreService
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
+    private static readonly JsonSerializerOptions Opts = new() { PropertyNameCaseInsensitive = true, WriteIndented = true };
+    private readonly string _baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OvertimeTimer");
+
+    private string WsPath => Path.Combine(_baseDir, "work-schedule.json");
+    private string ApPath => Path.Combine(_baseDir, "appearance.json");
+    private string StPath => Path.Combine(_baseDir, "storage.json");
+
+    public async Task<WorkScheduleConfig> LoadWorkScheduleAsync(CancellationToken ct = default)
+        => await LoadAsync<WorkScheduleConfig>(WsPath, ct) ?? new();
+
+    public async Task SaveWorkScheduleAsync(WorkScheduleConfig config, CancellationToken ct = default)
+        => await SaveAsync(WsPath, config, ct);
+
+    public async Task<AppearanceDataStore> LoadAppearanceAsync(CancellationToken ct = default)
+        => await LoadAsync<AppearanceDataStore>(ApPath, ct) ?? new();
+
+    public async Task SaveAppearanceAsync(AppearanceDataStore data, CancellationToken ct = default)
+        => await SaveAsync(ApPath, data, ct);
+
+    public async Task<StorageDataStore> LoadStorageAsync(CancellationToken ct = default)
+        => await LoadAsync<StorageDataStore>(StPath, ct) ?? new();
+
+    public async Task SaveStorageAsync(StorageDataStore data, CancellationToken ct = default)
+        => await SaveAsync(StPath, data, ct);
+
+    private static async Task<T?> LoadAsync<T>(string path, CancellationToken ct) where T : class
     {
-        WriteIndented = true
-    };
-
-    private readonly string _settingsDirectoryPath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "OvertimeTimer");
-
-    public async Task<SettingsDataStore> LoadAsync(CancellationToken cancellationToken = default)
-    {
-        var settingsFilePath = GetSettingsFilePath();
-        if (!File.Exists(settingsFilePath))
-        {
-            return new SettingsDataStore();
-        }
-
-        await using var stream = new FileStream(
-            settingsFilePath,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.Read,
-            4096,
-            FileOptions.Asynchronous);
-
-        var settingsDataStore = await JsonSerializer.DeserializeAsync<SettingsDataStore>(
-            stream,
-            SerializerOptions,
-            cancellationToken);
-
-        return settingsDataStore ?? new SettingsDataStore();
+        if (!File.Exists(path)) return null;
+        var json = await File.ReadAllTextAsync(path, ct);
+        return JsonSerializer.Deserialize<T>(json, Opts);
     }
 
-    public async Task SaveAsync(SettingsDataStore settingsDataStore, CancellationToken cancellationToken = default)
+    private static async Task SaveAsync<T>(string path, T data, CancellationToken ct)
     {
-        Directory.CreateDirectory(_settingsDirectoryPath);
-
-        var settingsFilePath = GetSettingsFilePath();
-        var temporaryFilePath = $"{settingsFilePath}.tmp";
-
-        await using (var stream = new FileStream(
-                         temporaryFilePath,
-                         FileMode.Create,
-                         FileAccess.Write,
-                         FileShare.None,
-                         4096,
-                         FileOptions.Asynchronous))
-        {
-            await JsonSerializer.SerializeAsync(stream, settingsDataStore, SerializerOptions, cancellationToken);
-            await stream.FlushAsync(cancellationToken);
-        }
-
-        if (File.Exists(settingsFilePath))
-        {
-            File.Replace(temporaryFilePath, settingsFilePath, null);
-            return;
-        }
-
-        File.Move(temporaryFilePath, settingsFilePath);
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        var tmp = path + ".tmp";
+        await File.WriteAllTextAsync(tmp, JsonSerializer.Serialize(data, Opts), ct);
+        if (File.Exists(path)) File.Replace(tmp, path, null);
+        else File.Move(tmp, path);
     }
-
-    private string GetSettingsFilePath() => Path.Combine(_settingsDirectoryPath, "settings.json");
 }
