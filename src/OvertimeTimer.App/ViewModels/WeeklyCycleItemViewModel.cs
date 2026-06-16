@@ -17,7 +17,7 @@ public sealed class WeeklyCycleItemViewModel : ViewModelBase
         };
     }
 
-    public int WeekIndex { get; }
+    public int WeekIndex { get; set; }
 
     public string WeekLabel => string.Format(LocalizationService.Instance["Calendar.WeekLabelFormat"], WeekIndex);
 

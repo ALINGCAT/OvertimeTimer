@@ -138,18 +138,50 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
     public void LoadFrom(WorkScheduleConfig workScheduleConfig)
     {
         SelectedMode = workScheduleConfig.Mode;
-        AnchorDate = workScheduleConfig.AnchorDate;
         WeekCycleCount = workScheduleConfig.WeekCycleCount;
         WorkDays = workScheduleConfig.WorkDays;
         RestDays = workScheduleConfig.RestDays;
-        AnchorWorkDayIndex = workScheduleConfig.AnchorWorkDayIndex;
+        var today = DateOnly.FromDateTime(DateTime.Today);
 
-        WeeklyCycleItems.Clear();
-        foreach (var weeklyCycle in workScheduleConfig.WeeklyCycles.OrderBy(item => item.WeekIndex))
+        if (SelectedMode == WorkScheduleMode.Weekly)
         {
-            WeeklyCycleItems.Add(WeeklyCycleItemViewModel.FromModel(weeklyCycle));
+            var ordered = workScheduleConfig.WeeklyCycles.OrderBy(i => i.WeekIndex).ToList();
+            if (ordered.Count == WeekCycleCount && WeekCycleCount > 0)
+            {
+                var anchorMon = workScheduleConfig.AnchorDate.AddDays(-(((int)workScheduleConfig.AnchorDate.DayOfWeek + 6) % 7));
+                var todayMon = today.AddDays(-(((int)today.DayOfWeek + 6) % 7));
+                var weekDiff = (todayMon.DayNumber - anchorMon.DayNumber) / 7;
+                var shift = ((weekDiff % WeekCycleCount) + WeekCycleCount) % WeekCycleCount;
+                if (shift > 0)
+                    ordered = ordered.Skip(shift).Concat(ordered.Take(shift)).ToList();
+            }
+
+            WeeklyCycleItems.Clear();
+            for (int i = 0; i < ordered.Count; i++)
+            {
+                var item = WeeklyCycleItemViewModel.FromModel(ordered[i]);
+                item.WeekIndex = i + 1;
+                WeeklyCycleItems.Add(item);
+            }
+            AnchorWorkDayIndex = 1;
+        }
+        else
+        {
+            var cycleLen = WorkDays + RestDays;
+            if (cycleLen > 0)
+            {
+                var dayDiff = today.DayNumber - workScheduleConfig.AnchorDate.DayNumber;
+                var anchorPos = workScheduleConfig.AnchorWorkDayIndex - 1;
+                var todayPos = ((anchorPos + dayDiff) % cycleLen + cycleLen) % cycleLen + 1;
+                AnchorWorkDayIndex = todayPos;
+            }
+
+            WeeklyCycleItems.Clear();
+            foreach (var item in workScheduleConfig.WeeklyCycles.OrderBy(i => i.WeekIndex))
+                WeeklyCycleItems.Add(WeeklyCycleItemViewModel.FromModel(item));
         }
 
+        AnchorDate = today;
         EnsureWeeklyCycleItems();
         ClampAnchorWorkDayIndex();
     }
@@ -159,12 +191,9 @@ public sealed class WorkScheduleSettingsViewModel : SettingsSectionViewModelBase
         return new WorkScheduleConfig
         {
             Mode = SelectedMode,
-            AnchorDate = AnchorDate,
+            AnchorDate = DateOnly.FromDateTime(DateTime.Today),
             WeekCycleCount = WeekCycleCount,
-            WeeklyCycles = WeeklyCycleItems
-                .OrderBy(item => item.WeekIndex)
-                .Select(item => item.ToModel())
-                .ToList(),
+            WeeklyCycles = WeeklyCycleItems.OrderBy(i => i.WeekIndex).Select(i => i.ToModel()).ToList(),
             WorkDays = WorkDays,
             RestDays = RestDays,
             AnchorWorkDayIndex = AnchorWorkDayIndex
