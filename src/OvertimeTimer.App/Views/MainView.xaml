@@ -121,7 +121,18 @@
                                                    Margin="0,0,4,3"
                                                    Foreground="{DynamicResource CalendarDiaryDotBrush}"
                                                    Text="●"
-                                                   Visibility="{Binding HasDiary, Converter={StaticResource BoolToVisibility}}" />
+                                                   Visibility="{Binding HasDiary, Converter={StaticResource BoolToVisibility}}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Opacity" Value="1" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasUnsavedDiary}" Value="True">
+                                                            <Setter Property="Opacity" Value="0.4" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
                                     </Grid>
                                 </Button>
                             </Border>

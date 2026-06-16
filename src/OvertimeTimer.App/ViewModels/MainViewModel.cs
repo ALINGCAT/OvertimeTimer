@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Prism.Commands;
 using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Models;
@@ -20,6 +21,9 @@ public sealed class MainViewModel : ViewModelBase
     private string _yearMonthLabel = string.Empty;
     private string _monthlyOvertimeSummary = string.Empty;
     private string _selectedDateLabel = string.Empty;
+    private bool _refreshingStats;
+    private readonly Dictionary<DateOnly, string> _unsavedDiaryCache = new();
+    private readonly Dictionary<DateOnly, string> _diarySnapshot = new();
 
     public MainViewModel(
         IStatusMessageService statusMessageService,
@@ -36,7 +40,25 @@ public sealed class MainViewModel : ViewModelBase
         _workScheduleProvider = workScheduleProvider;
         _loc = localizationService;
         _dayRecordViewModel = new DayRecordViewModel(statusMessageService, recordStoreService, diaryFileService, localizationService, appearanceSettingsService);
-        _dayRecordViewModel.Saved += () => _ = RefreshMonthStatsAsync();
+        _dayRecordViewModel.Saved += () =>
+        {
+            var date = SelectedDayRecord.Date;
+            _diarySnapshot[date] = SelectedDayRecord.DiaryMarkdown;
+            var day = CalendarDays.FirstOrDefault(d => d.Date == date);
+            if (day is not null) day.HasUnsavedDiary = false;
+            _unsavedDiaryCache.Remove(date);
+            _ = RefreshMonthStatsAsync();
+        };
+
+        _dayRecordViewModel.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(DayRecordViewModel.IsDirty) && SelectedDayRecord.IsDirty)
+            {
+                var day = CalendarDays.FirstOrDefault(d => d.Date == SelectedDayRecord.Date);
+                if (day is not null) day.HasUnsavedDiary = true;
+            }
+        };
+
         _monthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + _loc["Calendar.DefaultOvertimeSummary"];
         CalendarDays = new ObservableCollection<CalendarDayViewModel>();
 
@@ -288,6 +310,8 @@ public sealed class MainViewModel : ViewModelBase
                 day.HasDiary = true;
             }
 
+            day.HasUnsavedDiary = _unsavedDiaryCache.ContainsKey(date);
+
             CalendarDays.Add(day);
         }
 
@@ -315,58 +339,102 @@ public sealed class MainViewModel : ViewModelBase
 
     private async Task RefreshMonthStatsAsync()
     {
-        var records = await _recordStoreService.LoadAllAsync();
-        var firstDay = _displayedMonth;
-        var monthEnd = firstDay.AddMonths(1).AddDays(-1);
-        int totalMinutes = 0;
-
-        foreach (var day in CalendarDays)
+        if (_refreshingStats) return;
+        _refreshingStats = true;
+        try
         {
-            if (day.Date < firstDay || day.Date > monthEnd)
+            var records = await _recordStoreService.LoadAllAsync();
+            var firstDay = _displayedMonth;
+            var monthEnd = firstDay.AddMonths(1).AddDays(-1);
+            int totalMinutes = 0;
+
+            foreach (var day in CalendarDays)
             {
-                day.HasOvertime = false;
-                day.HasDiary = false;
-                continue;
+                if (day.Date < firstDay || day.Date > monthEnd)
+                {
+                    day.HasOvertime = false;
+                    day.HasDiary = false;
+                    continue;
+                }
+
+                var record = records.Find(r => r.Date == day.Date);
+                day.HasOvertime = record is not null && (record.OvertimeHours > 0 || record.OvertimeMinutes > 0);
+                if (record is not null)
+                    totalMinutes += record.OvertimeHours * 60 + record.OvertimeMinutes;
+
+                day.HasDiary = await _diaryFileService.ExistsAsync(day.Date);
+                day.HasUnsavedDiary = _unsavedDiaryCache.ContainsKey(day.Date);
             }
 
-            var record = records.Find(r => r.Date == day.Date);
-            day.HasOvertime = record is not null && (record.OvertimeHours > 0 || record.OvertimeMinutes > 0);
-            if (record is not null)
-                totalMinutes += record.OvertimeHours * 60 + record.OvertimeMinutes;
+            var totalHours = totalMinutes / 60;
+            var remainingMinutes = totalMinutes % 60;
+            MonthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + string.Format(_loc["Calendar.OvertimeFormat"], totalHours, remainingMinutes);
 
-            day.HasDiary = await _diaryFileService.ExistsAsync(day.Date);
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var daysRemaining = 0;
+            for (var d = today.AddDays(1); d <= monthEnd; d = d.AddDays(1))
+            {
+                if (_workScheduleProvider.IsWorkDay(d))
+                    daysRemaining++;
+            }
+
+            if (daysRemaining > 0)
+                MonthlyOvertimeSummary += string.Format(_loc["Calendar.WorkDaysRemaining"], daysRemaining);
         }
-
-        var totalHours = totalMinutes / 60;
-        var remainingMinutes = totalMinutes % 60;
-        MonthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + string.Format(_loc["Calendar.OvertimeFormat"], totalHours, remainingMinutes);
-
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var daysRemaining = 0;
-        for (var d = today.AddDays(1); d <= monthEnd; d = d.AddDays(1))
+        catch (Exception ex)
         {
-            if (_workScheduleProvider.IsWorkDay(d))
-                daysRemaining++;
+            Debug.WriteLine($"[RefreshMonthStats] {ex.Message}");
         }
-
-        if (daysRemaining > 0)
-            MonthlyOvertimeSummary += string.Format(_loc["Calendar.WorkDaysRemaining"], daysRemaining);
+        finally
+        {
+            _refreshingStats = false;
+        }
     }
 
     private async Task SelectDayAsync(DateOnly date)
     {
-        SelectedDayRecord.Date = date;
-
-        foreach (var day in CalendarDays)
+        try
         {
-            day.IsSelected = day.Date == date;
+            var prevDate = SelectedDayRecord.Date;
+            var prevContent = SelectedDayRecord.DiaryMarkdown;
+            if (!string.IsNullOrWhiteSpace(prevContent) && prevContent != _diarySnapshot.GetValueOrDefault(prevDate, ""))
+            {
+                _unsavedDiaryCache[prevDate] = prevContent;
+                var cachedDay = CalendarDays.FirstOrDefault(d => d.Date == prevDate);
+                if (cachedDay is not null) cachedDay.HasUnsavedDiary = true;
+            }
+
+            SelectedDayRecord.Date = date;
+
+            foreach (var day in CalendarDays)
+            {
+                day.IsSelected = day.Date == date;
+            }
+
+            SelectedDay = CalendarDays.FirstOrDefault(day => day.Date == date)
+                ?? CalendarDays.FirstOrDefault(day => day.IsInCurrentMonth);
+            UpdateSelectedDateLabel(date);
+
+            await SelectedDayRecord.LoadAsync(date);
+            _diarySnapshot[date] = SelectedDayRecord.DiaryMarkdown;
+
+            if (_unsavedDiaryCache.TryGetValue(date, out var cached))
+            {
+                if (cached != SelectedDayRecord.DiaryMarkdown)
+                    SelectedDayRecord.DiaryMarkdown = cached;
+                else
+                    _unsavedDiaryCache.Remove(date);
+            }
+            else
+            {
+                var day = CalendarDays.FirstOrDefault(d => d.Date == date);
+                if (day is not null) day.HasUnsavedDiary = false;
+            }
         }
-
-        SelectedDay = CalendarDays.FirstOrDefault(day => day.Date == date)
-            ?? CalendarDays.FirstOrDefault(day => day.IsInCurrentMonth);
-        UpdateSelectedDateLabel(date);
-
-        await SelectedDayRecord.LoadAsync(date);
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[SelectDayAsync] {ex.Message}");
+        }
     }
 
     private void UpdateSelectedDateLabel(DateOnly date)

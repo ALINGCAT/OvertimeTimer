@@ -45,17 +45,7 @@ public sealed class DayRecordViewModel : ViewModelBase
         _appearanceSettingsService.PreviewSettingsChanged += () => RaisePropertyChanged(nameof(HtmlPreview));
     }
 
-    public DateOnly Date
-    {
-        get => _date;
-        set
-        {
-            if (SetProperty(ref _date, value))
-            {
-                RaisePropertyChanged(nameof(DateDisplay));
-            }
-        }
-    }
+    public DateOnly Date { get => _date; set { if (SetProperty(ref _date, value)) RaisePropertyChanged(nameof(DateDisplay)); } }
 
     public string DateDisplay => Date.ToString("yyyy-MM-dd");
 
@@ -142,17 +132,6 @@ a {{ color: {linkColor}; }}
 ul, ol {{ padding-left: 2em; }}
 img {{ max-width: 100%; }}
 </style></head><body>{body}</body></html>";
-        }
-    }
-
-    public string BodyHtml
-    {
-        get
-        {
-            if (string.IsNullOrWhiteSpace(DiaryMarkdown))
-                return "";
-
-            return Markdown.ToHtml(DiaryMarkdown, Pipeline);
         }
     }
 

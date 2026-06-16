@@ -116,6 +116,7 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
     private void LoadDefaultStrings()
     {
         _strings.Clear();
+        _strings["Main.Title"] = "加班计时工具";
         _strings["Calendar.Monday"] = "周一";
         _strings["Calendar.Tuesday"] = "周二";
         _strings["Calendar.Wednesday"] = "周三";
