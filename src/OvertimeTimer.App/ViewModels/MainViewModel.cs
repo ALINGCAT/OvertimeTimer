@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Windows.Threading;
 using Prism.Commands;
 using OvertimeTimer.App.Localization;
 using OvertimeTimer.App.Models;
@@ -77,8 +78,10 @@ public sealed class MainViewModel : ViewModelBase
         {
             if (e.PropertyName == "Item[]")
             {
-                _ = LoadMonthAsync(_displayedMonth);
-            }
+        Dispatcher.CurrentDispatcher.BeginInvoke(
+            new Action(() => _ = LoadMonthAsync(_displayedMonth)),
+            DispatcherPriority.Loaded);
+    }
         };
 
         _ = LoadMonthAsync(_displayedMonth);
