@@ -133,6 +133,7 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Calendar.DefaultOvertimeSummary"] = "0小时0分钟";
         _strings["Calendar.MonthlyPrefix"] = "本月已加";
         _strings["Calendar.WorkDaysRemaining"] = " 本月工作日剩余{0}天";
+        _strings["Calendar.MonthWorkDays"] = "本月的工作日有{0}天";
         _strings["Calendar.Holiday"] = "节假日";
         _strings["Calendar.AdjustWorkday"] = "调休";
         _strings["Calendar.Leave"] = "请假";

@@ -16,6 +16,7 @@
   "Calendar.DefaultOvertimeSummary": "0 hrs 0 mins",
   "Calendar.MonthlyPrefix": "MTD: ",
   "Calendar.WorkDaysRemaining": " {0} work day(s) remaining",
+  "Calendar.MonthWorkDays": "{0} work days this month",
   "Calendar.Holiday": "Holiday",
   "Calendar.AdjustWorkday": "Workday Adj.",
   "Calendar.TotalOvertime": "Total Overtime: {0}",

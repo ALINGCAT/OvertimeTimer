@@ -159,11 +159,12 @@ public sealed class MainViewModel : ViewModelBase
         var result = _monthSelectionDialogService.Show(_displayedMonth);
         if (result is not null)
         {
-            SetDisplayedMonth(result.SelectedMonth);
             if (result.UseTodayAsSelectedDate)
-            {
                 SelectedDate = DateOnly.FromDateTime(DateTime.Today);
-            }
+            else if (SelectedDate.Year != result.SelectedMonth.Year || SelectedDate.Month != result.SelectedMonth.Month)
+                SelectedDate = result.SelectedMonth;
+
+            SetDisplayedMonth(result.SelectedMonth);
         }
     }
 
@@ -320,24 +321,30 @@ public sealed class MainViewModel : ViewModelBase
 
         var totalHours = totalMinutes / 60;
         var remainingMinutes = totalMinutes % 60;
+
         MonthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + string.Format(_loc["Calendar.OvertimeFormat"], totalHours, remainingMinutes);
 
         var today = DateOnly.FromDateTime(DateTime.Today);
-        var monthEndCalc = firstDay.AddMonths(1).AddDays(-1);
         var daysRemaining = 0;
-        for (var d = today.AddDays(1); d <= monthEndCalc; d = d.AddDays(1))
+        for (var d = today.AddDays(1); d <= monthEnd; d = d.AddDays(1))
         {
             if (_workScheduleProvider.IsWorkDay(d))
                 daysRemaining++;
         }
 
         if (daysRemaining > 0)
-        {
             MonthlyOvertimeSummary += string.Format(_loc["Calendar.WorkDaysRemaining"], daysRemaining);
-        }
 
         UpdateSelectedDateLabel(SelectedDate);
         await SelectDayAsync(SelectedDate);
+
+        if (today.Year != month.Year || today.Month != month.Month)
+        {
+            var workDaysInMonth = 0;
+            for (var d = firstDay; d <= monthEnd; d = d.AddDays(1))
+                if (_workScheduleProvider.IsWorkDay(d)) workDaysInMonth++;
+            MonthlyOvertimeSummary = string.Format(_loc["Calendar.MonthWorkDays"], workDaysInMonth);
+        }
     }
 
     private async Task RefreshMonthStatsAsync()
@@ -371,6 +378,7 @@ public sealed class MainViewModel : ViewModelBase
 
             var totalHours = totalMinutes / 60;
             var remainingMinutes = totalMinutes % 60;
+
             MonthlyOvertimeSummary = _loc["Calendar.MonthlyPrefix"] + string.Format(_loc["Calendar.OvertimeFormat"], totalHours, remainingMinutes);
 
             var today = DateOnly.FromDateTime(DateTime.Today);
@@ -383,6 +391,14 @@ public sealed class MainViewModel : ViewModelBase
 
             if (daysRemaining > 0)
                 MonthlyOvertimeSummary += string.Format(_loc["Calendar.WorkDaysRemaining"], daysRemaining);
+
+            if (today.Year != _displayedMonth.Year || today.Month != _displayedMonth.Month)
+            {
+                var workDaysInMonth = 0;
+                for (var d = firstDay; d <= monthEnd; d = d.AddDays(1))
+                    if (_workScheduleProvider.IsWorkDay(d)) workDaysInMonth++;
+                MonthlyOvertimeSummary = string.Format(_loc["Calendar.MonthWorkDays"], workDaysInMonth);
+            }
         }
         catch (Exception ex)
         {

@@ -16,6 +16,7 @@
   "Calendar.DefaultOvertimeSummary": "0小时0分钟",
   "Calendar.MonthlyPrefix": "本月已加班",
   "Calendar.WorkDaysRemaining": " 本月工作日剩余 {0} 天",
+  "Calendar.MonthWorkDays": "本月的工作日有 {0} 天",
   "Calendar.Holiday": "节假日",
   "Calendar.AdjustWorkday": "调休",
   "Calendar.TotalOvertime": "总计加班时长：{0}",
