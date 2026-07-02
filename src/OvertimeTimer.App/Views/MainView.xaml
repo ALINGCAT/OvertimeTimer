@@ -121,7 +121,7 @@
                                                    Margin="0,0,4,3"
                                                    Foreground="{DynamicResource CalendarDiaryDotBrush}"
                                                    Text="●"
-                                                   Visibility="{Binding HasDiary, Converter={StaticResource BoolToVisibility}}">
+                                                    Visibility="{Binding ShowDiaryDot, Converter={StaticResource BoolToVisibility}}">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Opacity" Value="1" />
@@ -239,12 +239,14 @@
                         </Grid.RowDefinitions>
                         <TextBlock Margin="0,0,0,8" Style="{StaticResource SectionCaptionTextStyle}" Text="{loc:Loc Calendar.MarkdownDiary}" />
                         <hc:TextBox Grid.Row="1"
+                                    x:Name="DiaryTextBox"
                                     AcceptsReturn="True"
                                     TextWrapping="Wrap"
                                     Padding="5"
                                     BorderThickness="2"
                                     VerticalScrollBarVisibility="Auto"
                                     VerticalContentAlignment="Top"
+                                    PreviewKeyDown="DiaryTextBox_PreviewKeyDown"
                                     Text="{Binding SelectedDayRecord.DiaryMarkdown, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
 

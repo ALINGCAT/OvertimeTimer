@@ -138,7 +138,7 @@ img {{ max-width: 100%; }}
     public bool IsDirty
     {
         get => _isDirty;
-        private set => SetProperty(ref _isDirty, value);
+        internal set => SetProperty(ref _isDirty, value);
     }
 
     public DelegateCommand SaveCommand { get; }

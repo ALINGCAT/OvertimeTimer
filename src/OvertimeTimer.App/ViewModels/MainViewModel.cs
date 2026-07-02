@@ -53,10 +53,13 @@ public sealed class MainViewModel : ViewModelBase
 
         _dayRecordViewModel.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(DayRecordViewModel.IsDirty) && SelectedDayRecord.IsDirty)
+            if (e.PropertyName == nameof(DayRecordViewModel.IsDirty))
             {
                 var day = CalendarDays.FirstOrDefault(d => d.Date == SelectedDayRecord.Date);
-                if (day is not null) day.HasUnsavedDiary = true;
+                if (day is not null) day.HasUnsavedDiary = SelectedDayRecord.IsDirty;
+
+                if (!SelectedDayRecord.IsDirty)
+                    _unsavedDiaryCache.Remove(SelectedDayRecord.Date);
             }
         };
 
@@ -300,16 +303,13 @@ public sealed class MainViewModel : ViewModelBase
             }
 
             var record = records.Find(r => r.Date == date);
-            if (record is not null)
+            if (record is not null && date >= monthStart && date <= monthEnd)
             {
                 day.HasOvertime = record.OvertimeHours > 0 || record.OvertimeMinutes > 0;
-                if (date >= monthStart && date <= monthEnd)
-                {
-                    totalMinutes += record.OvertimeHours * 60 + record.OvertimeMinutes;
-                }
+                totalMinutes += record.OvertimeHours * 60 + record.OvertimeMinutes;
             }
 
-            if (await _diaryFileService.ExistsAsync(date))
+            if (date >= monthStart && date <= monthEnd && await _diaryFileService.ExistsAsync(date))
             {
                 day.HasDiary = true;
             }
@@ -416,7 +416,7 @@ public sealed class MainViewModel : ViewModelBase
         {
             var prevDate = SelectedDayRecord.Date;
             var prevContent = SelectedDayRecord.DiaryMarkdown;
-            if (!string.IsNullOrWhiteSpace(prevContent) && prevContent != _diarySnapshot.GetValueOrDefault(prevDate, ""))
+            if (SelectedDayRecord.IsDirty)
             {
                 _unsavedDiaryCache[prevDate] = prevContent;
                 var cachedDay = CalendarDays.FirstOrDefault(d => d.Date == prevDate);

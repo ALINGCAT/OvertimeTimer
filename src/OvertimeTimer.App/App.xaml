@@ -139,11 +139,11 @@
                     <DataTrigger Binding="{Binding IsLeave}" Value="True">
                         <Setter Property="Foreground" Value="{DynamicResource CalendarLeaveBrush}" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding IsInCurrentMonth}" Value="False">
-                        <Setter Property="Foreground" Value="{DynamicResource CalendarOutOfMonthBrush}" />
-                    </DataTrigger>
                     <DataTrigger Binding="{Binding IsToday}" Value="True">
                         <Setter Property="Foreground" Value="{DynamicResource CalendarTodayBrush}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsInCurrentMonth}" Value="False">
+                        <Setter Property="Foreground" Value="{DynamicResource CalendarOutOfMonthBrush}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>

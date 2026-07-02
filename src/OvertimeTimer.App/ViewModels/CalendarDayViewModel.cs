@@ -39,7 +39,11 @@ public sealed class CalendarDayViewModel : ViewModelBase
     public bool HasDiary
     {
         get => _hasDiary;
-        set => SetProperty(ref _hasDiary, value);
+        set
+        {
+            if (SetProperty(ref _hasDiary, value))
+                RaisePropertyChanged(nameof(ShowDiaryDot));
+        }
     }
 
     public bool IsToday { get; }
@@ -65,8 +69,14 @@ public sealed class CalendarDayViewModel : ViewModelBase
     public bool HasUnsavedDiary
     {
         get => _hasUnsavedDiary;
-        set => SetProperty(ref _hasUnsavedDiary, value);
+        set
+        {
+            if (SetProperty(ref _hasUnsavedDiary, value))
+                RaisePropertyChanged(nameof(ShowDiaryDot));
+        }
     }
+
+    public bool ShowDiaryDot => HasDiary || HasUnsavedDiary;
 
     public bool IsSelected
     {
