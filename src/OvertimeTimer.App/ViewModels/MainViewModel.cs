@@ -81,16 +81,14 @@ public sealed class MainViewModel : ViewModelBase
         {
             if (e.PropertyName == "Item[]")
             {
-        Dispatcher.CurrentDispatcher.BeginInvoke(
-            new Action(() => _ = LoadMonthAsync(_displayedMonth)),
-            DispatcherPriority.Loaded);
-    }
+                _ = LoadMonthAsync(_displayedMonth);
+            }
         };
 
         _ = LoadMonthAsync(_displayedMonth);
     }
 
-    public ObservableCollection<CalendarDayViewModel> CalendarDays { get; }
+    public ObservableCollection<CalendarDayViewModel> CalendarDays { get; private set; }
 
     public DayRecordViewModel SelectedDayRecord => _dayRecordViewModel;
 
@@ -173,7 +171,7 @@ public sealed class MainViewModel : ViewModelBase
 
     private void SelectDay(CalendarDayViewModel? day)
     {
-        if (day is null)
+        if (day is null || CalendarDays.Count == 0)
         {
             return;
         }
@@ -273,7 +271,7 @@ public sealed class MainViewModel : ViewModelBase
 
     private async Task LoadMonthAsync(DateOnly month)
     {
-        CalendarDays.Clear();
+        var tempDays = new List<CalendarDayViewModel>(42);
         YearMonthLabel = month.ToString(_loc["Calendar.YearMonthFormat"]);
 
         var firstDay = new DateOnly(month.Year, month.Month, 1);
@@ -316,8 +314,11 @@ public sealed class MainViewModel : ViewModelBase
 
             day.HasUnsavedDiary = _unsavedDiaryCache.ContainsKey(date);
 
-            CalendarDays.Add(day);
+            tempDays.Add(day);
         }
+
+        CalendarDays = new ObservableCollection<CalendarDayViewModel>(tempDays);
+        RaisePropertyChanged(nameof(CalendarDays));
 
         var totalHours = totalMinutes / 60;
         var remainingMinutes = totalMinutes % 60;
