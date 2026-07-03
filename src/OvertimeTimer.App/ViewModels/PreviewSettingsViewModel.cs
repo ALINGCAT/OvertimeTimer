@@ -30,7 +30,14 @@ public sealed class PreviewSettingsViewModel : SettingsSectionViewModelBase
         foreach (var family in Fonts.SystemFontFamilies.Where(IsMonospace).OrderBy(f => f.Source))
             AvailableCodeFontFamilies.Add(family.Source);
 
-        PropertyChanged += (_, _) => ScheduleAutoSave(() => SaveCurrentSectionAsync());
+        PropertyChanged += (_, _) =>
+        {
+            ScheduleAutoSave(() => SaveCurrentSectionAsync());
+            _appearanceSettingsService.ApplyPreviewSettings(
+                PreviewFontFamily, PreviewFontSize, PreviewLineHeight,
+                PreviewBackgroundColor, PreviewTextColor, PreviewLinkColor,
+                PreviewCodeBackgroundColor, PreviewCodeFontFamily);
+        };
     }
 
     public void ApplyPreset(AppearancePresets.Preset preset)

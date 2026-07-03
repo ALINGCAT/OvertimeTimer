@@ -68,6 +68,7 @@ public sealed class AppearanceSettingsService : IAppearanceSettingsService
         resources["PreviewFontSize"] = fontSize;
         resources["PreviewLineHeight"] = lineHeight;
         resources["PreviewBackgroundColor"] = backgroundColor;
+        ApplyBrush(resources, "PreviewBackgroundBrush", backgroundColor);
         resources["PreviewTextColor"] = textColor;
         resources["PreviewLinkColor"] = linkColor;
         resources["PreviewCodeBackgroundColor"] = codeBackgroundColor;
