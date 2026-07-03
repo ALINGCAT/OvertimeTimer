@@ -344,7 +344,11 @@ public sealed class MainViewModel : ViewModelBase
             var workDaysInMonth = 0;
             for (var d = firstDay; d <= monthEnd; d = d.AddDays(1))
                 if (_workScheduleProvider.IsWorkDay(d)) workDaysInMonth++;
-            MonthlyOvertimeSummary = string.Format(_loc["Calendar.MonthWorkDays"], workDaysInMonth);
+
+            if (month.Year < today.Year || (month.Year == today.Year && month.Month < today.Month))
+                MonthlyOvertimeSummary = string.Format(_loc["Calendar.PastMonthSummary"], workDaysInMonth, totalHours, remainingMinutes);
+            else
+                MonthlyOvertimeSummary = string.Format(_loc["Calendar.MonthWorkDays"], workDaysInMonth);
         }
     }
 
@@ -398,7 +402,11 @@ public sealed class MainViewModel : ViewModelBase
                 var workDaysInMonth = 0;
                 for (var d = firstDay; d <= monthEnd; d = d.AddDays(1))
                     if (_workScheduleProvider.IsWorkDay(d)) workDaysInMonth++;
-                MonthlyOvertimeSummary = string.Format(_loc["Calendar.MonthWorkDays"], workDaysInMonth);
+
+                if (_displayedMonth.Year < today.Year || (_displayedMonth.Year == today.Year && _displayedMonth.Month < today.Month))
+                    MonthlyOvertimeSummary = string.Format(_loc["Calendar.PastMonthSummary"], workDaysInMonth, totalHours, remainingMinutes);
+                else
+                    MonthlyOvertimeSummary = string.Format(_loc["Calendar.MonthWorkDays"], workDaysInMonth);
             }
         }
         catch (Exception ex)
