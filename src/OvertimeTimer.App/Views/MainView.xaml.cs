@@ -17,6 +17,7 @@ public partial class MainView : System.Windows.Controls.UserControl
         InitializeComponent();
         System.Windows.DataObject.AddPastingHandler(OvertimeHoursInput, OnNumericPaste);
         System.Windows.DataObject.AddPastingHandler(OvertimeMinutesInput, OnNumericPaste);
+        System.Windows.DataObject.AddPastingHandler(DiaryTextBox, OnDiaryPaste);
 
         DataContextChanged += (_, _) => SetupWebView();
 
@@ -84,6 +85,9 @@ public partial class MainView : System.Windows.Controls.UserControl
             return;
         }
 
+        if ((Keyboard.Modifiers & ModifierKeys.Control) != 0 && e.Key is Key.C or Key.A or Key.Insert)
+            return;
+
         vm.SelectedDayRecord.IsDirty = true;
     }
 
@@ -107,6 +111,22 @@ public partial class MainView : System.Windows.Controls.UserControl
         if (!Regex.IsMatch(text, @"^\d+$"))
         {
             e.CancelCommand();
+        }
+    }
+
+    private void OnDiaryPaste(object sender, DataObjectPastingEventArgs e)
+    {
+        if (DataContext is ViewModels.MainViewModel vm)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var isEmpty = string.IsNullOrWhiteSpace(DiaryTextBox.Text);
+                var day = vm.CalendarDays.FirstOrDefault(d => d.Date == vm.SelectedDayRecord.Date);
+                if (!isEmpty)
+                    vm.SelectedDayRecord.IsDirty = true;
+                else if (day is not null && !day.HasDiary)
+                    vm.SelectedDayRecord.IsDirty = false;
+            }), System.Windows.Threading.DispatcherPriority.Background);
         }
     }
 }
