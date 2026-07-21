@@ -88,6 +88,11 @@ public partial class MainView : System.Windows.Controls.UserControl
         if ((Keyboard.Modifiers & ModifierKeys.Control) != 0 && e.Key is Key.C or Key.A or Key.Insert)
             return;
 
+        // Ctrl+Shift+S is "Save As" — do not mark dirty
+        if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == (ModifierKeys.Control | ModifierKeys.Shift)
+            && e.Key is Key.S)
+            return;
+
         vm.SelectedDayRecord.IsDirty = true;
     }
 

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Threading;
 using Prism.Commands;
 using OvertimeTimer.App.Localization;
@@ -16,6 +17,8 @@ public sealed class MainViewModel : ViewModelBase
     private readonly IDiaryFileService _diaryFileService;
     private readonly IWorkScheduleProvider _workScheduleProvider;
     private readonly ILocalizationService _loc;
+    private readonly IStatusMessageService _statusMessageService;
+    private readonly ISettingsInteractionService _settingsInteractionService;
     private DateOnly _displayedMonth = new(DateTime.Today.Year, DateTime.Today.Month, 1);
     private DateOnly _selectedDate = DateOnly.FromDateTime(DateTime.Today);
     private CalendarDayViewModel? _selectedDay;
@@ -33,13 +36,16 @@ public sealed class MainViewModel : ViewModelBase
         IDiaryFileService diaryFileService,
         IWorkScheduleProvider workScheduleProvider,
         ILocalizationService localizationService,
-        IAppearanceSettingsService appearanceSettingsService)
+        IAppearanceSettingsService appearanceSettingsService,
+        ISettingsInteractionService settingsInteractionService)
     {
         _monthSelectionDialogService = monthSelectionDialogService;
         _recordStoreService = recordStoreService;
         _diaryFileService = diaryFileService;
         _workScheduleProvider = workScheduleProvider;
         _loc = localizationService;
+        _statusMessageService = statusMessageService;
+        _settingsInteractionService = settingsInteractionService;
         _dayRecordViewModel = new DayRecordViewModel(statusMessageService, recordStoreService, diaryFileService, localizationService, appearanceSettingsService);
         _dayRecordViewModel.Saved += () =>
         {
@@ -70,6 +76,7 @@ public sealed class MainViewModel : ViewModelBase
         HolidayCommand = new DelegateCommand(ToggleHoliday, CanToggleHoliday);
         AdjustWorkdayCommand = new DelegateCommand(ToggleAdjustWorkday, CanToggleAdjustWorkday);
         LeaveCommand = new DelegateCommand(ToggleLeave, CanToggleLeave);
+        SaveAsCommand = new DelegateCommand(SaveAsDiary);
 
         _workScheduleProvider.Load();
         _workScheduleProvider.ConfigChanged += () => _ = LoadMonthAsync(_displayedMonth);
@@ -144,6 +151,8 @@ public sealed class MainViewModel : ViewModelBase
     public DelegateCommand AdjustWorkdayCommand { get; }
 
     public DelegateCommand LeaveCommand { get; }
+
+    public DelegateCommand SaveAsCommand { get; }
 
     public void GoToToday()
     {
@@ -459,6 +468,29 @@ public sealed class MainViewModel : ViewModelBase
         catch (Exception ex)
         {
             Debug.WriteLine($"[SelectDayAsync] {ex.Message}");
+        }
+    }
+
+    private async void SaveAsDiary()
+    {
+        try
+        {
+            var dateDisplay = SelectedDayRecord.DateDisplay;
+            var defaultFileName = $"{dateDisplay}.md";
+            var filter = "Markdown files (*.md)|*.md|All files (*.*)|*.*";
+
+            var chosenPath = _settingsInteractionService.SaveFile(filter, defaultFileName);
+            if (chosenPath is null)
+                return;
+
+            var content = SelectedDayRecord.DiaryMarkdown ?? string.Empty;
+            await File.WriteAllTextAsync(chosenPath, content);
+
+            _statusMessageService.Show(string.Format(_loc["Diary.SaveAsSucceeded"], chosenPath));
+        }
+        catch (Exception)
+        {
+            _statusMessageService.Show(_loc["Diary.SaveAsFailed"]);
         }
     }
 

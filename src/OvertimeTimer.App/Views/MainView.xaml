@@ -13,6 +13,7 @@
              mc:Ignorable="d">
     <UserControl.InputBindings>
         <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SelectedDayRecord.SaveCommand}" />
+        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{Binding SaveAsCommand}" />
     </UserControl.InputBindings>
     <Grid Margin="0">
         <Grid.ColumnDefinitions>
@@ -195,7 +196,9 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0"
@@ -212,7 +215,12 @@
                                 HorizontalAlignment="Left"
                                 Command="{Binding LeaveCommand}"
                                 Content="{loc:Loc Calendar.Leave}" />
-                        <Button Grid.Column="3"
+                        <Button Grid.Column="4"
+                                Margin="0,0,8,0"
+                                HorizontalAlignment="Right"
+                                Command="{Binding SaveAsCommand}"
+                                Content="{loc:Loc Calendar.SaveAs}" />
+                        <Button Grid.Column="5"
                                 HorizontalAlignment="Right"
                                 Command="{Binding SelectedDayRecord.SaveCommand}"
                                 Content="{loc:Loc Calendar.Save}" />

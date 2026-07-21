@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "OvertimeTimer",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "src/OvertimeTimer.App"],
+      "port": 8080
+    }
+  ]
+}

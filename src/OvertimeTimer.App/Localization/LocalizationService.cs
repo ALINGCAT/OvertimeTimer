@@ -143,10 +143,13 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Calendar.MarkdownDiary"] = "Markdown 日记";
         _strings["Calendar.Preview"] = "预览";
         _strings["Calendar.Save"] = "保存";
+        _strings["Calendar.SaveAs"] = "日记另存为";
         _strings["Calendar.Setting"] = "设置";
         _strings["Calendar.WeekLabelFormat"] = "第 {0} 周";
         _strings["Diary.Saved"] = "{0}已保存";
         _strings["Diary.SaveFailed"] = "保存失败，请重试。";
+        _strings["Diary.SaveAsSucceeded"] = "日记已另存为 {0}";
+        _strings["Diary.SaveAsFailed"] = "另存为失败，请重试。";
         _strings["MonthPicker.Title"] = "选择年月";
         _strings["MonthPicker.Year"] = "年";
         _strings["MonthPicker.Month"] = "月";
