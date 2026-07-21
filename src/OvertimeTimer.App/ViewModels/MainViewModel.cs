@@ -57,9 +57,6 @@ public sealed class MainViewModel : ViewModelBase
             {
                 var day = CalendarDays.FirstOrDefault(d => d.Date == SelectedDayRecord.Date);
                 if (day is not null) day.HasUnsavedDiary = SelectedDayRecord.IsDirty;
-
-                if (!SelectedDayRecord.IsDirty)
-                    _unsavedDiaryCache.Remove(SelectedDayRecord.Date);
             }
         };
 
