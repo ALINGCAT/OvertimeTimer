@@ -27,6 +27,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
@@ -118,6 +120,13 @@
                                                    Text="●"
                                                    Visibility="{Binding HasOvertime, Converter={StaticResource BoolToVisibility}}" />
                                         <TextBlock HorizontalAlignment="Right"
+                                                   VerticalAlignment="Top"
+                                                   Margin="0,3,3,0"
+                                                   Foreground="{DynamicResource CalendarMarkerDotBrush}"
+                                                   FontSize="11"
+                                                   Text="★"
+                                                   Visibility="{Binding IsMarked, Converter={StaticResource BoolToVisibility}}" />
+                                        <TextBlock HorizontalAlignment="Right"
                                                    VerticalAlignment="Bottom"
                                                    Margin="0,0,4,3"
                                                    Foreground="{DynamicResource CalendarDiaryDotBrush}"
@@ -197,8 +206,6 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0"
@@ -215,17 +222,30 @@
                                 HorizontalAlignment="Left"
                                 Command="{Binding LeaveCommand}"
                                 Content="{loc:Loc Calendar.Leave}" />
-                        <Button Grid.Column="4"
-                                Margin="0,0,8,0"
-                                HorizontalAlignment="Right"
-                                Command="{Binding SaveAsCommand}"
-                                Content="{loc:Loc Calendar.SaveAs}" />
-                        <Button Grid.Column="5"
-                                HorizontalAlignment="Right"
-                                Command="{Binding SelectedDayRecord.SaveCommand}"
-                                Content="{loc:Loc Calendar.Save}" />
+                        <Button Grid.Column="3"
+                                Margin="8,0,0,0"
+                                HorizontalAlignment="Left"
+                                Command="{Binding MarkCommand}"
+                                Content="{loc:Loc Calendar.Marker}" />
                     </Grid>
-            </Grid>
+                </Grid>
+
+                <Grid Grid.Row="5" Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="1"
+                            Margin="0,0,8,0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding SaveAsCommand}"
+                            Content="{loc:Loc Calendar.SaveAs}" />
+                    <Button Grid.Column="2"
+                            HorizontalAlignment="Right"
+                            Command="{Binding SelectedDayRecord.SaveCommand}"
+                            Content="{loc:Loc Calendar.Save}" />
+                </Grid>
             </Grid>
         </hc:Card>
 

@@ -26,5 +26,7 @@ public sealed class AppearanceConfig
 
     public string CalendarLeaveColor { get; set; } = "#FF0284C7";
 
+    public string CalendarMarkerDotColor { get; set; } = "#FFFFD700";
+
     public string CalendarDayBorderColor { get; set; } = "#FFBAE6FD";
 }

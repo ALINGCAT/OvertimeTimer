@@ -62,6 +62,7 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             CalendarHolidayColor = value.Config.CalendarHolidayColor;
             CalendarAdjustWorkdayColor = value.Config.CalendarAdjustWorkdayColor;
             CalendarLeaveColor = value.Config.CalendarLeaveColor;
+            CalendarMarkerDotColor = value.Config.CalendarMarkerDotColor;
             CardBackgroundColor = value.Config.CardBackgroundColor;
             CardBorderColor = value.Config.CardBorderColor;
             CalendarDayBorderColor = value.Config.CalendarDayBorderColor;
@@ -91,6 +92,8 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
     public string CalendarAdjustWorkdayColor { get => _calendarAdjustWorkdayColor; set => SetProperty(ref _calendarAdjustWorkdayColor, value); }
     private string _calendarLeaveColor = "#FF0284C7";
     public string CalendarLeaveColor { get => _calendarLeaveColor; set => SetProperty(ref _calendarLeaveColor, value); }
+    private string _calendarMarkerDotColor = "#FFFFD700";
+    public string CalendarMarkerDotColor { get => _calendarMarkerDotColor; set => SetProperty(ref _calendarMarkerDotColor, value); }
     private string _calendarDayBorderColor = "#FFBAE6FD";
     public string CalendarDayBorderColor { get => _calendarDayBorderColor; set => SetProperty(ref _calendarDayBorderColor, value); }
     private string _cardBackgroundColor = "#FFFFFFFF";
@@ -114,6 +117,7 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
         CardBackgroundColor = appearanceConfig.CardBackgroundColor;
         CardBorderColor = appearanceConfig.CardBorderColor;
         CalendarLeaveColor = appearanceConfig.CalendarLeaveColor;
+        CalendarMarkerDotColor = appearanceConfig.CalendarMarkerDotColor;
         CalendarDayBorderColor = appearanceConfig.CalendarDayBorderColor;
 
         MatchPreset();
@@ -135,6 +139,7 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             CardBackgroundColor = CardBackgroundColor,
             CardBorderColor = CardBorderColor,
             CalendarLeaveColor = CalendarLeaveColor,
+            CalendarMarkerDotColor = CalendarMarkerDotColor,
             CalendarDayBorderColor = CalendarDayBorderColor
         };
     }
@@ -155,6 +160,7 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             nameof(CardBackgroundColor) => CardBackgroundColor,
             nameof(CardBorderColor) => CardBorderColor,
             nameof(CalendarLeaveColor) => CalendarLeaveColor,
+            nameof(CalendarMarkerDotColor) => CalendarMarkerDotColor,
             nameof(CalendarDayBorderColor) => CalendarDayBorderColor,
             _ => "#FFFFFFFF"
         };
@@ -176,6 +182,7 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             case nameof(CardBackgroundColor): CardBackgroundColor = selectedColor; break;
             case nameof(CardBorderColor): CardBorderColor = selectedColor; break;
             case nameof(CalendarLeaveColor): CalendarLeaveColor = selectedColor; break;
+            case nameof(CalendarMarkerDotColor): CalendarMarkerDotColor = selectedColor; break;
             case nameof(CalendarDayBorderColor): CalendarDayBorderColor = selectedColor; break;
         }
     }
@@ -207,6 +214,7 @@ public sealed class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             ("Appearance.CardBackground", () => CardBackgroundColor, v => CardBackgroundColor = v),
             ("Appearance.CardBorder", () => CardBorderColor, v => CardBorderColor = v),
             ("Appearance.CalendarLeave", () => CalendarLeaveColor, v => CalendarLeaveColor = v),
+            ("Appearance.CalendarMarkerDot", () => CalendarMarkerDotColor, v => CalendarMarkerDotColor = v),
             ("Appearance.CalendarDayBorder", () => CalendarDayBorderColor, v => CalendarDayBorderColor = v)
         };
 

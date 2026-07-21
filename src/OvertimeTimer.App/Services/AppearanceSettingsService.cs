@@ -51,6 +51,7 @@ public sealed class AppearanceSettingsService : IAppearanceSettingsService
         ApplyBrush(resources, "CardBackgroundBrush", appearanceConfig.CardBackgroundColor);
         ApplyBrush(resources, "CardBorderBrush", appearanceConfig.CardBorderColor);
         ApplyBrush(resources, "CalendarLeaveBrush", appearanceConfig.CalendarLeaveColor);
+        ApplyBrush(resources, "CalendarMarkerDotBrush", appearanceConfig.CalendarMarkerDotColor);
         ApplyBrush(resources, "CalendarDayBorderBrush", appearanceConfig.CalendarDayBorderColor);
     }
 

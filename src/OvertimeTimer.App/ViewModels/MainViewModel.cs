@@ -76,6 +76,7 @@ public sealed class MainViewModel : ViewModelBase
         HolidayCommand = new DelegateCommand(ToggleHoliday, CanToggleHoliday);
         AdjustWorkdayCommand = new DelegateCommand(ToggleAdjustWorkday, CanToggleAdjustWorkday);
         LeaveCommand = new DelegateCommand(ToggleLeave, CanToggleLeave);
+        MarkCommand = new DelegateCommand(ToggleMark);
         SaveAsCommand = new DelegateCommand(SaveAsDiary);
 
         _workScheduleProvider.Load();
@@ -151,6 +152,8 @@ public sealed class MainViewModel : ViewModelBase
     public DelegateCommand AdjustWorkdayCommand { get; }
 
     public DelegateCommand LeaveCommand { get; }
+
+    public DelegateCommand MarkCommand { get; }
 
     public DelegateCommand SaveAsCommand { get; }
 
@@ -275,6 +278,12 @@ public sealed class MainViewModel : ViewModelBase
         _ = LoadMonthAsync(_displayedMonth);
     }
 
+    private void ToggleMark()
+    {
+        _workScheduleProvider.ToggleMark(SelectedDate);
+        _ = LoadMonthAsync(_displayedMonth);
+    }
+
     private async Task LoadMonthAsync(DateOnly month)
     {
         var tempDays = new List<CalendarDayViewModel>(42);
@@ -317,6 +326,8 @@ public sealed class MainViewModel : ViewModelBase
             {
                 day.HasDiary = true;
             }
+
+            day.IsMarked = _workScheduleProvider.IsMarked(date);
 
             day.HasUnsavedDiary = _unsavedDiaryCache.ContainsKey(date);
 

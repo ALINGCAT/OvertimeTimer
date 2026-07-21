@@ -10,10 +10,14 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
     private readonly ISettingsStoreService _store;
     private readonly string _overridesFilePath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OvertimeTimer", "overrides.json");
+    private readonly string _markedFilePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OvertimeTimer", "marked.json");
     private readonly Dictionary<DateOnly, DayOverride> _overrides = new();
+    private readonly HashSet<DateOnly> _markedDates = new();
 
     public WorkScheduleConfig Config { get; private set; } = new();
     public IReadOnlyList<DayOverride> Overrides => _overrides.Values.ToList().AsReadOnly();
+    public IReadOnlySet<DateOnly> MarkedDates => _markedDates;
     public event Action? ConfigChanged;
 
     public WorkScheduleProvider(ISettingsStoreService store) { _store = store; }
@@ -22,12 +26,14 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
     {
         Config = Task.Run(() => _store.LoadWorkScheduleAsync()).Result;
         LoadOverridesFromFile();
+        LoadMarkedFromFile();
     }
 
     public async Task LoadAsync(CancellationToken ct = default)
     {
         Config = await _store.LoadWorkScheduleAsync(ct);
         LoadOverridesFromFile();
+        LoadMarkedFromFile();
         ConfigChanged?.Invoke();
     }
 
@@ -43,6 +49,17 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
     {
         _overrides.Remove(date);
         _ = SaveOverridesAsync();
+    }
+
+    public bool IsMarked(DateOnly date) => _markedDates.Contains(date);
+
+    public void ToggleMark(DateOnly date)
+    {
+        if (_markedDates.Contains(date))
+            _markedDates.Remove(date);
+        else
+            _markedDates.Add(date);
+        _ = SaveMarkedAsync();
     }
 
     public bool IsRestDay(DateOnly date)
@@ -73,6 +90,20 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
         catch { }
     }
 
+    private void LoadMarkedFromFile()
+    {
+        _markedDates.Clear();
+        if (!File.Exists(_markedFilePath)) return;
+        try
+        {
+            var json = File.ReadAllText(_markedFilePath);
+            var list = JsonSerializer.Deserialize<List<DateOnly>>(json, SerializerOptions);
+            if (list is null) return;
+            foreach (var d in list) _markedDates.Add(d);
+        }
+        catch { }
+    }
+
     private async Task SaveOverridesAsync()
     {
         try
@@ -83,6 +114,20 @@ public sealed class WorkScheduleProvider : IWorkScheduleProvider
             await File.WriteAllTextAsync(tmp, JsonSerializer.Serialize(list, SerializerOptions));
             if (File.Exists(_overridesFilePath)) File.Replace(tmp, _overridesFilePath, null);
             else File.Move(tmp, _overridesFilePath);
+        }
+        catch { }
+    }
+
+    private async Task SaveMarkedAsync()
+    {
+        try
+        {
+            var list = _markedDates.ToList();
+            Directory.CreateDirectory(Path.GetDirectoryName(_markedFilePath)!);
+            var tmp = _markedFilePath + ".tmp";
+            await File.WriteAllTextAsync(tmp, JsonSerializer.Serialize(list, SerializerOptions));
+            if (File.Exists(_markedFilePath)) File.Replace(tmp, _markedFilePath, null);
+            else File.Move(tmp, _markedFilePath);
         }
         catch { }
     }
