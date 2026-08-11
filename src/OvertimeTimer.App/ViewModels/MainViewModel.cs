@@ -16,6 +16,7 @@ public sealed class MainViewModel : ViewModelBase
     private readonly IRecordStoreService _recordStoreService;
     private readonly IDiaryFileService _diaryFileService;
     private readonly IWorkScheduleProvider _workScheduleProvider;
+    private readonly IGeneralSettingsService _generalSettingsService;
     private readonly ILocalizationService _loc;
     private readonly IStatusMessageService _statusMessageService;
     private readonly ISettingsInteractionService _settingsInteractionService;
@@ -35,6 +36,7 @@ public sealed class MainViewModel : ViewModelBase
         IRecordStoreService recordStoreService,
         IDiaryFileService diaryFileService,
         IWorkScheduleProvider workScheduleProvider,
+        IGeneralSettingsService generalSettingsService,
         ILocalizationService localizationService,
         IAppearanceSettingsService appearanceSettingsService,
         ISettingsInteractionService settingsInteractionService)
@@ -43,6 +45,7 @@ public sealed class MainViewModel : ViewModelBase
         _recordStoreService = recordStoreService;
         _diaryFileService = diaryFileService;
         _workScheduleProvider = workScheduleProvider;
+        _generalSettingsService = generalSettingsService;
         _loc = localizationService;
         _statusMessageService = statusMessageService;
         _settingsInteractionService = settingsInteractionService;
@@ -78,8 +81,10 @@ public sealed class MainViewModel : ViewModelBase
         LeaveCommand = new DelegateCommand(ToggleLeave, CanToggleLeave);
         MarkCommand = new DelegateCommand(ToggleMark);
         SaveAsCommand = new DelegateCommand(SaveAsDiary);
+        ClockOutCommand = new DelegateCommand(() => _ = ClockOutAsync());
 
         _workScheduleProvider.Load();
+        _generalSettingsService.Load();
         _workScheduleProvider.ConfigChanged += () => _ = LoadMonthAsync(_displayedMonth);
 
         _loc.PropertyChanged += (_, e) =>
@@ -156,6 +161,8 @@ public sealed class MainViewModel : ViewModelBase
     public DelegateCommand MarkCommand { get; }
 
     public DelegateCommand SaveAsCommand { get; }
+
+    public DelegateCommand ClockOutCommand { get; }
 
     public void GoToToday()
     {
@@ -502,6 +509,36 @@ public sealed class MainViewModel : ViewModelBase
         catch (Exception)
         {
             _statusMessageService.Show(_loc["Diary.SaveAsFailed"]);
+        }
+    }
+
+    private async Task ClockOutAsync()
+    {
+        try
+        {
+            var now = DateTime.Now;
+            var offWork = new TimeSpan(_generalSettingsService.Config.OffWorkHour, _generalSettingsService.Config.OffWorkMinute, 0);
+            var current = now.TimeOfDay;
+
+            var crossedMidnight = current < offWork;
+            var overtime = crossedMidnight ? current + TimeSpan.FromHours(24) - offWork : current - offWork;
+            var recordDate = crossedMidnight ? DateOnly.FromDateTime(now.AddDays(-1)) : DateOnly.FromDateTime(now);
+
+            var record = await _recordStoreService.LoadAsync(recordDate) ?? new DailyRecord { Date = recordDate };
+            record.OvertimeHours = overtime.Hours;
+            record.OvertimeMinutes = overtime.Minutes;
+            record.LastModified = DateTime.Now;
+
+            await _recordStoreService.SaveAsync(record);
+
+            if (SelectedDayRecord.Date == recordDate)
+                await SelectedDayRecord.LoadAsync(recordDate);
+
+            await RefreshMonthStatsAsync();
+        }
+        catch (Exception)
+        {
+            _statusMessageService.Show(_loc["Diary.SaveFailed"]);
         }
     }
 

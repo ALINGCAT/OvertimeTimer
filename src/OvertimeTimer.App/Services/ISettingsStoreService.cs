@@ -10,4 +10,6 @@ public interface ISettingsStoreService
     Task SaveAppearanceAsync(AppearanceDataStore data, CancellationToken ct = default);
     Task<StorageDataStore> LoadStorageAsync(CancellationToken ct = default);
     Task SaveStorageAsync(StorageDataStore data, CancellationToken ct = default);
+    Task<GeneralConfig> LoadGeneralAsync(CancellationToken ct = default);
+    Task SaveGeneralAsync(GeneralConfig config, CancellationToken ct = default);
 }

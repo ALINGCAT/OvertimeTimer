@@ -9,15 +9,18 @@ public sealed class SettingsPersistenceCoordinator : ISettingsPersistenceCoordin
     private readonly IDiaryFileService _diaryFileService;
     private readonly IWorkScheduleProvider _workScheduleProvider;
     private readonly IAppearanceSettingsService _appearanceSettingsService;
+    private readonly IGeneralSettingsService _generalSettingsService;
 
     public SettingsPersistenceCoordinator(
         ISettingsStoreService store, IDiaryFileService diaryFileService,
-        IWorkScheduleProvider workScheduleProvider, IAppearanceSettingsService appearanceSettingsService)
+        IWorkScheduleProvider workScheduleProvider, IAppearanceSettingsService appearanceSettingsService,
+        IGeneralSettingsService generalSettingsService)
     {
         _store = store;
         _diaryFileService = diaryFileService;
         _workScheduleProvider = workScheduleProvider;
         _appearanceSettingsService = appearanceSettingsService;
+        _generalSettingsService = generalSettingsService;
     }
 
     public async Task LoadAsync(WorkScheduleSettingsViewModel ws, StorageSettingsViewModel ss, AppearanceSettingsViewModel ap,
@@ -34,6 +37,8 @@ public sealed class SettingsPersistenceCoordinator : ISettingsPersistenceCoordin
 
         var sd = await _store.LoadStorageAsync(ct);
         ss.LoadFrom(sd.DiaryConfig);
+
+        gs.LoadFrom(await _store.LoadGeneralAsync(ct));
     }
 
     public async Task SaveAsync(WorkScheduleSettingsViewModel ws, StorageSettingsViewModel ss, AppearanceSettingsViewModel ap,
@@ -51,6 +56,10 @@ public sealed class SettingsPersistenceCoordinator : ISettingsPersistenceCoordin
         }, ct);
 
         await _store.SaveStorageAsync(new StorageDataStore { DiaryConfig = ss.ToModel() }, ct);
+
+        var generalConfig = gs.ToModel();
+        await _store.SaveGeneralAsync(generalConfig, ct);
+        _generalSettingsService.Apply(generalConfig);
 
         _diaryFileService.Configure(ss.ToModel());
         _appearanceSettingsService.ApplyPreviewSettings(ps.PreviewFontFamily, ps.PreviewFontSize, ps.PreviewLineHeight,

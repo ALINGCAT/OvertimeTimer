@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Prism.Commands;
 using OvertimeTimer.App.Localization;
+using OvertimeTimer.App.Models;
 using OvertimeTimer.App.Services;
 
 namespace OvertimeTimer.App.ViewModels;
@@ -11,6 +12,8 @@ public sealed class GeneralSettingsViewModel : SettingsSectionViewModelBase
     private readonly ISettingsInteractionService _settingsInteractionService;
     private readonly StorageSettingsViewModel _storageSection;
     private LanguageItem? _selectedLanguage;
+    private int _offWorkHour = 18;
+    private int _offWorkMinute;
 
     public GeneralSettingsViewModel(
         ISettingsInteractionService settingsInteractionService,
@@ -32,12 +35,31 @@ public sealed class GeneralSettingsViewModel : SettingsSectionViewModelBase
             }
         };
 
+        PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(OffWorkHour) || args.PropertyName == nameof(OffWorkMinute))
+                ScheduleAutoSave(SaveAsync);
+        };
+
         OpenSettingsDirectoryCommand = new DelegateCommand(() => _settingsInteractionService.OpenSettingsDirectory());
         SaveCommand = new DelegateCommand(() => _ = SaveAsync());
     }
 
     public StorageSettingsViewModel StorageSection => _storageSection;
     public ObservableCollection<LanguageItem> AvailableLanguages { get; }
+
+    public int OffWorkHour
+    {
+        get => _offWorkHour;
+        set => SetProperty(ref _offWorkHour, value);
+    }
+
+    public int OffWorkMinute
+    {
+        get => _offWorkMinute;
+        set => SetProperty(ref _offWorkMinute, value);
+    }
+
     public LanguageItem? SelectedLanguage
     {
         get => _selectedLanguage;
@@ -49,6 +71,21 @@ public sealed class GeneralSettingsViewModel : SettingsSectionViewModelBase
     }
     public DelegateCommand OpenSettingsDirectoryCommand { get; }
     public DelegateCommand SaveCommand { get; }
+
+    public void LoadFrom(GeneralConfig generalConfig)
+    {
+        OffWorkHour = generalConfig.OffWorkHour;
+        OffWorkMinute = generalConfig.OffWorkMinute;
+    }
+
+    public GeneralConfig ToModel()
+    {
+        return new GeneralConfig
+        {
+            OffWorkHour = OffWorkHour,
+            OffWorkMinute = OffWorkMinute
+        };
+    }
 
     private async Task SaveAsync()
     {

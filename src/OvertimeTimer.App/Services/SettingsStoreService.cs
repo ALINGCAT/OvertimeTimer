@@ -12,6 +12,7 @@ public sealed class SettingsStoreService : ISettingsStoreService
     private string WsPath => Path.Combine(_baseDir, "work-schedule.json");
     private string ApPath => Path.Combine(_baseDir, "appearance.json");
     private string StPath => Path.Combine(_baseDir, "storage.json");
+    private string GnPath => Path.Combine(_baseDir, "general.json");
 
     public async Task<WorkScheduleConfig> LoadWorkScheduleAsync(CancellationToken ct = default)
         => await LoadAsync<WorkScheduleConfig>(WsPath, ct) ?? new();
@@ -30,6 +31,12 @@ public sealed class SettingsStoreService : ISettingsStoreService
 
     public async Task SaveStorageAsync(StorageDataStore data, CancellationToken ct = default)
         => await SaveAsync(StPath, data, ct);
+
+    public async Task<GeneralConfig> LoadGeneralAsync(CancellationToken ct = default)
+        => await LoadAsync<GeneralConfig>(GnPath, ct) ?? new();
+
+    public async Task SaveGeneralAsync(GeneralConfig config, CancellationToken ct = default)
+        => await SaveAsync(GnPath, config, ct);
 
     private static async Task<T?> LoadAsync<T>(string path, CancellationToken ct) where T : class
     {

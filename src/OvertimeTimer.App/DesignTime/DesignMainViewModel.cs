@@ -29,4 +29,6 @@ public sealed class DesignMainViewModel
     public DelegateCommand<DesignCalendarDayViewModel> SelectDayCommand { get; } = new(_ => { });
 
     public DelegateCommand OpenMonthPickerCommand { get; } = new(() => { });
+
+    public DelegateCommand ClockOutCommand { get; } = new(() => { });
 }

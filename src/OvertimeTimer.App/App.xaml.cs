@@ -25,6 +25,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IRecordStoreService, RecordStoreService>();
         containerRegistry.RegisterSingleton<IDiaryFileService, DiaryFileService>();
         containerRegistry.RegisterSingleton<IWorkScheduleProvider, WorkScheduleProvider>();
+        containerRegistry.RegisterSingleton<IGeneralSettingsService, GeneralSettingsService>();
 
         var localizationService = new LocalizationService();
         localizationService.Load();
