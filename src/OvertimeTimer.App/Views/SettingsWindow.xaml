@@ -6,6 +6,7 @@
         Height="700"
         ResizeMode="NoResize"
         Background="{DynamicResource AppWindowBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
         WindowStartupLocation="CenterOwner">
     <views:SettingsView Margin="10" />
 </Window>

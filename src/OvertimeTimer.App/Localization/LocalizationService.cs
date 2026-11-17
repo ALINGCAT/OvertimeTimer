@@ -160,11 +160,11 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Settings.General"] = "通用设置";
         _strings["Settings.WorkSchedule"] = "工作日规则";
         _strings["Settings.Appearance"] = "外观设置";
-        _strings["Settings.Preview"] = "预览设置";
+        _strings["Settings.Preview"] = "预览字体";
         _strings["Settings.GeneralDesc"] = "配置日记文件存储、分组方式和界面语言。";
         _strings["Settings.WorkScheduleDesc"] = "配置按周或按天的工作日循环规则。";
-        _strings["Settings.AppearanceDesc"] = "配置窗口背景、月历日期和提示点的颜色。";
-        _strings["Settings.PreviewDesc"] = "配置 Markdown 预览的字体、颜色等显示效果。";
+        _strings["Settings.AppearanceDesc"] = "选择一套喜欢的配色主题，立即应用到整个界面。";
+        _strings["Settings.PreviewDesc"] = "调整 Markdown 预览的字体和字号，配色随外观主题自动切换。";
         _strings["Settings.Save"] = "应用";
         _strings["Settings.ExportCss"] = "导出样式";
         _strings["Settings.ImportCss"] = "导入样式";
@@ -219,7 +219,6 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Appearance.CalendarDayBorder"] = "月历边框色";
         _strings["Appearance.Presets"] = "外观预设";
         _strings["Appearance.Preset.Custom"] = "自定义";
-        _strings["Appearance.Preset.WarmBrown"] = "暖棕";
         _strings["Appearance.PreviewBackground"] = "背景色";
         _strings["Appearance.PreviewText"] = "文字色";
         _strings["Appearance.PreviewLink"] = "链接色";
@@ -227,13 +226,17 @@ public sealed class LocalizationService : BindableBase, ILocalizationService
         _strings["Appearance.PreviewCodeFont"] = "代码块字体";
         _strings["Appearance.PreviewSection"] = "预览设置";
         _strings["Appearance.LanguageSection"] = "语言";
-        _strings["Appearance.Preset.SkyBlue"] = "淡蓝（默认）";
-        _strings["Appearance.Preset.Dark"] = "深色";
-        _strings["Appearance.Preset.WarmBrown"] = "暖棕";
-        _strings["Appearance.Preset.SageGreen"] = "豆沙绿";
-        _strings["Appearance.Preset.LightGray"] = "浅灰";
+        _strings["Appearance.ThemeHint"] = "点击卡片即可切换，选择会自动保存。";
+        _strings["Appearance.CustomLegacyHint"] = "当前为旧版自定义配色，选择任意主题即可统一配色。";
+        _strings["Appearance.PreviewColorHint"] = "预览配色由外观主题统一管理，这里只需调整字体。";
+        _strings["Appearance.Preset.OceanBlue"] = "海盐蓝（默认）";
+        _strings["Appearance.Preset.WarmBrown"] = "焦糖暖棕";
+        _strings["Appearance.Preset.SageGreen"] = "薄荷奶绿";
         _strings["Appearance.Preset.CherryBlossom"] = "樱花粉";
-        _strings["Appearance.Preset.OceanBlue"] = "海洋蓝";
-        _strings["Appearance.Preset.DarkPurple"] = "暗紫";
+        _strings["Appearance.Preset.Lavender"] = "薄雾紫";
+        _strings["Appearance.Preset.Graphite"] = "月岩灰";
+        _strings["Appearance.Preset.Midnight"] = "午夜蓝";
+        _strings["Appearance.Preset.Mocha"] = "摩卡夜";
+        _strings["Appearance.Preset.Violet"] = "紫夜";
     }
 }

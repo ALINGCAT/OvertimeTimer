@@ -6,6 +6,7 @@ public interface ISettingsStoreService
 {
     Task<WorkScheduleConfig> LoadWorkScheduleAsync(CancellationToken ct = default);
     Task SaveWorkScheduleAsync(WorkScheduleConfig config, CancellationToken ct = default);
+    AppearanceDataStore LoadAppearance();
     Task<AppearanceDataStore> LoadAppearanceAsync(CancellationToken ct = default);
     Task SaveAppearanceAsync(AppearanceDataStore data, CancellationToken ct = default);
     Task<StorageDataStore> LoadStorageAsync(CancellationToken ct = default);

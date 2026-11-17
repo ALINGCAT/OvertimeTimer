@@ -13,6 +13,7 @@
         Width="220"
         Height="120"
         Background="{DynamicResource AppWindowBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
         <Grid Margin="10">

@@ -4,100 +4,140 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:loc="clr-namespace:OvertimeTimer.App.Localization"
-             xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:vm="clr-namespace:OvertimeTimer.App.ViewModels"
              d:DataContext="{d:DesignInstance Type=vm:AppearanceSettingsViewModel, IsDesignTimeCreatable=False}"
+             Foreground="{DynamicResource TextPrimaryBrush}"
              mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+    <StackPanel>
+        <TextBlock Margin="0,0,0,14"
+                   Foreground="{DynamicResource TextSecondaryBrush}"
+                   Text="{loc:Loc Appearance.ThemeHint}"
+                   TextWrapping="Wrap" />
 
-            <!-- Row 0: preset -->
-            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.Presets}" />
-            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,0,12,8" ItemsSource="{Binding AvailablePresets}" DisplayMemberPath="DisplayName" SelectedItem="{Binding SelectedPreset}" />
-            <Separator Grid.Row="1" Grid.ColumnSpan="3" Margin="0,4,0,4" />
+        <ListBox Background="Transparent"
+                 BorderThickness="0"
+                 ItemsSource="{Binding AvailablePresets}"
+                 Padding="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                 SelectedItem="{Binding SelectedPreset, Mode=TwoWay}"
+                 SelectionMode="Single">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Margin" Value="0,0,10,10" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="AutomationProperties.Name" Value="{Binding DisplayName}" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                    <Setter Property="VerticalContentAlignment" Value="Top" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="132" Height="112">
+                        <Border x:Name="Card"
+                                Background="{Binding Config.WindowBackgroundColor, Converter={StaticResource ColorTextToBrushConverter}}"
+                                BorderBrush="{Binding Config.CardBorderColor, Converter={StaticResource ColorTextToBrushConverter}}"
+                                BorderThickness="1"
+                                CornerRadius="10">
+                            <Grid Margin="8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
-            <!-- Row 2 -->
-            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.WindowBackground}" />
-            <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,12,8" Text="{Binding WindowBackgroundColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="2" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="WindowBackgroundColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding WindowBackgroundColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 3 -->
-            <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CardBackground}" />
-            <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CardBackgroundColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="3" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CardBackgroundColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CardBackgroundColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 4 -->
-            <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CardBorder}" />
-            <TextBox Grid.Row="4" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CardBorderColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="4" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CardBorderColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CardBorderColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 5 -->
-            <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CalendarDayBorder}" />
-            <TextBox Grid.Row="5" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CalendarDayBorderColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="5" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarDayBorderColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarDayBorderColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 6 -->
-            <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CalendarWorkday}" />
-            <TextBox Grid.Row="6" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CalendarWorkdayColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="6" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarWorkdayColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarWorkdayColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 7 -->
-            <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CalendarRestDay}" />
-            <TextBox Grid.Row="7" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CalendarRestDayColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="7" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarRestDayColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarRestDayColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 8 -->
-            <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CalendarToday}" />
-            <TextBox Grid.Row="8" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CalendarTodayColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="8" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarTodayColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarTodayColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 9 -->
-            <TextBlock Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CalendarOutOfMonth}" />
-            <TextBox Grid.Row="9" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CalendarOutOfMonthColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="9" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarOutOfMonthColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarOutOfMonthColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 10 -->
-            <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CalendarOvertimeDot}" />
-            <TextBox Grid.Row="10" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CalendarOvertimeDotColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="10" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarOvertimeDotColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarOvertimeDotColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 11 -->
-            <TextBlock Grid.Row="11" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CalendarDiaryDot}" />
-            <TextBox Grid.Row="11" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CalendarDiaryDotColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="11" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarDiaryDotColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarDiaryDotColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 12 -->
-            <TextBlock Grid.Row="12" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CalendarHoliday}" />
-            <TextBox Grid.Row="12" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CalendarHolidayColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="12" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarHolidayColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarHolidayColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 13 -->
-            <TextBlock Grid.Row="13" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CalendarAdjustWorkday}" />
-            <TextBox Grid.Row="13" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CalendarAdjustWorkdayColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="13" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarAdjustWorkdayColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarAdjustWorkdayColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 14 -->
-            <TextBlock Grid.Row="14" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.CalendarLeave}" />
-            <TextBox Grid.Row="14" Grid.Column="1" Margin="0,0,12,8" Text="{Binding CalendarLeaveColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="14" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarLeaveColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarLeaveColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-            <!-- Row 15 -->
-            <TextBlock Grid.Row="15" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" Text="{loc:Loc Appearance.CalendarMarkerDot}" />
-            <TextBox Grid.Row="15" Grid.Column="1" Margin="0,0,12,0" Text="{Binding CalendarMarkerDotColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="15" Grid.Column="2" Width="44" Height="24" Padding="0" Command="{Binding ChooseColorCommand}" CommandParameter="CalendarMarkerDotColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding CalendarMarkerDotColor, Converter={StaticResource ColorTextToBrushConverter}}" />
-        </Grid>
-    </Grid>
+                                <Border Grid.Row="0"
+                                        Background="{Binding Config.CardBackgroundColor, Converter={StaticResource ColorTextToBrushConverter}}"
+                                        BorderBrush="{Binding Config.CardBorderColor, Converter={StaticResource ColorTextToBrushConverter}}"
+                                        BorderThickness="1"
+                                        CornerRadius="7"
+                                        Padding="7">
+                                    <StackPanel>
+                                        <TextBlock FontSize="15"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{Binding Config.CalendarWorkdayColor, Converter={StaticResource ColorTextToBrushConverter}}"
+                                                   Text="Aa" />
+                                        <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                            <Ellipse Width="6" Height="6" Margin="0,0,4,0" Fill="{Binding Config.CalendarTodayColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+                                            <Ellipse Width="6" Height="6" Margin="0,0,4,0" Fill="{Binding Config.CalendarOvertimeDotColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+                                            <Ellipse Width="6" Height="6" Margin="0,0,4,0" Fill="{Binding Config.CalendarDiaryDotColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+                                            <Ellipse Width="6" Height="6" Margin="0,0,4,0" Fill="{Binding Config.CalendarHolidayColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+                                            <Ellipse Width="6" Height="6" Margin="0,0,4,0" Fill="{Binding Config.CalendarLeaveColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+                                            <Ellipse Width="6" Height="6" Fill="{Binding Config.CalendarMarkerDotColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBlock Grid.Row="1"
+                                           Margin="2,7,0,0"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           Foreground="{Binding Config.TextPrimaryColor, Converter={StaticResource ColorTextToBrushConverter}}"
+                                           Text="{Binding DisplayName}" />
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="SelectionRing"
+                                Margin="0"
+                                BorderBrush="{Binding Config.AccentColor, Converter={StaticResource ColorTextToBrushConverter}}"
+                                BorderThickness="2"
+                                CornerRadius="10"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed" />
+
+                        <Border x:Name="CheckBadge"
+                                Width="16"
+                                Height="16"
+                                Margin="0,5,5,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Background="{Binding Config.AccentColor, Converter={StaticResource ColorTextToBrushConverter}}"
+                                CornerRadius="8"
+                                Visibility="Collapsed">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="9"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       Text="✓" />
+                        </Border>
+                    </Grid>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                            <Setter TargetName="SelectionRing" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="SelectionRing" Property="Opacity" Value="0.45" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                            <Setter TargetName="SelectionRing" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="SelectionRing" Property="Opacity" Value="1" />
+                            <Setter TargetName="CheckBadge" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock Margin="0,4,0,0"
+                   Foreground="{DynamicResource TextSecondaryBrush}"
+                   Text="{loc:Loc Appearance.CustomLegacyHint}"
+                   TextWrapping="Wrap"
+                   Visibility="{Binding IsCustomTheme, Converter={StaticResource BoolToVisibility}}" />
+
+        <TextBlock Style="{StaticResource InlineSaveFeedbackTextStyle}"
+                   Visibility="{Binding HasSaveFeedback, Converter={StaticResource BoolToVisibility}}"
+                   Text="{Binding SaveFeedbackMessage}" />
+    </StackPanel>
 </UserControl>

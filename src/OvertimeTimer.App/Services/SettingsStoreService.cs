@@ -20,6 +20,17 @@ public sealed class SettingsStoreService : ISettingsStoreService
     public async Task SaveWorkScheduleAsync(WorkScheduleConfig config, CancellationToken ct = default)
         => await SaveAsync(WsPath, config, ct);
 
+    public AppearanceDataStore LoadAppearance()
+    {
+        if (!File.Exists(ApPath))
+        {
+            return new();
+        }
+
+        var json = File.ReadAllText(ApPath);
+        return JsonSerializer.Deserialize<AppearanceDataStore>(json, Opts) ?? new();
+    }
+
     public async Task<AppearanceDataStore> LoadAppearanceAsync(CancellationToken ct = default)
         => await LoadAsync<AppearanceDataStore>(ApPath, ct) ?? new();
 

@@ -18,7 +18,6 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IMonthSelectionDialogService, MonthSelectionDialogService>();
         containerRegistry.RegisterSingleton<ISettingsDialogService, SettingsDialogService>();
         containerRegistry.RegisterSingleton<ISettingsInteractionService, SettingsInteractionService>();
-        containerRegistry.RegisterSingleton<IColorSelectionService, ColorSelectionService>();
         containerRegistry.RegisterSingleton<ISettingsStoreService, SettingsStoreService>();
         containerRegistry.RegisterSingleton<ISettingsPersistenceCoordinator, SettingsPersistenceCoordinator>();
         containerRegistry.RegisterSingleton<IAppearanceSettingsService, AppearanceSettingsService>();
@@ -39,6 +38,7 @@ public partial class App : PrismApplication
 
     protected override void OnInitialized()
     {
+        ApplyInitialAppearance();
         base.OnInitialized();
         if (MainWindow is not null)
             MainWindow.DataContext = Container.Resolve<MainWindowViewModel>();
@@ -46,20 +46,34 @@ public partial class App : PrismApplication
         _ = InitializeAsync();
     }
 
-    private async Task InitializeAsync()
+    private void ApplyInitialAppearance()
     {
         try
         {
             var store = Container.Resolve<ISettingsStoreService>();
             var appearanceSettingsService = Container.Resolve<IAppearanceSettingsService>();
-            var diaryFileService = Container.Resolve<IDiaryFileService>();
+            var data = store.LoadAppearance();
+            var config = AppearancePresets.UpgradeLegacy(data.AppearanceConfig);
 
-            var apData = await store.LoadAppearanceAsync();
-            appearanceSettingsService.Apply(apData.AppearanceConfig);
-            appearanceSettingsService.ApplyPreviewSettings(
-                apData.PreviewFontFamily, apData.PreviewFontSize, apData.PreviewLineHeight,
-                apData.PreviewBackgroundColor, apData.PreviewTextColor, apData.PreviewLinkColor,
-                apData.PreviewCodeBackgroundColor, apData.PreviewCodeFontFamily);
+            appearanceSettingsService.Apply(config);
+            appearanceSettingsService.ApplyPreviewColors(
+                data.PreviewBackgroundColor, data.PreviewTextColor, data.PreviewLinkColor,
+                data.PreviewCodeBackgroundColor);
+            appearanceSettingsService.ApplyPreviewTypography(
+                data.PreviewFontFamily, data.PreviewFontSize, data.PreviewCodeFontFamily);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Appearance init failed: {ex}");
+        }
+    }
+
+    private async Task InitializeAsync()
+    {
+        try
+        {
+            var store = Container.Resolve<ISettingsStoreService>();
+            var diaryFileService = Container.Resolve<IDiaryFileService>();
 
             var stData = await store.LoadStorageAsync();
             diaryFileService.Configure(stData.DiaryConfig);

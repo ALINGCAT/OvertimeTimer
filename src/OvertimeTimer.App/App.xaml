@@ -14,26 +14,25 @@
                 <hc:ThemeResources/>
                 <hc:Theme/>
             </ResourceDictionary.MergedDictionaries>
-            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FF0F172A" />
-            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FF64748B" />
-            <SolidColorBrush x:Key="AccentSoftBrush" Color="#FFEFF6FF" />
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FF16283A" />
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FF5F7488" />
+            <SolidColorBrush x:Key="AccentSoftBrush" Color="#FFEAF3FB" />
             <SolidColorBrush x:Key="AccentBrush" Color="#FF3B82F6" />
-            <SolidColorBrush x:Key="AppWindowBackgroundBrush" Color="#FFF0F9FF" />
-            <SolidColorBrush x:Key="CalendarWorkdayBrush" Color="#FF0C4A6E" />
-            <SolidColorBrush x:Key="CalendarRestDayBrush" Color="#FF7DD3FC" />
+            <SolidColorBrush x:Key="AppWindowBackgroundBrush" Color="#FFF3F8FC" />
+            <SolidColorBrush x:Key="CalendarWorkdayBrush" Color="#FF1F3A56" />
+            <SolidColorBrush x:Key="CalendarRestDayBrush" Color="#FF7D9AB3" />
             <SolidColorBrush x:Key="CalendarTodayBrush" Color="#FF22C55E" />
-            <SolidColorBrush x:Key="CalendarOutOfMonthBrush" Color="#FFE0F2FE" />
-            <SolidColorBrush x:Key="ShellBorderBrush" Color="#FFE2E8F0" />
+            <SolidColorBrush x:Key="CalendarOutOfMonthBrush" Color="#FFC9D8E4" />
+            <SolidColorBrush x:Key="ShellBorderBrush" Color="#FFDCE8F3" />
             <SolidColorBrush x:Key="CalendarHolidayBrush" Color="#FF8B5CF6" />
             <SolidColorBrush x:Key="CalendarAdjustWorkdayBrush" Color="#FFB91C1C" />
-            <SolidColorBrush x:Key="CalendarLeaveBrush" Color="#FF0284C7" />
-            <SolidColorBrush x:Key="CalendarDayBorderBrush" Color="#FFBAE6FD" />
-            <SolidColorBrush x:Key="CalendarMarkerDotBrush" Color="#FFFFD700" />
+            <SolidColorBrush x:Key="CalendarLeaveBrush" Color="#FF0891B2" />
+            <SolidColorBrush x:Key="CalendarDayBorderBrush" Color="#FFDCE8F3" />
+            <SolidColorBrush x:Key="CalendarMarkerDotBrush" Color="#FFE0A526" />
             <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFFFF" />
-            <SolidColorBrush x:Key="CardBorderBrush" Color="#FFBAE6FD" />
+            <SolidColorBrush x:Key="CardBorderBrush" Color="#FFDCE8F3" />
             <FontFamily x:Key="PreviewFontFamily">Microsoft YaHei UI</FontFamily>
             <system:Double x:Key="PreviewFontSize">14</system:Double>
-            <system:Double x:Key="PreviewLineHeight">12</system:Double>
             <SolidColorBrush x:Key="PreviewBackgroundBrush" Color="#FFFFFFFF" />
             <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
             <converters:ColorTextToBrushConverter x:Key="ColorTextToBrushConverter" />
@@ -58,31 +57,6 @@
                                                   VerticalAlignment="Center"
                                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
                             </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style x:Key="ColorPreviewButtonStyle" TargetType="Button">
-                <Setter Property="OverridesDefaultStyle" Value="True" />
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="BorderBrush" Value="{DynamicResource CalendarDayBorderBrush}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="Root"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="4">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Root" Property="BorderBrush" Value="#FF3B82F6" />
-                                    <Setter TargetName="Root" Property="BorderThickness" Value="2" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -113,11 +87,11 @@
                                     <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="Root" Property="Background" Value="#FFD9EAFD" />
+                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource CalendarDayBorderBrush}" />
                                     <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                                 </Trigger>
                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                    <Setter TargetName="Root" Property="BorderBrush" Value="#FFF59E0B" />
+                                    <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                                     <Setter TargetName="Root" Property="BorderThickness" Value="2" />
                                 </DataTrigger>
                             </ControlTemplate.Triggers>

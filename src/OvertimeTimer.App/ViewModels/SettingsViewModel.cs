@@ -12,7 +12,6 @@ public sealed class SettingsViewModel : ViewModelBase
 
     public SettingsViewModel(
         IAppearanceSettingsService appearanceSettingsService,
-        IColorSelectionService colorSelectionService,
         ISettingsInteractionService settingsInteractionService,
         ISettingsPersistenceCoordinator settingsPersistenceCoordinator,
         ILocalizationService localizationService)
@@ -31,10 +30,8 @@ public sealed class SettingsViewModel : ViewModelBase
 
         GeneralSection = new GeneralSettingsViewModel(settingsInteractionService, SaveSettingsAsync, localizationService);
         WorkScheduleSection = new WorkScheduleSettingsViewModel(SaveSettingsAsync, localizationService);
-        AppearanceSection = new AppearanceSettingsViewModel(appearanceSettingsService, colorSelectionService, SaveSettingsAsync, localizationService);
-        PreviewSection = new PreviewSettingsViewModel(appearanceSettingsService, colorSelectionService, SaveSettingsAsync, localizationService);
-
-        AppearanceSection.SetPreviewSection(PreviewSection);
+        AppearanceSection = new AppearanceSettingsViewModel(appearanceSettingsService, SaveSettingsAsync, localizationService);
+        PreviewSection = new PreviewSettingsViewModel(appearanceSettingsService, SaveSettingsAsync, localizationService);
 
         ShowGeneralSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.General));
         ShowWorkScheduleSectionCommand = new DelegateCommand(() => SelectSection(SettingsSection.WorkSchedule));

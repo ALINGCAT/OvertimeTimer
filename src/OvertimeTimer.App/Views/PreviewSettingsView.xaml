@@ -7,55 +7,73 @@
              xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:vm="clr-namespace:OvertimeTimer.App.ViewModels"
              d:DataContext="{d:DesignInstance Type=vm:PreviewSettingsViewModel, IsDesignTimeCreatable=False}"
+             Foreground="{DynamicResource TextPrimaryBrush}"
              mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.PreviewBackground}" />
-            <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,12,8" Text="{Binding PreviewBackgroundColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="0" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="PreviewBackgroundColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding PreviewBackgroundColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+        <TextBlock Grid.Row="0"
+                   Grid.ColumnSpan="2"
+                   Margin="0,0,0,14"
+                   Foreground="{DynamicResource TextSecondaryBrush}"
+                   Text="{loc:Loc Appearance.PreviewColorHint}"
+                   TextWrapping="Wrap" />
 
-            <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.PreviewText}" />
-            <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,12,8" Text="{Binding PreviewTextColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="1" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="PreviewTextColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding PreviewTextColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+        <TextBlock Grid.Row="1"
+                   Grid.Column="0"
+                   Margin="0,0,12,8"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   Text="{loc:Loc Appearance.PreviewFont}" />
+        <ComboBox Grid.Row="1"
+                  Grid.Column="1"
+                  Margin="0,0,12,8"
+                  IsEditable="True"
+                  ItemsSource="{Binding AvailableFontFamilies}"
+                  Text="{Binding PreviewFontFamily, UpdateSourceTrigger=LostFocus}" />
 
-            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.PreviewLink}" />
-            <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,12,8" Text="{Binding PreviewLinkColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="2" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="PreviewLinkColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding PreviewLinkColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   Margin="0,0,12,8"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   Text="{loc:Loc Appearance.FontSize}" />
+        <hc:NumericUpDown Grid.Row="2"
+                          Grid.Column="1"
+                          Width="80"
+                          Margin="0,0,12,8"
+                          HorizontalAlignment="Left"
+                          Maximum="32"
+                          Minimum="8"
+                          Value="{Binding PreviewFontSize}" />
 
-            <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.PreviewCodeBackground}" />
-            <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,12,8" Text="{Binding PreviewCodeBackgroundColor, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="3" Grid.Column="2" Width="44" Height="24" Padding="0" Margin="0,0,0,8" Command="{Binding ChooseColorCommand}" CommandParameter="PreviewCodeBackgroundColor" Style="{StaticResource ColorPreviewButtonStyle}" Background="{Binding PreviewCodeBackgroundColor, Converter={StaticResource ColorTextToBrushConverter}}" />
+        <TextBlock Grid.Row="3"
+                   Grid.Column="0"
+                   Margin="0,0,12,0"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   Text="{loc:Loc Appearance.PreviewCodeFont}" />
+        <ComboBox Grid.Row="3"
+                  Grid.Column="1"
+                  Margin="0,0,12,0"
+                  IsEditable="True"
+                  ItemsSource="{Binding AvailableCodeFontFamilies}"
+                  Text="{Binding PreviewCodeFontFamily, UpdateSourceTrigger=LostFocus}" />
 
-            <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.PreviewFont}" />
-            <ComboBox Grid.Row="4" Grid.Column="1" Margin="0,0,12,8" IsEditable="True" ItemsSource="{Binding AvailableFontFamilies}" Text="{Binding PreviewFontFamily, UpdateSourceTrigger=LostFocus}" />
-
-            <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.FontSize}" />
-            <hc:NumericUpDown Grid.Row="5" Grid.Column="1" Width="80" HorizontalAlignment="Left" Margin="0,0,12,8" Minimum="8" Maximum="32" Value="{Binding PreviewFontSize}" />
-
-            <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,8" Text="{loc:Loc Appearance.LineHeight}" />
-            <hc:NumericUpDown Grid.Row="6" Grid.Column="1" Width="80" HorizontalAlignment="Left" Margin="0,0,12,8" Minimum="12" Maximum="48" Value="{Binding PreviewLineHeight}" />
-
-            <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" Text="{loc:Loc Appearance.PreviewCodeFont}" />
-            <ComboBox Grid.Row="7" Grid.Column="1" Margin="0,0,12,0" IsEditable="True" ItemsSource="{Binding AvailableCodeFontFamilies}" Text="{Binding PreviewCodeFontFamily, UpdateSourceTrigger=LostFocus}" />
-        </Grid>
+        <TextBlock Grid.Row="4"
+                   Grid.ColumnSpan="2"
+                   Style="{StaticResource InlineSaveFeedbackTextStyle}"
+                   Visibility="{Binding HasSaveFeedback, Converter={StaticResource BoolToVisibility}}"
+                   Text="{Binding SaveFeedbackMessage}" />
     </Grid>
 </UserControl>

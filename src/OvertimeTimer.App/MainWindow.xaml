@@ -13,10 +13,16 @@
         Height="720"
         Width="1200"
         ResizeMode="NoResize"
+        Foreground="{DynamicResource TextPrimaryBrush}"
         WindowStartupLocation="CenterScreen">
     <DockPanel Background="{DynamicResource AppWindowBackgroundBrush}">
-        <StatusBar DockPanel.Dock="Bottom">
-            <StatusBarItem Content="{Binding StatusMessage}" />
+        <StatusBar DockPanel.Dock="Bottom"
+                   Background="{DynamicResource CardBackgroundBrush}"
+                   BorderBrush="{DynamicResource CardBorderBrush}"
+                   BorderThickness="0,1,0,0"
+                   Foreground="{DynamicResource TextSecondaryBrush}">
+            <StatusBarItem Content="{Binding StatusMessage}"
+                           Foreground="{DynamicResource TextSecondaryBrush}" />
         </StatusBar>
 
         <ContentControl Margin="20" Content="{Binding CurrentView}" />

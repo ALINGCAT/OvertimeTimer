@@ -11,6 +11,7 @@ public partial class MonthPickerWindow : Window
     public MonthPickerWindow(DateOnly currentMonth)
     {
         InitializeComponent();
+        WindowThemeHelper.Attach(this);
         var loc = LocalizationService.Instance;
         Title = loc["MonthPicker.Title"];
 

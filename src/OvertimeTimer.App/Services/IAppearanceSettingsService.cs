@@ -4,13 +4,15 @@ namespace OvertimeTimer.App.Services;
 
 public interface IAppearanceSettingsService
 {
-    bool TryNormalizeColor(string colorText, out string normalizedColor);
+    bool IsDarkTheme { get; }
 
     void Apply(AppearanceConfig appearanceConfig);
 
-    void ApplyPreviewSettings(string fontFamily, double fontSize, double lineHeight,
-        string backgroundColor, string textColor, string linkColor,
-        string codeBackgroundColor, string codeFontFamily);
+    void ApplyPreviewColors(string backgroundColor, string textColor, string linkColor, string codeBackgroundColor);
+
+    void ApplyPreviewTypography(string fontFamily, double fontSize, string codeFontFamily);
 
     event Action? PreviewSettingsChanged;
+
+    event Action? ThemeChanged;
 }

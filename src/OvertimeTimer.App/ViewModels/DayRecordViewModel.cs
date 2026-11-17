@@ -103,10 +103,15 @@ public sealed class DayRecordViewModel : ViewModelBase
             var body = Markdown.ToHtml(DiaryMarkdown, Pipeline);
             var fontFamily = (resources["PreviewFontFamily"] as System.Windows.Media.FontFamily)?.Source ?? "Microsoft YaHei UI";
             var fontSize = resources["PreviewFontSize"] as double? ?? 14;
-            var textColor = StripAlpha(resources["PreviewTextColor"] as string ?? "#0F172A");
-            var linkColor = StripAlpha(resources["PreviewLinkColor"] as string ?? "#3B82F6");
-            var codeBg = StripAlpha(resources["PreviewCodeBackgroundColor"] as string ?? "#F3F4F6");
+            var textColor = StripAlpha(resources["PreviewTextColor"] as string ?? "#FF1F3A56");
+            var linkColor = StripAlpha(resources["PreviewLinkColor"] as string ?? "#FF2563EB");
+            var codeBg = StripAlpha(resources["PreviewCodeBackgroundColor"] as string ?? "#FFEFF6FC");
             var codeFont = resources["PreviewCodeFontFamily"] as string ?? "Consolas";
+            var borderColor = StripAlpha(resources["CardBorderColor"] as string ?? "#FFDCE8F3");
+            var mutedColor = StripAlpha(resources["TextSecondaryColor"] as string ?? "#FF5F7488");
+            var isDark = resources["IsDarkTheme"] as bool? ?? false;
+            var stripeStrong = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)";
+            var stripeWeak = isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)";
 
             var safeFont = fontFamily.Replace("'", "").Replace("\"", "");
             var safeCodeFont = codeFont.Replace("'", "").Replace("\"", "");
@@ -114,20 +119,20 @@ public sealed class DayRecordViewModel : ViewModelBase
             return $@"<html><head><meta charset='utf-8'><style>
 body {{ font-family: '{safeFont}'; font-size: {fontSize}px; line-height: 1.5; word-wrap: break-word;
        color: {textColor}; background: {bgColor}; padding: 8px; padding-left: 12px; margin: 0; word-wrap: break-word; overflow-x: hidden; }}
-h1, h2 {{ border-bottom: 1px solid #D8DEE4; padding-bottom: 0.3em; }}
+h1, h2 {{ border-bottom: 1px solid {borderColor}; padding-bottom: 0.3em; }}
 h1 {{ font-size: 2em; margin: 4px 0 8px; }}
 h2 {{ font-size: 1.5em; margin: 4px 0 8px; }}
 h3 {{ font-size: 1.25em; margin: 4px 0 8px; }}
 h4 {{ font-size: 1.1em; margin: 4px 0 8px; }}
 table {{ border-collapse: collapse; width: 100%; margin: 8px 0; }}
-th, td {{ border: 1px solid #D1D5DB; padding: 6px 13px; text-align: left; }}
-th {{ background: rgba(0,0,0,0.04); font-weight: 600; }}
-tr:nth-child(odd) {{ background: rgba(0,0,0,0.02); }}
-tr:nth-child(even) {{ background: rgba(0,0,0,0.06); }}
+th, td {{ border: 1px solid {borderColor}; padding: 6px 13px; text-align: left; }}
+th {{ background: {stripeStrong}; font-weight: 600; }}
+tr:nth-child(odd) {{ background: {stripeWeak}; }}
+tr:nth-child(even) {{ background: {stripeStrong}; }}
 code {{ background: {codeBg}; padding: .2em .4em; border-radius: 6px; font-size: 85%; font-family: '{safeCodeFont}'; word-break: break-all; }}
 pre {{ background: {codeBg}; padding: 16px; border-radius: 6px; overflow-x: auto; line-height: 1.45; white-space: pre-wrap; word-break: break-all; }}
 pre code {{ background: none; padding: 0; font-size: 100%; }}
-blockquote {{ border-left: 4px solid #D8DEE4; color: #656D76; padding: 0 16px; margin: 8px 0; }}
+blockquote {{ border-left: 4px solid {borderColor}; color: {mutedColor}; padding: 0 16px; margin: 8px 0; }}
 a {{ color: {linkColor}; }}
 ul, ol {{ padding-left: 2em; }}
 img {{ max-width: 100%; }}

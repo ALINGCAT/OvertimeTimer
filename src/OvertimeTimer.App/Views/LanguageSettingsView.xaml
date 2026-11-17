@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:OvertimeTimer.App.ViewModels"
              d:DataContext="{d:DesignInstance Type=vm:LanguageSettingsViewModel, IsDesignTimeCreatable=False}"
+             Foreground="{DynamicResource TextPrimaryBrush}"
              mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>

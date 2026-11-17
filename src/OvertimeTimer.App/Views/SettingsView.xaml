@@ -10,9 +10,10 @@
              xmlns:loc="clr-namespace:OvertimeTimer.App.Localization"
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DataContext="{d:DesignInstance Type=design:DesignSettingsViewModel, IsDesignTimeCreatable=True}"
+             Foreground="{DynamicResource TextPrimaryBrush}"
              mc:Ignorable="d">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <hc:Card Padding="16" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}">
+        <hc:Card Padding="16" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}" Foreground="{DynamicResource TextPrimaryBrush}">
             <Grid Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

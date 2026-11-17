@@ -2,15 +2,15 @@ namespace OvertimeTimer.App.Models;
 
 public sealed class AppearanceConfig
 {
-    public string WindowBackgroundColor { get; set; } = "#FFF0F9FF";
+    public string WindowBackgroundColor { get; set; } = "#FFF3F8FC";
 
-    public string CalendarWorkdayColor { get; set; } = "#FF0C4A6E";
+    public string CalendarWorkdayColor { get; set; } = "#FF1F3A56";
 
-    public string CalendarRestDayColor { get; set; } = "#FF7DD3FC";
+    public string CalendarRestDayColor { get; set; } = "#FF7D9AB3";
 
     public string CalendarTodayColor { get; set; } = "#FF22C55E";
 
-    public string CalendarOutOfMonthColor { get; set; } = "#FFE0F2FE";
+    public string CalendarOutOfMonthColor { get; set; } = "#FFC9D8E4";
 
     public string CalendarOvertimeDotColor { get; set; } = "#FFDC2626";
 
@@ -22,11 +22,23 @@ public sealed class AppearanceConfig
 
     public string CardBackgroundColor { get; set; } = "#FFFFFFFF";
 
-    public string CardBorderColor { get; set; } = "#FFBAE6FD";
+    public string CardBorderColor { get; set; } = "#FFDCE8F3";
 
-    public string CalendarLeaveColor { get; set; } = "#FF0284C7";
+    public string CalendarLeaveColor { get; set; } = "#FF0891B2";
 
-    public string CalendarMarkerDotColor { get; set; } = "#FFFFD700";
+    public string CalendarMarkerDotColor { get; set; } = "#FFE0A526";
 
-    public string CalendarDayBorderColor { get; set; } = "#FFBAE6FD";
+    public string CalendarDayBorderColor { get; set; } = "#FFDCE8F3";
+
+    public string AccentColor { get; set; } = "#FF3B82F6";
+
+    public string AccentSoftColor { get; set; } = "#FFEAF3FB";
+
+    public string TextPrimaryColor { get; set; } = "#FF16283A";
+
+    public string TextSecondaryColor { get; set; } = "#FF5F7488";
+
+    public string ShellBorderColor { get; set; } = "#FFDCE8F3";
+
+    public bool IsDarkTheme { get; set; }
 }
