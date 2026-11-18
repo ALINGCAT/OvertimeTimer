@@ -32,3 +32,9 @@ WPF 桌面加班记录与日记应用。
 
 - 虽然做了 但是暂时没有实装新增语言包的方式
 - 有需求的话发issue 找时间实装一下
+
+### 构建与发布
+
+- 运行 `build-release-admin.bat`，脚本会自动请求管理员权限并执行 `build-release.ps1`
+- 发布目标为 `win-x64` 单文件版本，输出在 `src\OvertimeTimer.App\bin\Release\net10.0-windows\win-x64\publish`
+- 如果不需要管理员权限，也可以直接运行 `build-release.ps1`

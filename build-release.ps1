@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 $project = Join-Path $PSScriptRoot "src\OvertimeTimer.App\OvertimeTimer.App.csproj"
 $dotnet = "C:\Users\Admin\.dotnet\dotnet.exe"
 
-& $dotnet publish $project -c Release -p:PublishProfile=SingleFile
+& $dotnet publish $project -c Release -r win-x64 -p:PublishProfile=SingleFile
 
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Publish failed with exit code $LASTEXITCODE"
